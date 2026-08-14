@@ -22,6 +22,7 @@ extends Node
 var personajes: Array = [
 	{
 		"id": "don_ramiro",
+		"retrato": "res://assets/sprites/don_ramiro.png",
 		"nombre": "Don Ramiro",
 		"es_menor": false,
 		"especial": true,
@@ -37,6 +38,7 @@ var personajes: Array = [
 	},
 	{
 		"id": "chavo_prepa",
+		"retrato": "res://assets/sprites/chavo_prepa.png",
 		"nombre": "Chavo de prepa",
 		"es_menor": true,
 		"especial": false,
@@ -49,6 +51,7 @@ var personajes: Array = [
 	},
 	{
 		"id": "sra_lupe",
+		"retrato": "res://assets/sprites/sra_lupe.png",
 		"nombre": "Señora Lupe",
 		"es_menor": false,
 		"especial": false,
@@ -61,6 +64,7 @@ var personajes: Array = [
 	},
 	{
 		"id": "policia_erick",
+		"retrato": "res://assets/sprites/policia_erick.png",
 		"nombre": "Oficial Erick",
 		"es_menor": false,
 		"especial": true,
@@ -75,6 +79,7 @@ var personajes: Array = [
 	},
 	{
 		"id": "obrero_tony",
+		"retrato": "res://assets/sprites/obrero_tony.png",
 		"nombre": "Tony, el obrero",
 		"es_menor": false,
 		"especial": false,

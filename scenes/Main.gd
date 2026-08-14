@@ -17,6 +17,7 @@ const MICHELADA_MIXER_SCENE := preload("res://scenes/MicheladaMixer.tscn")
 @onready var day_label: Label = $InfoBar/DayLabel
 @onready var money_label: Label = $InfoBar/MoneyLabel
 @onready var customer_name: Label = $CustomerPanel/CustomerName
+@onready var customer_portrait: TextureRect = $CustomerPanel/Portrait
 @onready var dialogue_label: Label = $CustomerPanel/DialogueLabel
 @onready var vender_btn: Button = $CustomerPanel/ButtonsBox/VenderBtn
 @onready var rechazar_btn: Button = $CustomerPanel/ButtonsBox/RechazarBtn
@@ -53,6 +54,12 @@ func _mostrar_cliente_actual() -> void:
 
 	var cliente: Dictionary = fila_hoy[indice_actual]
 	customer_name.text = cliente["nombre"]
+
+	var ruta_retrato: String = cliente.get("retrato", "")
+	if ruta_retrato != "" and ResourceLoader.exists(ruta_retrato):
+		customer_portrait.texture = load(ruta_retrato)
+	else:
+		customer_portrait.texture = load("res://assets/sprites/placeholder.png")
 
 	if cliente["especial"] and cliente["dialogo"].size() > 0:
 		dialogue_label.text = cliente["dialogo"][randi() % cliente["dialogo"].size()]
