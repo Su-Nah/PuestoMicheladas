@@ -1,0 +1,24 @@
+; Engine configuration file.
+; Generado como punto de partida del MVP "Micheladas".
+
+config_version=5
+
+[application]
+
+config/name="Micheladas: Puesto de Sobrevivencia"
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[autoload]
+
+; Los autoloads son "singletons": están disponibles en TODO el juego
+; sin necesidad de buscarlos manualmente. Por eso GameManager y
+; CharacterDB se llaman así desde cualquier script (ej: GameManager.money).
+GameManager="*res://autoload/GameManager.gd"
+CharacterDB="*res://autoload/CharacterDB.gd"
+CustomerSpawner="*res://autoload/CustomerSpawner.gd"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

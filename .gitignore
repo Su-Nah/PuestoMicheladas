@@ -1,0 +1,11 @@
+# Carpeta de importación de Godot (se regenera sola, no se sube)
+.godot/
+.import/
+
+# Archivos de exportación (builds)
+export.cfg
+export_presets.cfg
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
