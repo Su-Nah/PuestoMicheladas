@@ -10,6 +10,10 @@ extends Control
 
 const CLIENTES_POR_DIA := 6
 
+# preload() carga la escena UNA sola vez al iniciar; instantiate() crea
+# una copia nueva cada vez que la necesitamos (una por cada venta).
+const MICHELADA_MIXER_SCENE := preload("res://scenes/MicheladaMixer.tscn")
+
 @onready var day_label: Label = $InfoBar/DayLabel
 @onready var money_label: Label = $InfoBar/MoneyLabel
 @onready var customer_name: Label = $CustomerPanel/CustomerName
@@ -57,18 +61,34 @@ func _mostrar_cliente_actual() -> void:
 	else:
 		dialogue_label.text = "Quiere una michelada."
 
-	vender_btn.disabled = false
+	# Si el personaje no compra michelada (ej. el policía, que solo viene
+	# a platicar), no tiene caso ofrecerle el botón de vender.
+	vender_btn.disabled = not cliente.get("quiere_michelada", true)
 	rechazar_btn.disabled = false
 
 
 func _on_vender_pressed() -> void:
 	var cliente: Dictionary = fila_hoy[indice_actual]
-	GameManager.registrar_venta(cliente["id"], cliente["precio_base"], cliente["es_menor"])
+	_bloquear_botones()
+	_abrir_minijuego(cliente)
+
+
+func _abrir_minijuego(cliente: Dictionary) -> void:
+	var mixer := MICHELADA_MIXER_SCENE.instantiate()
+	add_child(mixer)
+	mixer.setup(cliente)
+	# .bind(mixer, cliente) agrega esos dos argumentos DESPUÉS de los que
+	# ya manda la señal (precio_final, calidad), así el callback recibe los 4.
+	mixer.michelada_lista.connect(_on_michelada_lista.bind(mixer, cliente))
+
+
+func _on_michelada_lista(precio_final: int, _calidad: float, mixer: Node, cliente: Dictionary) -> void:
+	GameManager.registrar_venta(cliente["id"], precio_final, cliente["es_menor"])
 
 	if cliente["id"] == "policia_erick":
 		GameManager.flags["ayudo_a_personaje_especial"] = true
 
-	_bloquear_botones()
+	mixer.queue_free()
 
 
 func _on_rechazar_pressed() -> void:

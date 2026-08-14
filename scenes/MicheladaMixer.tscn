@@ -1,0 +1,99 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/MicheladaMixer.gd" id="1"]
+
+[node name="MicheladaMixer" type="Panel"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 90.0
+offset_right = 700.0
+offset_bottom = 420.0
+script = ExtResource("1")
+
+[node name="PedidoLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = 640.0
+offset_bottom = 55.0
+autowrap_mode = 3
+text = "Pedido: ..."
+
+[node name="ClamatoRow" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 65.0
+offset_right = 640.0
+offset_bottom = 95.0
+
+[node name="ClamatoLabel" type="Label" parent="ClamatoRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Clamato: 5"
+
+[node name="ClamatoSlider" type="HSlider" parent="ClamatoRow"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="LimonRow" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 105.0
+offset_right = 640.0
+offset_bottom = 135.0
+
+[node name="LimonLabel" type="Label" parent="LimonRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Limón: 5"
+
+[node name="LimonSlider" type="HSlider" parent="LimonRow"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="ChileRow" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 145.0
+offset_right = 640.0
+offset_bottom = 175.0
+
+[node name="ChileLabel" type="Label" parent="ChileRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Chile/Tajín: 5"
+
+[node name="ChileSlider" type="HSlider" parent="ChileRow"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="SalBorde" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 185.0
+offset_right = 300.0
+offset_bottom = 215.0
+text = "Sal en el borde"
+
+[node name="ResultLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 225.0
+offset_right = 640.0
+offset_bottom = 270.0
+autowrap_mode = 3
+visible = false
+
+[node name="ServirBtn" type="Button" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 280.0
+offset_right = 200.0
+offset_bottom = 320.0
+text = "Servir michelada"
