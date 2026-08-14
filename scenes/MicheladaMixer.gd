@@ -1,34 +1,31 @@
 extends Panel
 ## MicheladaMixer.gd
 ## ------------------
-## Minijuego de preparar la michelada. Se instancia dentro de Main.gd cada
-## vez que el jugador aprieta "Vender michelada". El jugador ajusta 3
-## sliders (clamato, limón, chile) y una casilla (sal en el borde) tratando
-## de acertarle a lo que pidió el cliente. Al presionar "Servir" se calcula
-## una "calidad" (0.0 a 1.0) comparando lo que preparaste contra la receta
-## ideal del cliente, y esa calidad determina cuánto te paga.
+## Minijuego de preparar la michelada, versión ARRASTRAR Y SOLTAR.
+## El jugador arrastra íconos de ingredientes hacia el vaso; cada
+## arrastre suma una unidad de ese ingrediente (máximo 10; la sal es
+## simplemente "sí" o "no"). Al presionar "Servir" se compara el vaso
+## contra la receta ideal del cliente para calcular calidad y precio.
 
 signal michelada_lista(precio_final: int, calidad: float)
 
 @onready var pedido_label: Label = $PedidoLabel
-@onready var clamato_slider: HSlider = $ClamatoRow/ClamatoSlider
-@onready var clamato_label: Label = $ClamatoRow/ClamatoLabel
-@onready var limon_slider: HSlider = $LimonRow/LimonSlider
-@onready var limon_label: Label = $LimonRow/LimonLabel
-@onready var chile_slider: HSlider = $ChileRow/ChileSlider
-@onready var chile_label: Label = $ChileRow/ChileLabel
-@onready var sal_check: CheckBox = $SalBorde
+@onready var vaso: Panel = $Vaso
+@onready var vaso_label: Label = $Vaso/VasoLabel
+@onready var reiniciar_btn: Button = $ReiniciarBtn
 @onready var result_label: Label = $ResultLabel
 @onready var servir_btn: Button = $ServirBtn
 
 var cliente: Dictionary = {}
 var ya_sirvio := false
 
+# Lo que lleva el vaso hasta ahora.
+var contenido := {"clamato": 0, "limon": 0, "chile": 0, "sal": 0}
+
 
 func _ready() -> void:
-	clamato_slider.value_changed.connect(func(_v): _actualizar_labels())
-	limon_slider.value_changed.connect(func(_v): _actualizar_labels())
-	chile_slider.value_changed.connect(func(_v): _actualizar_labels())
+	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
+	reiniciar_btn.pressed.connect(_vaciar_vaso)
 	servir_btn.pressed.connect(_on_servir_pressed)
 
 
@@ -40,22 +37,34 @@ func setup(p_cliente: Dictionary) -> void:
 		cliente.get("pedido_texto", "Una michelada normal."),
 	]
 
-	# Reiniciamos los controles a un punto neutral cada vez que se abre.
-	clamato_slider.value = 5
-	limon_slider.value = 5
-	chile_slider.value = 5
-	sal_check.button_pressed = false
-
-	_actualizar_labels()
+	_vaciar_vaso()
 	result_label.visible = false
 	servir_btn.disabled = false
 	ya_sirvio = false
 
 
-func _actualizar_labels() -> void:
-	clamato_label.text = "Clamato: %d" % int(clamato_slider.value)
-	limon_label.text = "Limón: %d" % int(limon_slider.value)
-	chile_label.text = "Chile/Tajín: %d" % int(chile_slider.value)
+func _on_ingrediente_soltado(ingrediente_id: String) -> void:
+	if ya_sirvio:
+		return
+
+	if ingrediente_id == "sal":
+		contenido["sal"] = 1  # la sal es todo o nada (sí lleva / no lleva)
+	elif contenido.has(ingrediente_id):
+		contenido[ingrediente_id] = min(contenido[ingrediente_id] + 1, 10)
+
+	_actualizar_vaso_label()
+
+
+func _vaciar_vaso() -> void:
+	contenido = {"clamato": 0, "limon": 0, "chile": 0, "sal": 0}
+	_actualizar_vaso_label()
+
+
+func _actualizar_vaso_label() -> void:
+	var sal_texto := "sí" if contenido["sal"] >= 1 else "no"
+	vaso_label.text = "Clamato: %d\nLimón: %d\nChile: %d\nSal al borde: %s" % [
+		contenido["clamato"], contenido["limon"], contenido["chile"], sal_texto,
+	]
 
 
 func _on_servir_pressed() -> void:
@@ -72,7 +81,6 @@ func _on_servir_pressed() -> void:
 	result_label.visible = true
 	result_label.text = _texto_resultado(calidad, precio_final)
 
-	# Pequeña pausa para que el jugador alcance a leer el resultado.
 	await get_tree().create_timer(1.2).timeout
 	michelada_lista.emit(precio_final, calidad)
 
@@ -81,32 +89,31 @@ func _calcular_calidad(receta: Dictionary) -> float:
 	if receta.is_empty():
 		return 1.0
 
-	# Cada ingrediente aporta un "error" entre 0.0 (perfecto) y 1.0 (pésimo).
 	var errores: Array = []
-	errores.append(abs(receta.get("clamato", 5) - clamato_slider.value) / 10.0)
-	errores.append(abs(receta.get("limon", 5) - limon_slider.value) / 10.0)
-	errores.append(abs(receta.get("chile", 5) - chile_slider.value) / 10.0)
+	errores.append(abs(receta.get("clamato", 5) - contenido["clamato"]) / 10.0)
+	errores.append(abs(receta.get("limon", 5) - contenido["limon"]) / 10.0)
+	errores.append(abs(receta.get("chile", 5) - contenido["chile"]) / 10.0)
 
 	if receta.has("sal_borde"):
-		errores.append(0.0 if receta["sal_borde"] == sal_check.button_pressed else 0.3)
+		var sal_correcta: bool = receta["sal_borde"] == (contenido["sal"] >= 1)
+		errores.append(0.0 if sal_correcta else 0.3)
 
 	var suma := 0.0
 	for e in errores:
 		suma += e
-	var error_promedio: float = suma / errores.size()
 
-	return clamp(1.0 - error_promedio, 0.0, 1.0)
+	return clamp(1.0 - (suma / errores.size()), 0.0, 1.0)
 
 
 func _multiplicador_por_calidad(calidad: float) -> float:
 	if calidad >= 0.85:
-		return 1.3   # Excelente: hasta propina extra
+		return 1.3
 	elif calidad >= 0.6:
-		return 1.0   # Buena: precio normal
+		return 1.0
 	elif calidad >= 0.35:
-		return 0.7   # Regular: paga menos, no le encantó
+		return 0.7
 	else:
-		return 0.4   # Mala: casi no paga
+		return 0.4
 
 
 func _texto_resultado(calidad: float, precio: int) -> String:
