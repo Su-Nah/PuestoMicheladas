@@ -9,6 +9,8 @@ extends Control
 ##    "vender" / "no vender": la paciencia decide.
 ##  - Los ingredientes están siempre visibles en la mesa de abajo, listos
 ##    para arrastrarse al vaso.
+##  - El vaso (VasoMichelada.gd) valida el ORDEN en el que se agregan los
+##    ingredientes y cambia de sprite según la combinación actual.
 ##  - La calidad promedio del día sube o baja cuántos clientes llegan
 ##    al día siguiente (reputación).
 
@@ -32,6 +34,39 @@ const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
 const CARA_NEUTRAL := preload("res://assets/sprites/faces/neutral.png")
 const CARA_ENOJADA := preload("res://assets/sprites/faces/angry.png")
 
+## Todos los ingredientes posibles, en el mismo orden canónico que usa
+## VasoMichelada.gd (res://scripts/VasoMichelada.gd), para poder recorrerlos
+## de forma consistente al calcular la calidad o mostrar el contenido.
+const ORDEN_CANONICO := [
+	"limon", "sal", "escarchado_cafe", "escarchado_azul",
+	"hielo", "salsa_tomate", "chile_liquido", "cerveza", "cerveza_azul",
+]
+
+## Nombres bonitos para mostrar en pantalla.
+const ETIQUETAS := {
+	"limon": "Limón",
+	"sal": "Sal",
+	"escarchado_cafe": "Escarchado (café/tajín)",
+	"escarchado_azul": "Escarchado azul",
+	"hielo": "Hielo",
+	"salsa_tomate": "Salsa de tomate",
+	"chile_liquido": "Chile líquido",
+	"cerveza": "Cerveza",
+	"cerveza_azul": "Cerveza azul",
+}
+
+## Texto que se le muestra al jugador cuando VasoMichelada rechaza un
+## ingrediente por estar fuera de orden.
+const MOTIVOS_TEXTO := {
+	"falta_limon_primero": "Primero hay que escarchar con limón.",
+	"solo_un_escarchado": "El borde ya tiene sal o escarchado. Solo se usa uno.",
+	"escarchado_fuera_de_tiempo": "El escarchado va antes del hielo.",
+	"falta_hielo_primero": "Primero hay que poner el hielo.",
+	"solo_una_cerveza": "Ya hay una cerveza en el vaso.",
+	"vaso_completo": "¡La michelada ya está lista! Sírvela o vacíala.",
+	"ingrediente_desconocido": "Ese ingrediente no se reconoce.",
+}
+
 var fila_hoy: Array = []
 var indice_actual := 0
 var cliente_actual: Dictionary = {}
@@ -41,11 +76,12 @@ var paciencia_maxima := 0.0
 var resolviendo := false
 var jornada_activa := false # false mientras se muestra el resumen del día
 
-# Contenido actual del vaso (lo que llevas arrastrado hasta ahora).
-var contenido := {"clamato": 0, "limon": 0, "chile": 0, "sal": 0}
-
 # Calidad de cada venta del día (0.0 si el cliente se fue sin comprar).
 var calidades_del_dia: Array = []
+
+# Se pone en true un momentito cuando se rechaza un ingrediente, para no
+# pisar ese mensaje con la actualización normal de la etiqueta del vaso.
+var _mostrando_rechazo := false
 
 
 func _ready() -> void:
@@ -53,6 +89,7 @@ func _ready() -> void:
 	GameManager.game_over.connect(_on_game_over)
 
 	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
+	vaso.ingrediente_rechazado.connect(_on_ingrediente_rechazado)
 	reiniciar_btn.pressed.connect(_vaciar_vaso)
 	servir_btn.pressed.connect(_on_servir_pressed)
 
@@ -142,7 +179,13 @@ func _resolver_cliente(hubo_tiempo: bool) -> void:
 		var multiplicador := _multiplicador_por_calidad(calidad)
 		var precio_final := int(round(cliente_actual["precio_base"] * multiplicador))
 
-		GameManager.registrar_venta(cliente_actual["id"], precio_final, cliente_actual["es_menor"])
+		# El dilema ético solo se activa si el cliente ES menor de edad Y la
+		# michelada que le serviste SÍ lleva alcohol (cerveza o cerveza azul).
+		# Una michelada preparada sin cerveza servida a un menor no cuenta
+		# como venta de alcohol a menores.
+		var es_venta_de_alcohol_a_menor: bool = cliente_actual["es_menor"] and vaso.tiene_alcohol()
+
+		GameManager.registrar_venta(cliente_actual["id"], precio_final, es_venta_de_alcohol_a_menor)
 		calidades_del_dia.append(calidad)
 		result_label.text = _texto_resultado(calidad, precio_final)
 	else:
@@ -234,29 +277,49 @@ func _actualizar_emoji(ratio: float) -> void:
 # ---------------------------------------------------------------------
 # MESA / VASO (arrastrar y soltar)
 # ---------------------------------------------------------------------
+# El contenido del vaso YA NO se guarda aquí: VasoMichelada.gd es la única
+# fuente de verdad (vaso.ingredientes_agregados). Aquí solo reaccionamos a
+# sus señales para actualizar la etiqueta de texto.
 
-func _on_ingrediente_soltado(ingrediente_id: String) -> void:
+func _on_ingrediente_soltado(_ingrediente_id: String) -> void:
 	if resolviendo or not jornada_activa:
 		return
+	_actualizar_vaso_label()
 
-	if ingrediente_id == "sal":
-		contenido["sal"] = 1
-	elif contenido.has(ingrediente_id):
-		contenido[ingrediente_id] = min(contenido[ingrediente_id] + 1, 10)
 
+func _on_ingrediente_rechazado(ingrediente_id: String, motivo: String) -> void:
+	if resolviendo or not jornada_activa:
+		return
+	var etiqueta: String = ETIQUETAS.get(ingrediente_id, ingrediente_id)
+	var explicacion: String = MOTIVOS_TEXTO.get(motivo, "No se puede agregar ahora.")
+	_mostrando_rechazo = true
+	vaso_label.text = "❌ %s: %s" % [etiqueta, explicacion]
+
+	await get_tree().create_timer(1.4).timeout
+	_mostrando_rechazo = false
 	_actualizar_vaso_label()
 
 
 func _vaciar_vaso() -> void:
-	contenido = {"clamato": 0, "limon": 0, "chile": 0, "sal": 0}
+	vaso.reset()
+	_mostrando_rechazo = false
 	_actualizar_vaso_label()
 
 
 func _actualizar_vaso_label() -> void:
-	var sal_texto := "sí" if contenido["sal"] >= 1 else "no"
-	vaso_label.text = "Clamato: %d\nLimón: %d\nChile: %d\nSal al borde: %s" % [
-		contenido["clamato"], contenido["limon"], contenido["chile"], sal_texto,
-	]
+	if _mostrando_rechazo:
+		return
+
+	var presentes: Array = vaso.obtener_ingredientes()
+	if presentes.is_empty():
+		vaso_label.text = "Vaso vacío.\nArrastra ingredientes aquí."
+		return
+
+	var nombres: Array = []
+	for id in ORDEN_CANONICO:
+		if presentes.has(id):
+			nombres.append(ETIQUETAS.get(id, id))
+	vaso_label.text = ", ".join(nombres)
 
 
 func _on_servir_pressed() -> void:
@@ -268,25 +331,27 @@ func _on_servir_pressed() -> void:
 # ---------------------------------------------------------------------
 # CÁLCULO DE CALIDAD Y PRECIO
 # ---------------------------------------------------------------------
+# receta: Dictionary con los ingredientes que el cliente SÍ quiere, marcados
+# como true (ej. {"limon": true, "sal": true, "hielo": true, "cerveza": true}).
+# Cualquier ingrediente de ORDEN_CANONICO que no aparezca en la receta se
+# interpreta como "no lo quiere". La calidad es el % de ingredientes en los
+# que el vaso coincide exactamente con lo que el cliente pidió (tanto lo
+# que sí lleva como lo que no debía llevar).
 
 func _calcular_calidad(receta: Dictionary) -> float:
 	if receta.is_empty():
 		return 1.0
 
-	var errores: Array = []
-	errores.append(abs(receta.get("clamato", 5) - contenido["clamato"]) / 10.0)
-	errores.append(abs(receta.get("limon", 5) - contenido["limon"]) / 10.0)
-	errores.append(abs(receta.get("chile", 5) - contenido["chile"]) / 10.0)
+	var presentes: Array = vaso.obtener_ingredientes()
+	var aciertos := 0
 
-	if receta.has("sal_borde"):
-		var sal_correcta: bool = receta["sal_borde"] == (contenido["sal"] >= 1)
-		errores.append(0.0 if sal_correcta else 0.3)
+	for id in ORDEN_CANONICO:
+		var lo_quiere: bool = receta.get(id, false)
+		var lo_tiene: bool = presentes.has(id)
+		if lo_quiere == lo_tiene:
+			aciertos += 1
 
-	var suma := 0.0
-	for e in errores:
-		suma += e
-
-	return clamp(1.0 - (suma / errores.size()), 0.0, 1.0)
+	return float(aciertos) / float(ORDEN_CANONICO.size())
 
 
 func _multiplicador_por_calidad(calidad: float) -> float:

@@ -3,12 +3,17 @@
 [ext_resource type="Script" uid="uid://vltr1jtoclx3" path="res://scenes/Main.gd" id="1"]
 [ext_resource type="Script" uid="uid://cbdawe1i17kdq" path="res://scripts/IngredientDrag.gd" id="2"]
 [ext_resource type="Script" uid="uid://wa7elcp6n1mu" path="res://scripts/VasoMichelada.gd" id="3"]
-[ext_resource type="Texture2D" uid="uid://c25w8y3b6v5xb" path="res://assets/sprites/ingredients/clamato.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://cjx7cmyw6n0nq" path="res://assets/sprites/ingredients/limon.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://d4ibxjdlgn6in" path="res://assets/sprites/ingredients/chile.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://p5d01pb6morn" path="res://assets/sprites/ingredients/sal.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://b02xyhad8yhc4" path="res://assets/sprites/ingredients/vaso_vacio.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://y6wd0sbmt8kr" path="res://assets/michelada/michelada_vacio.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://dv70q2mtycbdh" path="res://assets/sprites/faces/neutral.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dnh3bk3prd0l8" path="res://assets/sprites/ingredients/escarchado_cafe.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://dbpwy8iy2rt1j" path="res://assets/sprites/ingredients/escarchado_azul.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://h72gwx7hurp6" path="res://assets/sprites/ingredients/hielo.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://bf82iw1vkv8y0" path="res://assets/sprites/ingredients/salsa_tomate.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://ndtua1uvx1n7" path="res://assets/sprites/ingredients/chile_liquido.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://c5k58fbsky8ee" path="res://assets/sprites/ingredients/cerveza.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://nbmlbb7j8dex" path="res://assets/sprites/ingredients/cerveza_azul.png" id="17"]
 
 [node name="Main" type="Control" unique_id=173019364]
 layout_mode = 3
@@ -105,85 +110,179 @@ offset_right = 1880.0
 offset_bottom = 1050.0
 color = Color(0.4, 0.26, 0.14, 1)
 
-[node name="IngredientesRow" type="HBoxContainer" parent="Mesa" unique_id=1642816402]
+[node name="IngredientesGrid" type="GridContainer" parent="Mesa" unique_id=1642816402]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 30.0
-offset_right = 640.0
-offset_bottom = 170.0
-theme_override_constants/separation = 30
+offset_left = 20.0
+offset_top = 8.0
+offset_right = 560.0
+offset_bottom = 192.0
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+columns = 5
 
-[node name="ClamatoIcon" type="TextureRect" parent="Mesa/IngredientesRow" unique_id=1181148140]
-custom_minimum_size = Vector2(120, 120)
-layout_mode = 2
-texture = ExtResource("4")
-script = ExtResource("2")
-
-[node name="Label" type="Label" parent="Mesa/IngredientesRow/ClamatoIcon" unique_id=2096562363]
-layout_mode = 0
-offset_top = 124.0
-offset_right = 120.0
-offset_bottom = 150.0
-theme_override_font_sizes/font_size = 18
-text = "Clamato"
-horizontal_alignment = 1
-
-[node name="LimonIcon" type="TextureRect" parent="Mesa/IngredientesRow" unique_id=256412087]
-custom_minimum_size = Vector2(120, 120)
+[node name="LimonIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=256412087]
+custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
 texture = ExtResource("5")
 script = ExtResource("2")
 ingrediente_id = "limon"
 etiqueta = "Limón"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesRow/LimonIcon" unique_id=1423120205]
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/LimonIcon" unique_id=1423120205]
 layout_mode = 0
-offset_top = 124.0
-offset_right = 120.0
-offset_bottom = 150.0
-theme_override_font_sizes/font_size = 18
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 13
 text = "Limón"
 horizontal_alignment = 1
 
-[node name="ChileIcon" type="TextureRect" parent="Mesa/IngredientesRow" unique_id=72251247]
-custom_minimum_size = Vector2(120, 120)
+[node name="EscarchadoCafeIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468601]
+custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
-texture = ExtResource("6")
+texture = ExtResource("11")
 script = ExtResource("2")
-ingrediente_id = "chile"
-etiqueta = "Chile/Tajín"
+ingrediente_id = "escarchado_cafe"
+etiqueta = "Escarchado café"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesRow/ChileIcon" unique_id=1811468507]
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/EscarchadoCafeIcon" unique_id=1811468602]
 layout_mode = 0
-offset_top = 124.0
-offset_right = 120.0
-offset_bottom = 150.0
-theme_override_font_sizes/font_size = 18
-text = "Chile"
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 12
+text = "Escarchado café"
 horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="SalIcon" type="TextureRect" parent="Mesa/IngredientesRow" unique_id=1321226597]
-custom_minimum_size = Vector2(120, 120)
+[node name="EscarchadoAzulIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468603]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("12")
+script = ExtResource("2")
+ingrediente_id = "escarchado_azul"
+etiqueta = "Escarchado azul"
+
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/EscarchadoAzulIcon" unique_id=1811468604]
+layout_mode = 0
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 12
+text = "Escarchado azul"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SalIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1321226597]
+custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
 texture = ExtResource("7")
 script = ExtResource("2")
 ingrediente_id = "sal"
 etiqueta = "Sal"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesRow/SalIcon" unique_id=362577833]
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/SalIcon" unique_id=362577833]
 layout_mode = 0
-offset_top = 124.0
-offset_right = 120.0
-offset_bottom = 150.0
-theme_override_font_sizes/font_size = 18
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 13
 text = "Sal"
 horizontal_alignment = 1
 
+[node name="HieloIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468605]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("13")
+script = ExtResource("2")
+ingrediente_id = "hielo"
+etiqueta = "Hielo"
+
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/HieloIcon" unique_id=1811468606]
+layout_mode = 0
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 13
+text = "Hielo"
+horizontal_alignment = 1
+
+[node name="SalsaTomateIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468607]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("14")
+script = ExtResource("2")
+ingrediente_id = "salsa_tomate"
+etiqueta = "Salsa de tomate"
+
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/SalsaTomateIcon" unique_id=1811468608]
+layout_mode = 0
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 12
+text = "Salsa de tomate"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ChileLiquidoIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468609]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("15")
+script = ExtResource("2")
+ingrediente_id = "chile_liquido"
+etiqueta = "Chile líquido"
+
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/ChileLiquidoIcon" unique_id=1811468610]
+layout_mode = 0
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 12
+text = "Chile líquido"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CervezaIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468611]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("16")
+script = ExtResource("2")
+ingrediente_id = "cerveza"
+etiqueta = "Cerveza"
+
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/CervezaIcon" unique_id=1811468612]
+layout_mode = 0
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 13
+text = "Cerveza"
+horizontal_alignment = 1
+
+[node name="CervezaAzulIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468613]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("17")
+script = ExtResource("2")
+ingrediente_id = "cerveza_azul"
+etiqueta = "Cerveza azul"
+
+[node name="Label" type="Label" parent="Mesa/IngredientesGrid/CervezaAzulIcon" unique_id=1811468614]
+layout_mode = 0
+offset_top = 86.0
+offset_right = 84.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 12
+text = "Cerveza azul"
+horizontal_alignment = 1
+autowrap_mode = 3
+
 [node name="Vaso" type="Panel" parent="Mesa" unique_id=1001578185]
 layout_mode = 0
-offset_left = 700.0
+offset_left = 610.0
 offset_top = 10.0
-offset_right = 940.0
+offset_right = 850.0
 offset_bottom = 190.0
 script = ExtResource("3")
 
