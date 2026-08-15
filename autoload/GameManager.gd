@@ -19,9 +19,12 @@ signal game_over(ending_id: String)
 
 const TOTAL_DAYS := 7
 const DAILY_EXTORTION := 150 # "derecho de piso" que se cobra cada noche
+const CLIENTES_MIN := 3
+const CLIENTES_MAX := 10
 
 var current_day := 1
 var money := 0
+var clientes_por_dia := 6 # cuántos clientes llegan; sube o baja según la calidad del día anterior
 
 var extortion_paid_days: Array = []   # días en que sí pagaste
 var extortion_missed_days: Array = [] # días en que NO pagaste
@@ -49,6 +52,7 @@ func reset() -> void:
 	# Se llama cuando el jugador reinicia una partida nueva.
 	current_day = 1
 	money = 0
+	clientes_por_dia = 6
 	extortion_paid_days.clear()
 	extortion_missed_days.clear()
 	last_ending = ""
@@ -95,6 +99,15 @@ func pagar_extorsion() -> bool:
 
 func no_pagar_extorsion() -> void:
 	extortion_missed_days.append(current_day)
+
+
+func ajustar_clientes_por_dia(calidad_promedio: float) -> void:
+	# Buena fama = más clientes al día siguiente; mala fama = menos.
+	if calidad_promedio >= 0.75:
+		clientes_por_dia = min(clientes_por_dia + 1, CLIENTES_MAX)
+	elif calidad_promedio < 0.4:
+		clientes_por_dia = max(clientes_por_dia - 1, CLIENTES_MIN)
+	# Entre 0.4 y 0.75 se queda igual (calidad "normal").
 
 
 func avanzar_dia() -> String:

@@ -1,124 +1,173 @@
 extends Control
 ## Main.gd
 ## -------
-## Controla el flujo de UN día de juego:
-##   1) Genera la fila de clientes del día (CustomerSpawner).
-##   2) Muestra cada cliente uno por uno.
-##   3) El jugador decide: Vender / No vender.
-##   4) Al terminar la fila, se cobra (o no) la extorsión y se avanza de día.
-##   5) Si GameManager detecta un final, cambia de escena a Ending.tscn.
-
-const CLIENTES_POR_DIA := 6
-
-# preload() carga la escena UNA sola vez al iniciar; instantiate() crea
-# una copia nueva cada vez que la necesitamos (una por cada venta).
-const MICHELADA_MIXER_SCENE := preload("res://scenes/MicheladaMixer.tscn")
+## Escena única del juego, 100% automática:
+##  - Los clientes aparecen uno tras otro sin botones de "siguiente".
+##  - Cada cliente tiene una barra de paciencia (+ un emoji) que se agota
+##    con el tiempo. Si llegas a servir antes de que se agote, hay venta;
+##    si se agota, el cliente se va sin comprar. No hay botones de
+##    "vender" / "no vender": la paciencia decide.
+##  - Los ingredientes están siempre visibles en la mesa de abajo, listos
+##    para arrastrarse al vaso.
+##  - La calidad promedio del día sube o baja cuántos clientes llegan
+##    al día siguiente (reputación).
 
 @onready var day_label: Label = $InfoBar/DayLabel
 @onready var money_label: Label = $InfoBar/MoneyLabel
-@onready var customer_name: Label = $CustomerPanel/CustomerName
-@onready var customer_portrait: TextureRect = $CustomerPanel/Portrait
-@onready var dialogue_label: Label = $CustomerPanel/DialogueLabel
-@onready var vender_btn: Button = $CustomerPanel/ButtonsBox/VenderBtn
-@onready var rechazar_btn: Button = $CustomerPanel/ButtonsBox/RechazarBtn
-@onready var siguiente_btn: Button = $SiguienteBtn
+@onready var day_timeline: HBoxContainer = $DayTimeline
+
+@onready var emoji_icon: TextureRect = $EmojiIcon
+@onready var patience_bar: ProgressBar = $PatienceBar
+@onready var customer_portrait: TextureRect = $CustomerPortrait
+@onready var customer_name: Label = $CustomerName
+@onready var dialogue_label: Label = $DialogueLabel
+
+@onready var vaso: Panel = $Mesa/Vaso
+@onready var vaso_label: Label = $Mesa/Vaso/VasoLabel
+@onready var reiniciar_btn: Button = $Mesa/ReiniciarBtn
+@onready var servir_btn: Button = $Mesa/ServirBtn
+@onready var result_label: Label = $Mesa/ResultLabel
+
+const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
+const CARA_NEUTRAL := preload("res://assets/sprites/faces/neutral.png")
+const CARA_ENOJADA := preload("res://assets/sprites/faces/angry.png")
 
 var fila_hoy: Array = []
 var indice_actual := 0
-var dia_terminado := false
+var cliente_actual: Dictionary = {}
+
+var paciencia_actual := 0.0
+var paciencia_maxima := 0.0
+var resolviendo := false
+var jornada_activa := false # false mientras se muestra el resumen del día
+
+# Contenido actual del vaso (lo que llevas arrastrado hasta ahora).
+var contenido := {"clamato": 0, "limon": 0, "chile": 0, "sal": 0}
+
+# Calidad de cada venta del día (0.0 si el cliente se fue sin comprar).
+var calidades_del_dia: Array = []
 
 
 func _ready() -> void:
 	GameManager.money_changed.connect(_on_money_changed)
 	GameManager.game_over.connect(_on_game_over)
 
-	vender_btn.pressed.connect(_on_vender_pressed)
-	rechazar_btn.pressed.connect(_on_rechazar_pressed)
-	siguiente_btn.pressed.connect(_on_siguiente_pressed)
+	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
+	reiniciar_btn.pressed.connect(_vaciar_vaso)
+	servir_btn.pressed.connect(_on_servir_pressed)
 
 	_actualizar_info_bar()
 	_iniciar_dia()
 
 
+func _process(delta: float) -> void:
+	if not jornada_activa or resolviendo:
+		return
+	if indice_actual >= fila_hoy.size():
+		return
+
+	paciencia_actual -= delta
+	patience_bar.value = max(paciencia_actual, 0.0)
+
+	var ratio := 0.0
+	if paciencia_maxima > 0:
+		ratio = paciencia_actual / paciencia_maxima
+	_actualizar_emoji(ratio)
+
+	if paciencia_actual <= 0.0:
+		_resolver_cliente(false) # se le acabó la paciencia
+
+
+# ---------------------------------------------------------------------
+# FLUJO DEL DÍA
+# ---------------------------------------------------------------------
+
 func _iniciar_dia() -> void:
-	dia_terminado = false
-	fila_hoy = CustomerSpawner.generar_dia(CLIENTES_POR_DIA)
+	jornada_activa = true
+	fila_hoy = CustomerSpawner.generar_dia(GameManager.clientes_por_dia)
 	indice_actual = 0
+	calidades_del_dia.clear()
+	_construir_timeline()
 	_mostrar_cliente_actual()
 
 
 func _mostrar_cliente_actual() -> void:
+	_actualizar_timeline()
+
 	if indice_actual >= fila_hoy.size():
 		_fin_del_dia()
 		return
 
-	var cliente: Dictionary = fila_hoy[indice_actual]
-	customer_name.text = cliente["nombre"]
+	cliente_actual = fila_hoy[indice_actual]
+	resolviendo = false
+	result_label.text = ""
 
-	var ruta_retrato: String = cliente.get("retrato", "")
+	customer_name.text = cliente_actual["nombre"]
+
+	var ruta_retrato: String = cliente_actual.get("retrato", "")
 	if ruta_retrato != "" and ResourceLoader.exists(ruta_retrato):
 		customer_portrait.texture = load(ruta_retrato)
 	else:
 		customer_portrait.texture = load("res://assets/sprites/placeholder.png")
 
-	if cliente["especial"] and cliente["dialogo"].size() > 0:
-		dialogue_label.text = cliente["dialogo"][randi() % cliente["dialogo"].size()]
-	elif cliente["es_menor"]:
-		dialogue_label.text = "Se ve muy joven para tomar... ¿le vendes de todos modos?"
+	if cliente_actual["especial"] and cliente_actual["dialogo"].size() > 0:
+		dialogue_label.text = cliente_actual["dialogo"][randi() % cliente_actual["dialogo"].size()]
+	elif cliente_actual.get("quiere_michelada", true):
+		dialogue_label.text = "\"%s\"" % cliente_actual.get("pedido_texto", "Quiere una michelada.")
 	else:
-		dialogue_label.text = "Quiere una michelada."
+		dialogue_label.text = "Solo vino a platicar un rato."
 
-	# Si el personaje no compra michelada (ej. el policía, que solo viene
-	# a platicar), no tiene caso ofrecerle el botón de vender.
-	vender_btn.disabled = not cliente.get("quiere_michelada", true)
-	rechazar_btn.disabled = false
+	_vaciar_vaso()
 
+	paciencia_maxima = cliente_actual.get("paciencia", 14.0)
+	paciencia_actual = paciencia_maxima
+	patience_bar.max_value = paciencia_maxima
+	patience_bar.value = paciencia_maxima
+	_actualizar_emoji(1.0)
 
-func _on_vender_pressed() -> void:
-	var cliente: Dictionary = fila_hoy[indice_actual]
-	_bloquear_botones()
-	_abrir_minijuego(cliente)
-
-
-func _abrir_minijuego(cliente: Dictionary) -> void:
-	var mixer := MICHELADA_MIXER_SCENE.instantiate()
-	add_child(mixer)
-	mixer.setup(cliente)
-	# .bind(mixer, cliente) agrega esos dos argumentos DESPUÉS de los que
-	# ya manda la señal (precio_final, calidad), así el callback recibe los 4.
-	mixer.michelada_lista.connect(_on_michelada_lista.bind(mixer, cliente))
+	servir_btn.disabled = not cliente_actual.get("quiere_michelada", true)
 
 
-func _on_michelada_lista(precio_final: int, _calidad: float, mixer: Node, cliente: Dictionary) -> void:
-	GameManager.registrar_venta(cliente["id"], precio_final, cliente["es_menor"])
-
-	if cliente["id"] == "policia_erick":
-		GameManager.flags["ayudo_a_personaje_especial"] = true
-
-	mixer.queue_free()
-
-
-func _on_rechazar_pressed() -> void:
-	_bloquear_botones()
-
-
-func _bloquear_botones() -> void:
-	vender_btn.disabled = true
-	rechazar_btn.disabled = true
-
-
-func _on_siguiente_pressed() -> void:
-	if dia_terminado:
+func _resolver_cliente(hubo_tiempo: bool) -> void:
+	if resolviendo:
 		return
+	resolviendo = true
+	servir_btn.disabled = true
+
+	if not cliente_actual.get("quiere_michelada", true):
+		result_label.text = "%s se despide y sigue su camino." % cliente_actual["nombre"]
+	elif hubo_tiempo:
+		var receta: Dictionary = cliente_actual.get("receta", {})
+		var calidad := _calcular_calidad(receta)
+		var multiplicador := _multiplicador_por_calidad(calidad)
+		var precio_final := int(round(cliente_actual["precio_base"] * multiplicador))
+
+		GameManager.registrar_venta(cliente_actual["id"], precio_final, cliente_actual["es_menor"])
+		calidades_del_dia.append(calidad)
+		result_label.text = _texto_resultado(calidad, precio_final)
+	else:
+		calidades_del_dia.append(0.0)
+		result_label.text = "%s se cansó de esperar y se fue sin comprar." % cliente_actual["nombre"]
+
+	await get_tree().create_timer(1.3).timeout
 	indice_actual += 1
 	_mostrar_cliente_actual()
 
 
 func _fin_del_dia() -> void:
-	dia_terminado = true
+	jornada_activa = false
 	customer_name.text = "Fin del día"
-	vender_btn.disabled = true
-	rechazar_btn.disabled = true
+	dialogue_label.text = ""
+	servir_btn.disabled = true
+	patience_bar.value = 0
+	customer_portrait.texture = load("res://assets/sprites/placeholder.png")
+
+	var promedio := 0.5
+	if calidades_del_dia.size() > 0:
+		var suma := 0.0
+		for c in calidades_del_dia:
+			suma += c
+		promedio = suma / calidades_del_dia.size()
 
 	var mensaje := ""
 	if GameManager.money >= GameManager.DAILY_EXTORTION:
@@ -128,24 +177,143 @@ func _fin_del_dia() -> void:
 		GameManager.no_pagar_extorsion()
 		mensaje = "No te alcanzó para pagar el derecho de piso..."
 
+	GameManager.ajustar_clientes_por_dia(promedio)
+	mensaje += "\nCalidad promedio del día: %d%%" % int(round(promedio * 100))
+	mensaje += "\nMañana esperas %d clientes." % GameManager.clientes_por_dia
+
 	dialogue_label.text = mensaje
 
 	var resultado := GameManager.avanzar_dia()
 	if resultado == "":
 		_actualizar_info_bar()
-		siguiente_btn.text = "Empezar día %d" % GameManager.current_day
-		siguiente_btn.pressed.disconnect(_on_siguiente_pressed)
-		siguiente_btn.pressed.connect(_iniciar_nuevo_dia_desde_boton)
-	# Si resultado != "", GameManager ya emitió game_over y _on_game_over
-	# se encarga de cambiar de escena.
+		await get_tree().create_timer(3.0).timeout
+		_iniciar_dia()
+	# Si resultado != "", GameManager ya emitió game_over.
 
 
-func _iniciar_nuevo_dia_desde_boton() -> void:
-	siguiente_btn.text = "Siguiente cliente"
-	siguiente_btn.pressed.disconnect(_iniciar_nuevo_dia_desde_boton)
-	siguiente_btn.pressed.connect(_on_siguiente_pressed)
-	_iniciar_dia()
+# ---------------------------------------------------------------------
+# LÍNEA DE TIEMPO DEL DÍA (cuadritos de progreso)
+# ---------------------------------------------------------------------
 
+func _construir_timeline() -> void:
+	for child in day_timeline.get_children():
+		child.queue_free()
+
+	for i in range(fila_hoy.size()):
+		var segmento := ColorRect.new()
+		segmento.custom_minimum_size = Vector2(30, 20)
+		segmento.color = Color(0.6, 0.6, 0.6)
+		day_timeline.add_child(segmento)
+
+
+func _actualizar_timeline() -> void:
+	var segmentos := day_timeline.get_children()
+	for i in range(segmentos.size()):
+		var segmento: ColorRect = segmentos[i]
+		if i < indice_actual:
+			segmento.color = Color(0.3, 0.8, 0.3)
+		elif i == indice_actual:
+			segmento.color = Color(0.9, 0.8, 0.2)
+		else:
+			segmento.color = Color(0.6, 0.6, 0.6)
+
+
+# ---------------------------------------------------------------------
+# PACIENCIA / EMOJI
+# ---------------------------------------------------------------------
+
+func _actualizar_emoji(ratio: float) -> void:
+	if ratio > 0.66:
+		emoji_icon.texture = CARA_FELIZ
+	elif ratio > 0.33:
+		emoji_icon.texture = CARA_NEUTRAL
+	else:
+		emoji_icon.texture = CARA_ENOJADA
+
+
+# ---------------------------------------------------------------------
+# MESA / VASO (arrastrar y soltar)
+# ---------------------------------------------------------------------
+
+func _on_ingrediente_soltado(ingrediente_id: String) -> void:
+	if resolviendo or not jornada_activa:
+		return
+
+	if ingrediente_id == "sal":
+		contenido["sal"] = 1
+	elif contenido.has(ingrediente_id):
+		contenido[ingrediente_id] = min(contenido[ingrediente_id] + 1, 10)
+
+	_actualizar_vaso_label()
+
+
+func _vaciar_vaso() -> void:
+	contenido = {"clamato": 0, "limon": 0, "chile": 0, "sal": 0}
+	_actualizar_vaso_label()
+
+
+func _actualizar_vaso_label() -> void:
+	var sal_texto := "sí" if contenido["sal"] >= 1 else "no"
+	vaso_label.text = "Clamato: %d\nLimón: %d\nChile: %d\nSal al borde: %s" % [
+		contenido["clamato"], contenido["limon"], contenido["chile"], sal_texto,
+	]
+
+
+func _on_servir_pressed() -> void:
+	if resolviendo or not jornada_activa:
+		return
+	_resolver_cliente(true)
+
+
+# ---------------------------------------------------------------------
+# CÁLCULO DE CALIDAD Y PRECIO
+# ---------------------------------------------------------------------
+
+func _calcular_calidad(receta: Dictionary) -> float:
+	if receta.is_empty():
+		return 1.0
+
+	var errores: Array = []
+	errores.append(abs(receta.get("clamato", 5) - contenido["clamato"]) / 10.0)
+	errores.append(abs(receta.get("limon", 5) - contenido["limon"]) / 10.0)
+	errores.append(abs(receta.get("chile", 5) - contenido["chile"]) / 10.0)
+
+	if receta.has("sal_borde"):
+		var sal_correcta: bool = receta["sal_borde"] == (contenido["sal"] >= 1)
+		errores.append(0.0 if sal_correcta else 0.3)
+
+	var suma := 0.0
+	for e in errores:
+		suma += e
+
+	return clamp(1.0 - (suma / errores.size()), 0.0, 1.0)
+
+
+func _multiplicador_por_calidad(calidad: float) -> float:
+	if calidad >= 0.85:
+		return 1.3
+	elif calidad >= 0.6:
+		return 1.0
+	elif calidad >= 0.35:
+		return 0.7
+	else:
+		return 0.4
+
+
+func _texto_resultado(calidad: float, precio: int) -> String:
+	if calidad >= 0.85:
+		return "¡Excelente! Le encantó. Paga $%d." % precio
+	elif calidad >= 0.6:
+		return "Buena michelada. Paga $%d." % precio
+	elif calidad >= 0.35:
+		return "Meh... no era lo que pidió. Paga solo $%d." % precio
+	else:
+		return "No le gustó nada. A regañadientes paga $%d." % precio
+
+
+# ---------------------------------------------------------------------
+# UI GENERAL / SEÑALES DE GameManager
+# ---------------------------------------------------------------------
 
 func _on_money_changed(new_amount: int) -> void:
 	money_label.text = "Dinero: $%d" % new_amount
