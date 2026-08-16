@@ -1,3 +1,4 @@
+class_name VasoMichelada
 extends Panel
 ## VasoMichelada.gd
 ## -----------------
@@ -5,24 +6,32 @@ extends Panel
 ## _can_drop_data() para preguntar si puede aceptar lo que se está
 ## arrastrando, y _drop_data() cuando el jugador suelta el mouse aquí.
 ##
-## NOVEDADES:
-## 1) El vaso ahora VALIDA el orden en el que se agregan los ingredientes
-##    (ver _validar_orden). Si el ingrediente llega fuera de orden, se
-##    rechaza (no se agrega) y se emite ingrediente_rechazado con un motivo,
-##    para que la UI pueda avisarle al jugador (sonido, texto, shake, etc).
-## 2) El sprite del vaso cambia según la COMBINACIÓN de ingredientes que
-##    tiene actualmente, no según cuántas veces se soltó cada uno. Soltar
-##    "sal" tres veces se ve exactamente igual que soltarla una sola vez.
+## SISTEMA DE CAPAS (nuevo)
+## -------------------------
+## En vez de tener UN sprite distinto por cada una de las 65 combinaciones
+## válidas de ingredientes, el vaso ahora se dibuja apilando varias capas
+## (una por ingrediente, más el vidrio y el contorno). Cada capa es un
+## TextureRect que se muestra u oculta según si ese ingrediente está en el
+## vaso. Al estar unas encima de otras (con transparencia), el motor las
+## "encima" visualmente y genera cualquier combinación sin necesitar un
+## PNG por combinación.
 ##
-## CÓMO INTEGRARLO EN LA ESCENA (MicheladaMixer.tscn):
-##  - Agrega un nodo hijo TextureRect llamado exactamente "VasoSprite"
-##    dentro de este Panel (o ajusta el @onready var de abajo con el path
-##    correcto). Ese TextureRect es el que muestra el vaso.
-##  - Copia la carpeta assets/michelada/ (incluida en este mismo paquete) a
-##    res://assets/michelada/ en tu proyecto. Ahí están los sprites para
-##    TODAS las combinaciones válidas de ingredientes.
-##  - Cuando empiece un cliente nuevo, llama a vaso.reset() para vaciar el
-##    vaso y volver al sprite vacío.
+## Orden de las capas de abajo hacia arriba (ver CAPAS y ORDEN_VISUAL):
+##   1. vidrio_base       (siempre visible)
+##   2. líquidos (salsa de tomate / chile líquido / cerveza / cerveza azul)
+##   3. hielo
+##   4. escarchado del borde (sal / escarchado café / escarchado azul)
+##   5. limón (gajo decorativo)
+##   6. contorno           (siempre visible, va arriba de todo)
+##
+## CÓMO INTEGRARLO EN LA ESCENA (Main.tscn):
+##  - Dentro de este Panel, agrega un nodo Control hijo llamado
+##    "VasoCapas", y dentro de él un TextureRect por cada capa, con el
+##    nombre exacto que aparece en CAPAS (ver más abajo) y todos del mismo
+##    tamaño/posición (para que calcen perfectamente al superponerse).
+##  - Copia la carpeta assets/michelada_capas/ (incluida en este paquete) a
+##    res://assets/michelada_capas/ en tu proyecto.
+##  - Cuando empiece un cliente nuevo, llama a vaso.reset().
 
 ## --- Catálogo de ingredientes -------------------------------------------
 const LIMON := "limon"
@@ -39,33 +48,43 @@ const RIM_COATS := [SAL, ESCARCHADO_CAFE, ESCARCHADO_AZUL] # solo se puede elegi
 const LIQUIDOS := [SALSA_TOMATE, CHILE_LIQUIDO]             # se pueden combinar los dos
 const CERVEZAS := [CERVEZA, CERVEZA_AZUL]                   # solo se puede elegir UNA
 
-## Orden canónico usado para construir el nombre del sprite. Debe coincidir
-## EXACTO con ORDEN_CANONICO de gen_sprites.py (el generador de assets),
-## para que la clave calculada aquí siempre encuentre su archivo.
-const ORDEN_CANONICO := [
-	LIMON, SAL, ESCARCHADO_CAFE, ESCARCHADO_AZUL,
-	HIELO, SALSA_TOMATE, CHILE_LIQUIDO, CERVEZA, CERVEZA_AZUL,
-]
-
-const RUTA_SPRITES := "res://assets/michelada/michelada_%s.png"
+## Mapa ingrediente -> nombre del nodo TextureRect (capa) que lo representa
+## dentro de $VasoCapas. "sal" / "escarchado_cafe" / "escarchado_azul"
+## comparten la misma "ranura" visual (el borde del vaso) pero cada uno
+## tiene su propia capa, porque solo una puede estar visible a la vez.
+const CAPAS := {
+	LIMON: "Limon",
+	SAL: "RimSal",
+	ESCARCHADO_CAFE: "RimEscarchadoCafe",
+	ESCARCHADO_AZUL: "RimEscarchadoAzul",
+	HIELO: "Hielo",
+	SALSA_TOMATE: "LiquidoSalsaTomate",
+	CHILE_LIQUIDO: "LiquidoChileLiquido",
+	CERVEZA: "LiquidoCerveza",
+	CERVEZA_AZUL: "LiquidoCervezaAzul",
+}
 
 ## --- Señales --------------------------------------------------------------
 signal ingrediente_soltado(ingrediente_id: String)
 signal ingrediente_rechazado(ingrediente_id: String, motivo: String)
-signal vaso_actualizado(textura_path: String)
+## Emite la lista de ingredientes presentes cada vez que el vaso cambia
+## (por si alguna UI externa quiere reaccionar a esto).
+signal vaso_actualizado(ingredientes_presentes: Array)
 
 ## --- Estado -----------------------------------------------------------
 ## Set de ingredientes presentes en el vaso. Es un Dictionary usado como
 ## "set": si la llave existe, el ingrediente está puesto. No guardamos
-## cuántas veces se soltó cada uno a propósito (el vaso no "cuenta" toppings).
+## cuántas veces se soltó cada uno a propósito (el vaso no "cuenta" toppings,
+## y visualmente tampoco: la capa de "hielo" se ve igual si se soltó 1 o 10
+## veces, porque solo se muestra/oculta, nunca se duplica).
 var ingredientes_agregados: Dictionary = {}
 
-## Ajusta este path si tu TextureRect vive en otro lugar del árbol.
-@onready var vaso_sprite: TextureRect = $VasoSprite
+## Contenedor de las capas visuales. Ajusta el path si lo ubicas distinto.
+@onready var capas_root: Node = $VasoCapas
 
 
 func _ready() -> void:
-	_actualizar_sprite()
+	_actualizar_capas()
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
@@ -81,7 +100,7 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func intentar_agregar(id: String) -> bool:
 	if ingredientes_agregados.has(id):
 		# Ya estaba puesto: no pasa nada. Así evitamos que "contar" repeticiones
-		# afecte el sprite o la receta.
+		# afecte el vaso o la receta.
 		return true
 
 	var motivo := _validar_orden(id)
@@ -91,7 +110,7 @@ func intentar_agregar(id: String) -> bool:
 
 	ingredientes_agregados[id] = true
 	ingrediente_soltado.emit(id)
-	_actualizar_sprite()
+	_actualizar_capas()
 	return true
 
 
@@ -113,15 +132,11 @@ func _validar_orden(id: String) -> String:
 		return "vaso_completo"
 
 	if id == LIMON:
-		# El limón (paso 1a) debe llegar antes del hielo o los líquidos.
 		if ya_hay_hielo or ya_hay_liquido:
 			return "escarchado_fuera_de_tiempo"
 		return ""
 
 	if id in RIM_COATS:
-		# Sal / escarchado café / escarchado azul (paso 1b): necesitan limón
-		# antes, solo puede haber UNO de los tres, y deben llegar antes del
-		# hielo o los líquidos.
 		if not ingredientes_agregados.has(LIMON):
 			return "falta_limon_primero"
 		for otro_coat in RIM_COATS:
@@ -132,21 +147,14 @@ func _validar_orden(id: String) -> String:
 		return ""
 
 	if id == HIELO:
-		# El hielo (paso 2) siempre se puede agregar, salvo que ya haya
-		# cerveza (ya filtrado arriba). No exigimos escarchado antes: el
-		# escarchado es opcional, pero SI el jugador quería ponerlo, ya no
-		# podrá hacerlo después de agregar hielo (ver arriba).
 		return ""
 
 	if id in LIQUIDOS:
-		# Salsa de tomate / chile líquido (paso 3): requieren hielo primero.
 		if not ya_hay_hielo:
 			return "falta_hielo_primero"
 		return ""
 
 	if id in CERVEZAS:
-		# Cerveza / cerveza azul (paso 4): requiere hielo primero, y solo
-		# puede haber una de las dos.
 		if not ya_hay_hielo:
 			return "falta_hielo_primero"
 		for otra_cerveza in CERVEZAS:
@@ -157,33 +165,31 @@ func _validar_orden(id: String) -> String:
 	return "ingrediente_desconocido"
 
 
-## Recalcula qué sprite corresponde a la combinación actual y lo aplica.
-func _actualizar_sprite() -> void:
-	var path := RUTA_SPRITES % _calcular_clave_combo()
-	if ResourceLoader.exists(path):
-		vaso_sprite.texture = load(path)
-	else:
-		push_warning("VasoMichelada: no existe sprite para la combinación '%s'" % path)
-	vaso_actualizado.emit(path)
+## Muestra/oculta cada capa según los ingredientes presentes. A diferencia
+## del sistema anterior, aquí NO se carga ningún recurso en tiempo real:
+## todas las capas ya existen como nodos en la escena, solo cambiamos su
+## visibilidad. Esto es más barato y evita el típico "no existe el sprite
+## para esta combinación" cuando falta generar un PNG.
+func _actualizar_capas() -> void:
+	if capas_root == null:
+		push_warning("VasoMichelada: no se encontró el nodo VasoCapas. Revisa la escena.")
+		return
 
+	for id in CAPAS:
+		var nombre_nodo: String = CAPAS[id]
+		var nodo := capas_root.get_node_or_null(nombre_nodo)
+		if nodo == null:
+			push_warning("VasoMichelada: falta la capa '%s' dentro de VasoCapas." % nombre_nodo)
+			continue
+		nodo.visible = ingredientes_agregados.has(id)
 
-## Construye la clave del sprite en el mismo orden canónico usado por
-## gen_sprites.py, por ejemplo: "limon_sal_hielo_salsa_tomate_cerveza".
-## Si no hay ningún ingrediente, la clave es "vacio".
-func _calcular_clave_combo() -> String:
-	var partes: Array = []
-	for id in ORDEN_CANONICO:
-		if ingredientes_agregados.has(id):
-			partes.append(id)
-	if partes.is_empty():
-		return "vacio"
-	return "_".join(partes)
+	vaso_actualizado.emit(obtener_ingredientes())
 
 
 ## Vacía el vaso (llamar al empezar a atender a un cliente nuevo).
 func reset() -> void:
 	ingredientes_agregados.clear()
-	_actualizar_sprite()
+	_actualizar_capas()
 
 
 ## Devuelve la lista de ingredientes actualmente en el vaso (sin conteo).

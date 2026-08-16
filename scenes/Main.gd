@@ -24,7 +24,7 @@ extends Control
 @onready var customer_name: Label = $CustomerName
 @onready var dialogue_label: Label = $DialogueLabel
 
-@onready var vaso: Panel = $Mesa/Vaso
+@onready var vaso: VasoMichelada = $Mesa/Vaso
 @onready var vaso_label: Label = $Mesa/Vaso/VasoLabel
 @onready var reiniciar_btn: Button = $Mesa/ReiniciarBtn
 @onready var servir_btn: Button = $Mesa/ServirBtn
@@ -172,25 +172,30 @@ func _resolver_cliente(hubo_tiempo: bool) -> void:
 	servir_btn.disabled = true
 
 	if not cliente_actual.get("quiere_michelada", true):
-		result_label.text = "%s se despide y sigue su camino." % cliente_actual["nombre"]
+		result_label.text = "%s se despide y sigue su camino." % cliente_actual.get("nombre", "El cliente")
 	elif hubo_tiempo:
 		var receta: Dictionary = cliente_actual.get("receta", {})
 		var calidad := _calcular_calidad(receta)
 		var multiplicador := _multiplicador_por_calidad(calidad)
-		var precio_final := int(round(cliente_actual["precio_base"] * multiplicador))
+		var precio_base: int = cliente_actual.get("precio_base", 0)
+		var precio_final := int(round(precio_base * multiplicador))
 
 		# El dilema ético solo se activa si el cliente ES menor de edad Y la
 		# michelada que le serviste SÍ lleva alcohol (cerveza o cerveza azul).
 		# Una michelada preparada sin cerveza servida a un menor no cuenta
 		# como venta de alcohol a menores.
-		var es_venta_de_alcohol_a_menor: bool = cliente_actual["es_menor"] and vaso.tiene_alcohol()
+		var es_menor: bool = cliente_actual.get("es_menor", false)
+		var tiene_alcohol := false
+		if vaso != null:
+			tiene_alcohol = vaso.tiene_alcohol()
+		var es_venta_de_alcohol_a_menor: bool = es_menor and tiene_alcohol
 
-		GameManager.registrar_venta(cliente_actual["id"], precio_final, es_venta_de_alcohol_a_menor)
+		GameManager.registrar_venta(cliente_actual.get("id", ""), precio_final, es_venta_de_alcohol_a_menor)
 		calidades_del_dia.append(calidad)
 		result_label.text = _texto_resultado(calidad, precio_final)
 	else:
 		calidades_del_dia.append(0.0)
-		result_label.text = "%s se cansó de esperar y se fue sin comprar." % cliente_actual["nombre"]
+		result_label.text = "%s se cansó de esperar y se fue sin comprar." % cliente_actual.get("nombre", "El cliente")
 
 	await get_tree().create_timer(1.3).timeout
 	indice_actual += 1
