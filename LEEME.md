@@ -1,82 +1,71 @@
-# Vaso por capas (en vez de 65 combinaciones) + hardening del freeze
+# Tutorial estilo Ren'py con Nancy + personajes detrás de la mesa
 
-## Sobre el freeze al darle a "Servir michelada"
-Con el `.uid` que mandaste confirmé que no existe un `MicheladaMixer.gd` con
-contenido propio en tu proyecto — el `.uid` es solo el "apuntador" que
-Godot genera por cada script, pero el archivo `.gd` real ya no está (se
-renombró a `Main.gd`, según lo que vimos). Así que el bug está en algún
-lugar del flujo `Main.gd` ⇄ `VasoMichelada.gd`.
+## 1) Tutorial al estilo Ren'py
+Agregué un nuevo overlay (`TutorialOverlay.gd`, nodo `TutorialLayer` en
+`Main.tscn`) que se muestra automáticamente al arrancar la partida, ANTES
+del día 1: fondo oscurecido, el retrato de **Nancy** (la hermana del
+jugador) a la izquierda, y un cuadro de diálogo a la derecha con su nombre,
+el texto del paso, un indicador "Paso X de 7" y un botón "Siguiente ▶"
+(que en el último paso cambia a "¡Empezar!"). También hay un botón
+"Saltar tutorial" para no repetirlo si están probando el juego una y otra
+vez.
 
-Revisé todo el camino que se ejecuta al presionar "Servir" línea por línea
-y no encontré ningún bucle infinito (ni en `Main.gd`, ni en
-`CustomerSpawner.gd`, que además ya tenía un límite de intentos
-anti-loop-infinito puesto por ustedes). Lo más probable es que un dato
-faltante (por ejemplo, un campo ausente en un diccionario) causara un error
-de tipo a medio camino de `_resolver_cliente()`, dejando la bandera interna
-`resolviendo` en `true` para siempre — eso hace que el botón "Servir" deje
-de reaccionar y la barra de paciencia se quede congelada, dando la
-sensación de que "el juego se traba" aunque el motor sigue corriendo.
+Los 7 pasos de Nancy están alineados con las reglas de orden que ya tiene
+`VasoMichelada.gd`: escarchado (limón → sal/escarchado café/escarchado
+azul) → hielo → salsa de tomate/chile líquido → cerveza, y cierra con la
+regla de "nunca le sirvas alcohol a un menor de edad" (que conecta
+directo con el dilema ético que ya tienen implementado).
 
-Hice dos cosas para blindar esto:
-1. **`Main.gd`**: cambié todos los accesos `cliente_actual["campo"]` (que
-   truenan si el campo no existe) por `cliente_actual.get("campo", valor_por_defecto)`
-   en la función que se dispara al servir.
-2. **`VasoMichelada.gd`**: le agregué `class_name VasoMichelada` y en
-   `Main.gd` ahora la variable `vaso` está tipada como `VasoMichelada` (antes
-   como `Panel` genérico). Esto no debería cambiar el comportamiento, pero
-   hace que Godot pueda verificar en tiempo de análisis que
-   `vaso.tiene_alcohol()`, `vaso.reset()`, etc. existen de verdad, en vez de
-   confiar en que se resuelvan en tiempo de ejecución.
+**Mientras el tutorial está en pantalla, el día NO arranca**: `Main.gd` ya
+no llama a `_iniciar_dia()` directo en `_ready()`, sino que espera la señal
+`tutorial_terminado` de `TutorialOverlay.gd`. Así la barra de paciencia del
+primer cliente no se gasta mientras el jugador está leyendo.
 
-**Si el freeze sigue pasando con este paquete**, lo que más me ayudaría es
-que abras la pestaña "Debugger" / "Output" de Godot (abajo del editor) justo
-después de que se trabe, y me copies el texto en rojo que aparezca ahí —
-con eso puedo ir directo a la línea exacta en vez de ir a ciegas.
+Nancy es un personaje "guía", no aparece en la rotación normal de clientes
+(no toqué `CharacterDB.gd` ni `CustomerSpawner.gd` para esto). Su retrato
+(`nancy_la_hermana.png`) es arte placeholder generado por código, con el
+mismo criterio que los demás assets de este proyecto: para que el tutorial
+funcione visualmente desde ya, y lo reemplacen con arte final más adelante
+si quieren (mismo nombre de archivo, mismo lugar).
 
-## El cambio que pediste: capas en vez de 65 combinaciones
-Ya no genero un PNG distinto por cada una de las 65 combinaciones válidas.
-Ahora el vaso es una **pila de capas** (como en Photoshop): cada ingrediente
-tiene su propia imagen transparente del tamaño completo del vaso, y
-`VasoMichelada.gd` simplemente la muestra u oculta según si ese ingrediente
-está puesto. Al estar unas encima de otras, el motor las combina solo — así
-que cualquier combinación de las 65 (y cualquier futura, si agregan más
-ingredientes) se ve bien sin que tengas que generar un PNG por cada mezcla.
+## 2) Personajes detrás de la mesa, sin recortarse
+Reordené los nodos de `Main.tscn` y agrandé el área del cliente:
+- `CustomerPortrait` ahora es más grande (500×740 en vez de 400×370) y se
+  extiende hacia abajo hasta pasar el borde superior de la mesa (`Mesa`
+  empieza en Y=850, el retrato ahora llega hasta Y=900). Como `Mesa` sigue
+  dibujándose después en el árbol de nodos, la mesa queda **enfrente** y
+  tapa naturalmente la parte de abajo del personaje — como si estuviera
+  parado detrás del mostrador — en vez de que la imagen se vea cortada por
+  un rectángulo arbitrario.
+- Moví `CustomerPortrait` ANTES de `EmojiIcon` y `PatienceBar` en el árbol
+  de nodos, para que la carita y la barra de paciencia se sigan viendo
+  ENCIMA del personaje (no tapadas por él).
+- `CustomerName` y `DialogueLabel` ya no se superponían con el retrato
+  agrandado: los moví al margen izquierdo de la pantalla (antes vacío),
+  como una especie de tarjeta de diálogo fija, en vez de flotar debajo del
+  personaje.
 
-Capas, de abajo hacia arriba:
-1. `vidrio_base` — el vaso vacío (siempre visible)
-2. `liquido_salsa_tomate`, `liquido_chile_liquido`, `liquido_cerveza`,
-   `liquido_cerveza_azul` — cada una semitransparente a propósito, para que
-   si el jugador combina varias (ej. salsa + chile + cerveza) se vean
-   "mezcladas" entre sí de forma natural, sin necesitar código de mezcla de
-   colores.
-3. `hielo`
-4. `rim_sal` / `rim_escarchado_cafe` / `rim_escarchado_azul` — el borde del
-   vaso. Solo una de las tres es visible a la vez (la lógica de
-   `VasoMichelada.gd` ya se encarga de que solo pueda haber una puesta).
-5. `limon` — el gajito decorativo en el borde
-6. `contorno` — el borde/silueta del vaso, siempre visible y siempre hasta
-   arriba para que se vea nítido encima de todo lo demás.
+Esto no depende de qué tan alto o ancho sea el arte real de cada
+personaje: como `stretch_mode` sigue en "keep aspect centered", cualquier
+imagen que suban se va a acomodar completa dentro de esa caja más grande,
+y si el arte incluye cuerpo completo, las piernas quedarán naturalmente
+detrás del mostrador.
 
 ## Qué reemplaza este paquete
-- **`VasoMichelada.gd`** → reescrito para el sistema de capas. Las reglas de
-  orden de los ingredientes NO cambiaron, solo cambió cómo se dibuja el
-  vaso.
-- **`Main.tscn`** → dentro de `Mesa/Vaso` ya no hay un solo `VasoSprite`,
-  ahora hay un nodo `VasoCapas` con 11 `TextureRect` hijos (uno por capa).
-- **`Main.gd`** → mismo comportamiento de antes, con los accesos más
-  seguros que mencioné arriba y el tipo `VasoMichelada` en vez de `Panel`.
-- **`CharacterDB.gd`** → sin cambios respecto al paquete anterior (lo
-  incluyo de nuevo por completitud).
-- **`assets/michelada_capas/`** → las 11 imágenes de capas (reemplaza a la
-  carpeta `assets/michelada/` de 65 archivos, que ya NO se usa — puedes
-  borrarla de tu proyecto si quieres, aunque dejarla no rompe nada).
-- **`assets/sprites/ingredients/`** → los mismos 7 iconos de ingredientes
-  del paquete anterior, sin cambios, incluidos por completitud.
+- **`Main.tscn`** → layout reordenado + nodo `TutorialLayer` nuevo.
+- **`Main.gd`** → ahora espera el tutorial antes de iniciar el día 1.
+- **`TutorialOverlay.gd`** (archivo nuevo) → colócalo en
+  `res://scripts/TutorialOverlay.gd` (mismo lugar que `VasoMichelada.gd`).
+- **`assets/sprites/nancy_la_hermana.png`** (archivo nuevo).
+- `VasoMichelada.gd`, `CharacterDB.gd`, `assets/michelada_capas/`,
+  `assets/sprites/ingredients/` → sin cambios respecto al paquete anterior,
+  incluidos de nuevo por completitud.
 
 ## Cómo integrarlo
-1. Reemplaza `VasoMichelada.gd`, `Main.gd`, `Main.tscn` y `CharacterDB.gd`
-   donde ya los tenías.
-2. Copia `assets/michelada_capas/` a `res://assets/michelada_capas/`.
-3. (Opcional) borra `res://assets/michelada/` — ya no se usa.
-4. Abre `Main.tscn` en el editor y confirma que dentro de `Mesa > Vaso`
-   aparece el nuevo nodo `VasoCapas` con sus 11 hijos.
+1. Reemplaza `Main.tscn` y `Main.gd`.
+2. Copia `TutorialOverlay.gd` a `res://scripts/`.
+3. Copia `assets/sprites/nancy_la_hermana.png` a `res://assets/sprites/`.
+4. Abre `Main.tscn` y confirma que aparece el nodo `TutorialLayer` al final
+   del árbol (hijo directo de `Main`, después de `Mesa`).
+5. Corre el juego: debería aparecer el tutorial de Nancy antes que llegue
+   el primer cliente.

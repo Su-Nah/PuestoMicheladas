@@ -5,25 +5,27 @@
 [ext_resource type="Script" uid="uid://wa7elcp6n1mu" path="res://scripts/VasoMichelada.gd" id="3"]
 [ext_resource type="Texture2D" uid="uid://cjx7cmyw6n0nq" path="res://assets/sprites/ingredients/limon.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://p5d01pb6morn" path="res://assets/sprites/ingredients/sal.png" id="7"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/escarchado_cafe.png" id="11"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/escarchado_azul.png" id="12"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/hielo.png" id="13"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/salsa_tomate.png" id="14"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/chile_liquido.png" id="15"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/cerveza.png" id="16"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ingredients/cerveza_azul.png" id="17"]
 [ext_resource type="Texture2D" uid="uid://dv70q2mtycbdh" path="res://assets/sprites/faces/neutral.png" id="10"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/vidrio_base.png" id="20"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/liquido_salsa_tomate.png" id="21"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/liquido_chile_liquido.png" id="22"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/liquido_cerveza.png" id="23"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/liquido_cerveza_azul.png" id="24"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/hielo.png" id="25"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/rim_sal.png" id="26"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/rim_escarchado_cafe.png" id="27"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/rim_escarchado_azul.png" id="28"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/limon.png" id="29"]
-[ext_resource type="Texture2D" path="res://assets/michelada_capas/contorno.png" id="30"]
+[ext_resource type="Texture2D" uid="uid://dnh3bk3prd0l8" path="res://assets/sprites/ingredients/escarchado_cafe.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://dbpwy8iy2rt1j" path="res://assets/sprites/ingredients/escarchado_azul.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://h72gwx7hurp6" path="res://assets/sprites/ingredients/hielo.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://bf82iw1vkv8y0" path="res://assets/sprites/ingredients/salsa_tomate.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://ndtua1uvx1n7" path="res://assets/sprites/ingredients/chile_liquido.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://c5k58fbsky8ee" path="res://assets/sprites/ingredients/cerveza.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://nbmlbb7j8dex" path="res://assets/sprites/ingredients/cerveza_azul.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://b0g0br0mmxcyu" path="res://assets/michelada_capas/vidrio_base.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://cnfyqo7gpjdrs" path="res://assets/michelada_capas/liquido_salsa_tomate.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://62xcrtl881us" path="res://assets/michelada_capas/liquido_chile_liquido.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://bispmafo6ewcq" path="res://assets/michelada_capas/liquido_cerveza.png" id="23"]
+[ext_resource type="Texture2D" uid="uid://b0wldlk2a5sq" path="res://assets/michelada_capas/liquido_cerveza_azul.png" id="24"]
+[ext_resource type="Texture2D" uid="uid://l8te3y3sgd7d" path="res://assets/michelada_capas/hielo.png" id="25"]
+[ext_resource type="Texture2D" uid="uid://cfwhwg1jmq0sx" path="res://assets/michelada_capas/rim_sal.png" id="26"]
+[ext_resource type="Texture2D" uid="uid://bdfs2c8raliin" path="res://assets/michelada_capas/rim_escarchado_cafe.png" id="27"]
+[ext_resource type="Texture2D" uid="uid://gg33dn6wtijr" path="res://assets/michelada_capas/rim_escarchado_azul.png" id="28"]
+[ext_resource type="Texture2D" uid="uid://ck20t8v1lh86j" path="res://assets/michelada_capas/limon.png" id="29"]
+[ext_resource type="Texture2D" uid="uid://doj041xycu0i3" path="res://assets/michelada_capas/contorno.png" id="30"]
+[ext_resource type="Script" uid="uid://brata5s6568mm" path="res://scripts/TutorialOverlay.gd" id="31"]
+[ext_resource type="Texture2D" uid="uid://b773mjm7wbcm6" path="res://assets/sprites/nancy_la_hermana.png" id="32"]
 
 [node name="Main" type="Control" unique_id=173019364]
 layout_mode = 3
@@ -62,6 +64,15 @@ offset_top = 80.0
 offset_right = 900.0
 offset_bottom = 115.0
 
+[node name="CustomerPortrait" type="TextureRect" parent="." unique_id=1567801457]
+layout_mode = 0
+offset_left = 710.0
+offset_top = 160.0
+offset_right = 1210.0
+offset_bottom = 900.0
+expand_mode = 1
+stretch_mode = 5
+
 [node name="EmojiIcon" type="TextureRect" parent="." unique_id=1739497543]
 layout_mode = 0
 offset_left = 900.0
@@ -82,34 +93,23 @@ max_value = 14.0
 value = 14.0
 show_percentage = false
 
-[node name="CustomerPortrait" type="TextureRect" parent="." unique_id=1567801457]
-layout_mode = 0
-offset_left = 760.0
-offset_top = 270.0
-offset_right = 1160.0
-offset_bottom = 640.0
-expand_mode = 1
-stretch_mode = 5
-
 [node name="CustomerName" type="Label" parent="." unique_id=265810873]
 layout_mode = 0
-offset_left = 660.0
-offset_top = 650.0
-offset_right = 1260.0
-offset_bottom = 690.0
+offset_left = 40.0
+offset_top = 150.0
+offset_right = 700.0
+offset_bottom = 190.0
 theme_override_font_sizes/font_size = 26
 text = "Cliente"
-horizontal_alignment = 1
 
 [node name="DialogueLabel" type="Label" parent="." unique_id=1036050906]
 layout_mode = 0
-offset_left = 560.0
-offset_top = 695.0
-offset_right = 1360.0
-offset_bottom = 800.0
+offset_left = 40.0
+offset_top = 200.0
+offset_right = 700.0
+offset_bottom = 500.0
 theme_override_font_sizes/font_size = 20
 text = "Quiere una michelada."
-horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="Mesa" type="ColorRect" parent="." unique_id=1573789620]
@@ -162,8 +162,8 @@ offset_right = 84.0
 offset_bottom = 104.0
 theme_override_font_sizes/font_size = 12
 text = "Escarchado café"
-autowrap_mode = 3
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="EscarchadoAzulIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468603]
 custom_minimum_size = Vector2(84, 84)
@@ -180,8 +180,8 @@ offset_right = 84.0
 offset_bottom = 104.0
 theme_override_font_sizes/font_size = 12
 text = "Escarchado azul"
-autowrap_mode = 3
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="SalIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1321226597]
 custom_minimum_size = Vector2(84, 84)
@@ -232,8 +232,8 @@ offset_right = 84.0
 offset_bottom = 104.0
 theme_override_font_sizes/font_size = 12
 text = "Salsa de tomate"
-autowrap_mode = 3
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="ChileLiquidoIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468609]
 custom_minimum_size = Vector2(84, 84)
@@ -250,8 +250,8 @@ offset_right = 84.0
 offset_bottom = 104.0
 theme_override_font_sizes/font_size = 12
 text = "Chile líquido"
-autowrap_mode = 3
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="CervezaIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468611]
 custom_minimum_size = Vector2(84, 84)
@@ -285,8 +285,8 @@ offset_right = 84.0
 offset_bottom = 104.0
 theme_override_font_sizes/font_size = 12
 text = "Cerveza azul"
-autowrap_mode = 3
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="Vaso" type="Panel" parent="Mesa" unique_id=1001578185]
 layout_mode = 0
@@ -297,9 +297,8 @@ offset_bottom = 190.0
 script = ExtResource("3")
 
 [node name="VasoCapas" type="Control" parent="Mesa/Vaso" unique_id=1560262390]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 20.0
-offset_top = 0.0
 offset_right = 220.0
 offset_bottom = 180.0
 mouse_filter = 2
@@ -314,6 +313,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="LiquidoSalsaTomate" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262393]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -321,9 +321,9 @@ mouse_filter = 2
 texture = ExtResource("21")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="LiquidoChileLiquido" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262394]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -331,9 +331,9 @@ mouse_filter = 2
 texture = ExtResource("22")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="LiquidoCerveza" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262395]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -341,9 +341,9 @@ mouse_filter = 2
 texture = ExtResource("23")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="LiquidoCervezaAzul" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262396]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -351,9 +351,9 @@ mouse_filter = 2
 texture = ExtResource("24")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="Hielo" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262397]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -361,9 +361,9 @@ mouse_filter = 2
 texture = ExtResource("25")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="RimSal" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262398]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -371,9 +371,9 @@ mouse_filter = 2
 texture = ExtResource("26")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="RimEscarchadoCafe" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262399]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -381,9 +381,9 @@ mouse_filter = 2
 texture = ExtResource("27")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="RimEscarchadoAzul" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262400]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -391,9 +391,9 @@ mouse_filter = 2
 texture = ExtResource("28")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="Limon" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262401]
+visible = false
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 180.0
@@ -401,7 +401,6 @@ mouse_filter = 2
 texture = ExtResource("29")
 expand_mode = 1
 stretch_mode = 5
-visible = false
 
 [node name="Contorno" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262402]
 layout_mode = 0
@@ -447,3 +446,87 @@ offset_right = 1820.0
 offset_bottom = 170.0
 theme_override_font_sizes/font_size = 20
 autowrap_mode = 3
+
+[node name="TutorialLayer" type="Control" parent="." unique_id=63704865]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("31")
+
+[node name="Dim" type="ColorRect" parent="TutorialLayer" unique_id=63704866]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.6)
+
+[node name="NancyPortrait" type="TextureRect" parent="TutorialLayer" unique_id=63704867]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 220.0
+offset_right = 700.0
+offset_bottom = 1010.0
+mouse_filter = 2
+texture = ExtResource("32")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DialogBox" type="Panel" parent="TutorialLayer" unique_id=63704868]
+layout_mode = 0
+offset_left = 700.0
+offset_top = 660.0
+offset_right = 1880.0
+offset_bottom = 1050.0
+mouse_filter = 1
+
+[node name="NombreLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704869]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 14.0
+offset_right = 400.0
+offset_bottom = 54.0
+theme_override_font_sizes/font_size = 24
+text = "Nancy"
+
+[node name="PasoLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704870]
+layout_mode = 0
+offset_left = 960.0
+offset_top = 18.0
+offset_right = 1156.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 16
+text = "Paso 1 de 7"
+horizontal_alignment = 2
+
+[node name="TextoLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704871]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 60.0
+offset_right = 1156.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 21
+text = "..."
+autowrap_mode = 3
+
+[node name="SaltarBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704872]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 336.0
+offset_right = 220.0
+offset_bottom = 380.0
+text = "Saltar tutorial"
+
+[node name="SiguienteBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704873]
+layout_mode = 0
+offset_left = 960.0
+offset_top = 336.0
+offset_right = 1156.0
+offset_bottom = 380.0
+text = "Siguiente ▶"

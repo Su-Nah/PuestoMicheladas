@@ -25,6 +25,7 @@ extends Control
 @onready var dialogue_label: Label = $DialogueLabel
 
 @onready var vaso: VasoMichelada = $Mesa/Vaso
+@onready var tutorial: TutorialOverlay = $TutorialLayer
 @onready var vaso_label: Label = $Mesa/Vaso/VasoLabel
 @onready var reiniciar_btn: Button = $Mesa/ReiniciarBtn
 @onready var servir_btn: Button = $Mesa/ServirBtn
@@ -94,7 +95,12 @@ func _ready() -> void:
 	servir_btn.pressed.connect(_on_servir_pressed)
 
 	_actualizar_info_bar()
-	_iniciar_dia()
+
+	# El día 1 no arranca de inmediato: primero Nancy explica cómo se
+	# prepara una michelada (ver TutorialOverlay.gd). jornada_activa sigue
+	# en false mientras tanto, así que _process() no hace avanzar ninguna
+	# paciencia hasta que el tutorial termine.
+	tutorial.tutorial_terminado.connect(_iniciar_dia)
 
 
 func _process(delta: float) -> void:
