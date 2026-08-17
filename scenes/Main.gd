@@ -293,13 +293,13 @@ func _actualizar_emoji(ratio: float) -> void:
 # sus señales para actualizar la etiqueta de texto.
 
 func _on_ingrediente_soltado(_ingrediente_id: String) -> void:
-	if resolviendo or not jornada_activa:
+	if resolviendo:
 		return
 	_actualizar_vaso_label()
 
 
 func _on_ingrediente_rechazado(ingrediente_id: String, motivo: String) -> void:
-	if resolviendo or not jornada_activa:
+	if resolviendo:
 		return
 	var etiqueta: String = ETIQUETAS.get(ingrediente_id, ingrediente_id)
 	var explicacion: String = MOTIVOS_TEXTO.get(motivo, "No se puede agregar ahora.")
