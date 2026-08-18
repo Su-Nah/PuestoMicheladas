@@ -14,6 +14,16 @@ extends Control
 ## Los pasos sin ingrediente asociado (la intro y el cierre) se avanzan con
 ## el botón "Siguiente".
 ##
+## NANCY, DETRÁS DE LA MESA
+## -------------------------
+## El retrato de Nancy ("NancyPortrait") ya NO vive dentro de este overlay:
+## vive como hermano de "Mesa" en Main.tscn (igual que los retratos de los
+## clientes), colocado ANTES que "Mesa" en el árbol de nodos para que la
+## mesa se dibuje encima y tape su parte de abajo — así se ve parada detrás
+## del mostrador, igual que cualquier cliente, en vez de cortada por un
+## rectángulo. Este script solo la muestra/oculta según si el tutorial está
+## activo (get_node("../NancyPortrait")).
+##
 ## Mientras el tutorial está visible, el día NO ha empezado
 ## (jornada_activa en Main.gd sigue en false), así que la mesa y el vaso
 ## están ahí mismo, debajo del cuadro de diálogo, listos para usarse.
@@ -27,10 +37,11 @@ signal tutorial_terminado
 @onready var siguiente_btn: Button = $DialogBox/SiguienteBtn
 @onready var saltar_btn: Button = $DialogBox/SaltarBtn
 
-## VasoMichelada vive en Mesa/Vaso, hermano de este nodo (los dos son hijos
-## directos de Main). Si mueves este nodo de lugar, ajusta este path.
+## Nancy y el vaso viven como hermanos de este nodo (todos hijos directos
+## de Main). Si mueves este nodo de lugar, ajusta estos paths.
 @onready var vaso: VasoMichelada = get_node("../Mesa/Vaso")
 @onready var ingredientes_grid: Node = get_node("../Mesa/IngredientesGrid")
+@onready var nancy_portrait: CanvasItem = get_node("../NancyPortrait")
 
 ## Ingrediente -> nombre del nodo icono dentro de IngredientesGrid (debe
 ## coincidir con los nombres que pusimos en Main.tscn).
@@ -40,8 +51,6 @@ const NODOS_INGREDIENTE := {
 	"escarchado_cafe": "EscarchadoCafeIcon",
 	"escarchado_azul": "EscarchadoAzulIcon",
 	"hielo": "HieloIcon",
-	"salsa_tomate": "SalsaTomateIcon",
-	"chile_liquido": "ChileLiquidoIcon",
 	"cerveza": "CervezaIcon",
 	"cerveza_azul": "CervezaAzulIcon",
 }
@@ -65,10 +74,6 @@ var pasos: Array = [
 	{
 		"texto": "Perfecto. Ahora agrega el HIELO.",
 		"requiere": ["hielo"],
-	},
-	{
-		"texto": "Después del hielo puedes poner salsa de tomate, chile líquido, o los dos. Prueba con cualquiera de ellos: le dan sabor, color y su toque picoso.",
-		"requiere": ["salsa_tomate", "chile_liquido"],
 	},
 	{
 		"texto": "Por último, la CERVEZA (o la cerveza azul, para los que quieren algo distinto). Ojo: en cuanto la sirvas, ¡la michelada queda lista y no se le puede agregar nada más!",
@@ -101,6 +106,8 @@ func _ready() -> void:
 ## Llamar desde Main.gd para (re)iniciar el tutorial desde el primer paso.
 func mostrar() -> void:
 	visible = true
+	if nancy_portrait:
+		nancy_portrait.visible = true
 	if vaso != null:
 		vaso.reset()
 	mostrar_paso(0)
@@ -155,7 +162,6 @@ func _nombre_bonito(id: String) -> String:
 	var mapa := {
 		"limon": "el limón", "sal": "la sal", "escarchado_cafe": "el escarchado café",
 		"escarchado_azul": "el escarchado azul", "hielo": "el hielo",
-		"salsa_tomate": "la salsa de tomate", "chile_liquido": "el chile líquido",
 		"cerveza": "la cerveza", "cerveza_azul": "la cerveza azul",
 	}
 	return mapa.get(id, id)
@@ -235,4 +241,6 @@ func _terminar() -> void:
 	_quitar_resaltados()
 	_bloquear_ingredientes([]) # deja todo desbloqueado para el juego real
 	visible = false
+	if nancy_portrait:
+		nancy_portrait.visible = false
 	tutorial_terminado.emit()

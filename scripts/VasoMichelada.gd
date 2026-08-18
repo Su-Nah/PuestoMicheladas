@@ -6,23 +6,31 @@ extends Panel
 ## _can_drop_data() para preguntar si puede aceptar lo que se está
 ## arrastrando, y _drop_data() cuando el jugador suelta el mouse aquí.
 ##
-## SISTEMA DE CAPAS (nuevo)
+## SISTEMA DE CAPAS
 ## -------------------------
-## En vez de tener UN sprite distinto por cada una de las 65 combinaciones
-## válidas de ingredientes, el vaso ahora se dibuja apilando varias capas
-## (una por ingrediente, más el vidrio y el contorno). Cada capa es un
-## TextureRect que se muestra u oculta según si ese ingrediente está en el
-## vaso. Al estar unas encima de otras (con transparencia), el motor las
-## "encima" visualmente y genera cualquier combinación sin necesitar un
-## PNG por combinación.
+## En vez de tener UN sprite distinto por cada combinación posible de
+## ingredientes, el vaso se dibuja apilando varias capas (una por
+## ingrediente, más el vidrio y el contorno). Cada capa es un TextureRect
+## que se muestra u oculta según si ese ingrediente está en el vaso. Al
+## estar unas encima de otras (con transparencia), el motor las "encima"
+## visualmente y genera cualquier combinación sin necesitar un PNG por
+## combinación.
 ##
-## Orden de las capas de abajo hacia arriba (ver CAPAS y ORDEN_VISUAL):
+## Orden de las capas de abajo hacia arriba (ver CAPAS):
 ##   1. vidrio_base       (siempre visible)
-##   2. líquidos (salsa de tomate / chile líquido / cerveza / cerveza azul)
+##   2. líquido (cerveza / cerveza azul)
 ##   3. hielo
 ##   4. escarchado del borde (sal / escarchado café / escarchado azul)
 ##   5. limón (gajo decorativo)
 ##   6. contorno           (siempre visible, va arriba de todo)
+##
+## ORDEN DE INGREDIENTES EXIGIDO
+## -------------------------------
+##   1) Escarchado del borde (opcional): primero limón, luego (opcional)
+##      sal O escarchado café O escarchado azul (solo uno).
+##   2) Hielo.
+##   3) Cerveza O cerveza azul (requiere que ya haya hielo; es el último
+##      paso — después de la cerveza el vaso queda cerrado).
 ##
 ## CÓMO INTEGRARLO EN LA ESCENA (Main.tscn):
 ##  - Dentro de este Panel, agrega un nodo Control hijo llamado
@@ -39,13 +47,10 @@ const SAL := "sal"
 const ESCARCHADO_CAFE := "escarchado_cafe"
 const ESCARCHADO_AZUL := "escarchado_azul"
 const HIELO := "hielo"
-const SALSA_TOMATE := "salsa_tomate"
-const CHILE_LIQUIDO := "chile_liquido"
 const CERVEZA := "cerveza"
 const CERVEZA_AZUL := "cerveza_azul"
 
 const RIM_COATS := [SAL, ESCARCHADO_CAFE, ESCARCHADO_AZUL] # solo se puede elegir UNO
-const LIQUIDOS := [SALSA_TOMATE, CHILE_LIQUIDO]             # se pueden combinar los dos
 const CERVEZAS := [CERVEZA, CERVEZA_AZUL]                   # solo se puede elegir UNA
 
 ## Mapa ingrediente -> nombre del nodo TextureRect (capa) que lo representa
@@ -58,8 +63,6 @@ const CAPAS := {
 	ESCARCHADO_CAFE: "RimEscarchadoCafe",
 	ESCARCHADO_AZUL: "RimEscarchadoAzul",
 	HIELO: "Hielo",
-	SALSA_TOMATE: "LiquidoSalsaTomate",
-	CHILE_LIQUIDO: "LiquidoChileLiquido",
 	CERVEZA: "LiquidoCerveza",
 	CERVEZA_AZUL: "LiquidoCervezaAzul",
 }
@@ -115,16 +118,9 @@ func intentar_agregar(id: String) -> bool:
 
 
 ## Devuelve "" si {id} se puede agregar ahora mismo, o un código de motivo
-## de rechazo si no. Orden exigido:
-##   1) Escarchado del borde: primero limón, luego (opcional) sal O
-##      escarchado café O escarchado azul (solo uno).
-##   2) Hielo.
-##   3) Salsa de tomate y/o chile líquido (requieren que ya haya hielo).
-##   4) Cerveza O cerveza azul (requiere que ya haya hielo; es el último paso,
-##      después de la cerveza el vaso queda cerrado).
+## de rechazo si no.
 func _validar_orden(id: String) -> String:
 	var ya_hay_hielo := ingredientes_agregados.has(HIELO)
-	var ya_hay_liquido := ingredientes_agregados.has(SALSA_TOMATE) or ingredientes_agregados.has(CHILE_LIQUIDO)
 	var ya_hay_cerveza := ingredientes_agregados.has(CERVEZA) or ingredientes_agregados.has(CERVEZA_AZUL)
 
 	# Nada se agrega después de la cerveza: la michelada ya está lista.
@@ -132,7 +128,7 @@ func _validar_orden(id: String) -> String:
 		return "vaso_completo"
 
 	if id == LIMON:
-		if ya_hay_hielo or ya_hay_liquido:
+		if ya_hay_hielo:
 			return "escarchado_fuera_de_tiempo"
 		return ""
 
@@ -142,16 +138,11 @@ func _validar_orden(id: String) -> String:
 		for otro_coat in RIM_COATS:
 			if otro_coat != id and ingredientes_agregados.has(otro_coat):
 				return "solo_un_escarchado"
-		if ya_hay_hielo or ya_hay_liquido:
+		if ya_hay_hielo:
 			return "escarchado_fuera_de_tiempo"
 		return ""
 
 	if id == HIELO:
-		return ""
-
-	if id in LIQUIDOS:
-		if not ya_hay_hielo:
-			return "falta_hielo_primero"
 		return ""
 
 	if id in CERVEZAS:
@@ -165,11 +156,7 @@ func _validar_orden(id: String) -> String:
 	return "ingrediente_desconocido"
 
 
-## Muestra/oculta cada capa según los ingredientes presentes. A diferencia
-## del sistema anterior, aquí NO se carga ningún recurso en tiempo real:
-## todas las capas ya existen como nodos en la escena, solo cambiamos su
-## visibilidad. Esto es más barato y evita el típico "no existe el sprite
-## para esta combinación" cuando falta generar un PNG.
+## Muestra/oculta cada capa según los ingredientes presentes.
 func _actualizar_capas() -> void:
 	if capas_root == null:
 		push_warning("VasoMichelada: no se encontró el nodo VasoCapas. Revisa la escena.")
