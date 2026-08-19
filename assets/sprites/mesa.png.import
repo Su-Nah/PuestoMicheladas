@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cfwhwg1jmq0sx"
-path="res://.godot/imported/rim_sal.png-84e6beca33162b710f3e28972925e01a.ctex"
+uid="uid://c5c8a5hpb56r"
+path="res://.godot/imported/mesa.png-54384dd43a798c26c2dc601afaa6c0ea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/michelada_capas/rim_sal.png"
-dest_files=["res://.godot/imported/rim_sal.png-84e6beca33162b710f3e28972925e01a.ctex"]
+source_file="res://assets/sprites/mesa.png"
+dest_files=["res://.godot/imported/mesa.png-54384dd43a798c26c2dc601afaa6c0ea.ctex"]
 
 [params]
 
