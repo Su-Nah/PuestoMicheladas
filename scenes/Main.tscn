@@ -30,6 +30,8 @@
 [ext_resource type="Texture2D" uid="uid://cb713lud4dh1b" path="res://assets/michelada_capas/gomitas.png" id="47"]
 [ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/mesa.png" id="50"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_e2s0e"]
+
 [node name="Main" type="Control" unique_id=173019364]
 layout_mode = 3
 anchors_preset = 15
@@ -73,17 +75,15 @@ anchors_preset = 0
 offset_left = 40.0
 offset_top = 118.0
 offset_right = 620.0
-offset_bottom = 900.0
+offset_bottom = 917.0
 script = ExtResource("4")
 
 [node name="Portrait" type="TextureRect" parent="ClienteSlot0" unique_id=63804866]
 layout_mode = 0
 offset_top = 130.0
 offset_right = 580.0
-offset_bottom = 782.0
+offset_bottom = 780.0
 mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
 
 [node name="NombreLabel" type="Label" parent="ClienteSlot0" unique_id=63804867]
 layout_mode = 0
@@ -129,7 +129,7 @@ anchors_preset = 0
 offset_left = 660.0
 offset_top = 118.0
 offset_right = 1240.0
-offset_bottom = 900.0
+offset_bottom = 919.0
 script = ExtResource("4")
 slot_index = 1
 
@@ -137,7 +137,7 @@ slot_index = 1
 layout_mode = 0
 offset_top = 130.0
 offset_right = 580.0
-offset_bottom = 782.0
+offset_bottom = 780.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
@@ -186,7 +186,7 @@ anchors_preset = 0
 offset_left = 1280.0
 offset_top = 118.0
 offset_right = 1860.0
-offset_bottom = 900.0
+offset_bottom = 917.0
 script = ExtResource("4")
 slot_index = 2
 
@@ -238,126 +238,83 @@ theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
 
 [node name="NancyPortrait" type="TextureRect" parent="." unique_id=63704867]
-visible = false
 layout_mode = 0
-offset_left = 660.0
-offset_top = 248.0
-offset_right = 1240.0
-offset_bottom = 900.0
+offset_left = 8.0
+offset_top = 212.0
+offset_right = 439.0
+offset_bottom = 864.0
 mouse_filter = 2
 texture = ExtResource("32")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Mesa" type="ColorRect" parent="." unique_id=1573789620]
+z_index = 1
 layout_mode = 0
-offset_left = 40.0
+offset_left = 5.0
 offset_top = 740.0
-offset_right = 1880.0
-offset_bottom = 1050.0
+offset_right = 1915.0
+offset_bottom = 1064.0
 color = Color(0.4, 0.26, 0.14, 1)
 
 [node name="MesaFondo" type="TextureRect" parent="Mesa" unique_id=1573789700]
 layout_mode = 0
-offset_right = 1840.0
-offset_bottom = 310.0
+offset_left = -2.0
+offset_top = -5.0
+offset_right = 1915.0
+offset_bottom = 335.0
 mouse_filter = 2
 texture = ExtResource("50")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="IngredientesGrid" type="GridContainer" parent="Mesa" unique_id=1642816402]
-layout_mode = 0
-offset_left = 24.0
-offset_top = 10.0
-offset_right = 646.0
-offset_bottom = 264.0
-theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 34
-columns = 5
-
-[node name="VasoIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468700]
+[node name="ChamoyCafeIcon" type="TextureRect" parent="Mesa" unique_id=1811468710]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
-texture = ExtResource("43")
-expand_mode = 1
-stretch_mode = 5
-script = ExtResource("2")
-ingrediente_id = "vaso"
-etiqueta = "Vaso"
-
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/VasoIcon" unique_id=1811468701]
 layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 15
-text = "Vaso"
-horizontal_alignment = 1
-
-[node name="ChamoyCafeIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468710]
-custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+offset_left = 164.0
+offset_top = -84.0
+offset_right = 384.0
+offset_bottom = 221.9375
 texture = ExtResource("40")
-expand_mode = 1
+expand_mode = 5
 stretch_mode = 5
 script = ExtResource("2")
 ingrediente_id = "chamoy_cafe"
 etiqueta = "Chamoy rojo"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/ChamoyCafeIcon" unique_id=1811468711]
+[node name="VasoIcon" type="TextureRect" parent="Mesa" unique_id=1811468700]
 layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 13
-text = "Chamoy rojo"
-horizontal_alignment = 1
-autowrap_mode = 3
+offset_left = -37.0
+offset_top = 15.0
+offset_right = 203.0
+offset_bottom = 255.0
+texture = ExtResource("43")
+stretch_mode = 5
+script = ExtResource("2")
+ingrediente_id = "vaso"
+etiqueta = "Vaso"
 
-[node name="ChamoyAzulIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468712]
+[node name="ChamoyAzulIcon" type="TextureRect" parent="Mesa" unique_id=1811468712]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+layout_mode = 0
+offset_left = 286.0
+offset_top = 135.0
+offset_right = 506.0
+offset_bottom = 245.0
 texture = ExtResource("41")
-expand_mode = 1
+expand_mode = 3
 stretch_mode = 5
 script = ExtResource("2")
 ingrediente_id = "chamoy_azul"
 etiqueta = "Chamoy azul"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/ChamoyAzulIcon" unique_id=1811468713]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 13
-text = "Chamoy azul"
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="EscarchadoCafeIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468601]
+[node name="EscarchadoAzulIcon" type="TextureRect" parent="Mesa" unique_id=1811468603]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
-texture = ExtResource("11")
-expand_mode = 1
-stretch_mode = 5
-script = ExtResource("2")
-ingrediente_id = "escarchado_cafe"
-etiqueta = "Chile en polvo rojo"
-
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/EscarchadoCafeIcon" unique_id=1811468602]
 layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 12
-text = "Chile polvo rojo"
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="EscarchadoAzulIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468603]
-custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+offset_left = 603.0
+offset_top = 68.0
+offset_right = 769.0
+offset_bottom = 240.0
 texture = ExtResource("12")
 expand_mode = 1
 stretch_mode = 5
@@ -365,38 +322,27 @@ script = ExtResource("2")
 ingrediente_id = "escarchado_azul"
 etiqueta = "Chile en polvo azul"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/EscarchadoAzulIcon" unique_id=1811468604]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 12
-text = "Chile polvo azul"
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="LimonIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=256412087]
+[node name="EscarchadoCafeIcon" type="TextureRect" parent="Mesa" unique_id=1811468601]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
-texture = ExtResource("5")
-expand_mode = 1
+layout_mode = 0
+offset_left = 447.0
+offset_top = -45.0
+offset_right = 615.0
+offset_bottom = 146.0
+texture = ExtResource("11")
+expand_mode = 4
 stretch_mode = 5
 script = ExtResource("2")
-ingrediente_id = "limon"
-etiqueta = "Limón"
+ingrediente_id = "escarchado_cafe"
+etiqueta = "Chile en polvo rojo"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/LimonIcon" unique_id=1423120205]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 15
-text = "Limón"
-horizontal_alignment = 1
-
-[node name="VodkaIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468720]
+[node name="VodkaIcon" type="TextureRect" parent="Mesa" unique_id=1811468720]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+layout_mode = 0
+offset_left = 1270.0
+offset_top = -101.0
+offset_right = 1630.0
+offset_bottom = 259.0
 texture = ExtResource("18")
 expand_mode = 1
 stretch_mode = 5
@@ -404,56 +350,55 @@ script = ExtResource("2")
 ingrediente_id = "vodka"
 etiqueta = "Vodka"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/VodkaIcon" unique_id=1811468721]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 15
-text = "Vodka"
-horizontal_alignment = 1
-
-[node name="CervezaIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468611]
+[node name="CervezaIcon" type="TextureRect" parent="Mesa" unique_id=1811468611]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+layout_mode = 0
+offset_left = 1238.0
+offset_top = -232.0
+offset_right = 1348.0
+offset_bottom = 134.66666
 texture = ExtResource("16")
-expand_mode = 1
+expand_mode = 5
 stretch_mode = 5
 script = ExtResource("2")
 ingrediente_id = "cerveza"
 etiqueta = "Cerveza"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/CervezaIcon" unique_id=1811468612]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 15
-text = "Cerveza"
-horizontal_alignment = 1
-
-[node name="GatorliteIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468722]
+[node name="GatorliteIcon" type="TextureRect" parent="Mesa" unique_id=1811468722]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+layout_mode = 0
+offset_left = 1527.0
+offset_top = -184.0
+offset_right = 1637.0
+offset_bottom = 130.28574
 texture = ExtResource("19")
-expand_mode = 1
+expand_mode = 5
 stretch_mode = 5
 script = ExtResource("2")
 ingrediente_id = "gatorlite"
 etiqueta = "Gatorlite"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/GatorliteIcon" unique_id=1811468723]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 14
-text = "Gatorlite"
-horizontal_alignment = 1
-
-[node name="GomitasIcon" type="TextureRect" parent="Mesa/IngredientesGrid" unique_id=1811468724]
+[node name="LimonIcon" type="TextureRect" parent="Mesa" unique_id=256412087]
 custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
+layout_mode = 0
+offset_left = 1136.0
+offset_top = 137.0
+offset_right = 1296.0
+offset_bottom = 272.0
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2")
+ingrediente_id = "limon"
+etiqueta = "Limón"
+
+[node name="GomitasIcon" type="TextureRect" parent="Mesa" unique_id=1811468724]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 0
+offset_left = 1661.0
+offset_top = -16.0
+offset_right = 1941.0
+offset_bottom = 278.0
 texture = ExtResource("42")
 expand_mode = 1
 stretch_mode = 5
@@ -461,21 +406,19 @@ script = ExtResource("2")
 ingrediente_id = "gomitas"
 etiqueta = "Gomitas"
 
-[node name="Label" type="Label" parent="Mesa/IngredientesGrid/GomitasIcon" unique_id=1811468725]
-layout_mode = 0
-offset_top = 112.0
-offset_right = 110.0
-offset_bottom = 136.0
-theme_override_font_sizes/font_size = 15
-text = "Gomitas"
-horizontal_alignment = 1
-
 [node name="Vaso" type="Panel" parent="Mesa" unique_id=1001578185]
-layout_mode = 0
-offset_left = 686.0
-offset_top = 10.0
-offset_right = 1006.0
-offset_bottom = 300.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -319.0
+offset_right = 160.0
+offset_bottom = -29.0
+grow_horizontal = 2
+grow_vertical = 0
 script = ExtResource("3")
 
 [node name="VasoCapas" type="Control" parent="Mesa/Vaso" unique_id=1560262390]
@@ -597,39 +540,35 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="VasoLabel" type="Label" parent="Mesa/Vaso" unique_id=1013007674]
-layout_mode = 0
-offset_left = 40.0
-offset_top = 16.0
-offset_right = 300.0
-offset_bottom = 274.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -130.0
+offset_right = 130.0
+offset_bottom = 258.0
+grow_horizontal = 2
 theme_override_font_sizes/font_size = 17
 text = "No hay vaso.
 Arrastra uno aquí para empezar."
+horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="ReiniciarBtn" type="Button" parent="Mesa" unique_id=1707587747]
 layout_mode = 0
-offset_left = 1046.0
-offset_top = 40.0
-offset_right = 1266.0
-offset_bottom = 100.0
+offset_left = 795.0
+offset_top = 237.0
+offset_right = 1113.0
+offset_bottom = 297.0
 theme_override_font_sizes/font_size = 18
 text = "Vaciar vaso"
-
-[node name="ResultLabel" type="Label" parent="Mesa" unique_id=1419696589]
-layout_mode = 0
-offset_left = 1306.0
-offset_top = 20.0
-offset_right = 1820.0
-offset_bottom = 300.0
-theme_override_font_sizes/font_size = 20
-autowrap_mode = 3
 
 [node name="TutorialLayer" type="Control" parent="." unique_id=63704865]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = -336.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -638,16 +577,16 @@ script = ExtResource("31")
 [node name="Dim" type="ColorRect" parent="TutorialLayer" unique_id=63704866]
 layout_mode = 0
 offset_right = 1920.0
-offset_bottom = 830.0
+offset_bottom = 743.0
 mouse_filter = 2
 color = Color(0, 0, 0, 0.6)
 
 [node name="DialogBox" type="Panel" parent="TutorialLayer" unique_id=63704868]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 590.0
-offset_right = 1880.0
-offset_bottom = 830.0
+offset_left = 397.0
+offset_top = 276.0
+offset_right = 1921.0
+offset_bottom = 739.0
 mouse_filter = 1
 
 [node name="NombreLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704869]
@@ -658,23 +597,24 @@ offset_right = 300.0
 offset_bottom = 38.0
 theme_override_font_sizes/font_size = 22
 text = "Nancy"
+label_settings = SubResource("LabelSettings_e2s0e")
 
 [node name="PasoLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704870]
 layout_mode = 0
-offset_left = 1580.0
-offset_top = 12.0
-offset_right = 1816.0
-offset_bottom = 36.0
+offset_left = 1271.0
+offset_top = 13.0
+offset_right = 1507.0
+offset_bottom = 37.0
 theme_override_font_sizes/font_size = 15
 text = "Paso 1 de 10"
 horizontal_alignment = 2
 
 [node name="TextoLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704871]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 42.0
-offset_right = 1816.0
-offset_bottom = 130.0
+offset_left = 23.0
+offset_top = 55.0
+offset_right = 1503.0
+offset_bottom = 358.0
 theme_override_font_sizes/font_size = 18
 text = "..."
 autowrap_mode = 3
@@ -692,16 +632,16 @@ autowrap_mode = 3
 
 [node name="SaltarBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704872]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 190.0
-offset_right = 220.0
-offset_bottom = 230.0
+offset_left = 16.0
+offset_top = 366.0
+offset_right = 212.0
+offset_bottom = 406.0
 text = "Saltar tutorial"
 
 [node name="SiguienteBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704873]
 layout_mode = 0
-offset_left = 1620.0
-offset_top = 190.0
-offset_right = 1816.0
-offset_bottom = 230.0
+offset_left = 232.0
+offset_top = 368.0
+offset_right = 428.0
+offset_bottom = 408.0
 text = "Siguiente ▶"

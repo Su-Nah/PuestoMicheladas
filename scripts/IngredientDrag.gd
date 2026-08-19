@@ -13,7 +13,6 @@ extends TextureRect
 
 
 func _ready() -> void:
-	label.text = etiqueta
 	# expand_mode = Ignore Size: el nodo respeta SU propio tamaño (120x120
 	# definido en la escena) en vez de crecer al tamaño real del archivo.
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE

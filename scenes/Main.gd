@@ -161,7 +161,6 @@ func _iniciar_dia() -> void:
 	slots = [null, null, null]
 	resolviendo_slot = [false, false, false]
 	calidades_del_dia.clear()
-	result_label.text = ""
 	_construir_timeline()
 	for i in range(NUM_SLOTS):
 		_actualizar_slot_ui(i)
