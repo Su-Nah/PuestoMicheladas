@@ -2,31 +2,11 @@ class_name TutorialOverlay
 extends Control
 ## TutorialOverlay.gd
 ## -------------------
-## Tutorial estilo "novela visual" (como Ren'py) PERO interactivo: Nancy,
-## la hermana del jugador, explica un paso a la vez y, si ese paso requiere
-## una acción (por ejemplo "pon limón"), el tutorial NO avanza con un botón:
-## avanza solo cuando el jugador de verdad suelta ese ingrediente en el
-## vaso. Mientras un paso requiere una acción:
-##   - Se resalta (con una animación de pulso) el/los ingrediente(s) que
-##     sirven para ese paso.
-##   - Se bloquean temporalmente los demás ingredientes (no se pueden
-##     arrastrar) para que el jugador no se adelante y rompa el orden.
-## Los pasos sin ingrediente asociado (la intro y el cierre) se avanzan con
+## Tutorial estilo "novela visual" interactivo: Nancy explica un paso a la
+## vez y, si el paso requiere una acción concreta, el tutorial avanza solo
+## cuando el jugador la hace de verdad (arrastrar tal ingrediente, o el
+## vaso mismo). Los pasos sin acción (intro, explicaciones, cierre) usan
 ## el botón "Siguiente".
-##
-## NANCY, DETRÁS DE LA MESA
-## -------------------------
-## El retrato de Nancy ("NancyPortrait") ya NO vive dentro de este overlay:
-## vive como hermano de "Mesa" en Main.tscn (igual que los retratos de los
-## clientes), colocado ANTES que "Mesa" en el árbol de nodos para que la
-## mesa se dibuje encima y tape su parte de abajo — así se ve parada detrás
-## del mostrador, igual que cualquier cliente, en vez de cortada por un
-## rectángulo. Este script solo la muestra/oculta según si el tutorial está
-## activo (get_node("../NancyPortrait")).
-##
-## Mientras el tutorial está visible, el día NO ha empezado
-## (jornada_activa en Main.gd sigue en false), así que la mesa y el vaso
-## están ahí mismo, debajo del cuadro de diálogo, listos para usarse.
 
 signal tutorial_terminado
 
@@ -37,50 +17,63 @@ signal tutorial_terminado
 @onready var siguiente_btn: Button = $DialogBox/SiguienteBtn
 @onready var saltar_btn: Button = $DialogBox/SaltarBtn
 
-## Nancy y el vaso viven como hermanos de este nodo (todos hijos directos
-## de Main). Si mueves este nodo de lugar, ajusta estos paths.
+## Nancy, el vaso y la bandeja de ingredientes viven como hermanos de este
+## nodo (todos hijos directos de Main). Ajusta los paths si mueves algo.
 @onready var vaso: VasoMichelada = get_node("../Mesa/Vaso")
 @onready var ingredientes_grid: Node = get_node("../Mesa/IngredientesGrid")
 @onready var nancy_portrait: CanvasItem = get_node("../NancyPortrait")
 
-## Ingrediente -> nombre del nodo icono dentro de IngredientesGrid (debe
-## coincidir con los nombres que pusimos en Main.tscn).
+## Ingrediente -> nombre del nodo icono dentro de IngredientesGrid.
 const NODOS_INGREDIENTE := {
-	"limon": "LimonIcon",
-	"sal": "SalIcon",
+	"vaso": "VasoIcon",
+	"chamoy_cafe": "ChamoyCafeIcon",
+	"chamoy_azul": "ChamoyAzulIcon",
 	"escarchado_cafe": "EscarchadoCafeIcon",
 	"escarchado_azul": "EscarchadoAzulIcon",
-	"hielo": "HieloIcon",
+	"limon": "LimonIcon",
 	"cerveza": "CervezaIcon",
-	"cerveza_azul": "CervezaAzulIcon",
+	"vodka": "VodkaIcon",
+	"gatorlite": "GatorliteIcon",
+	"gomitas": "GomitasIcon",
 }
 
-## Cada paso: el texto que dice Nancy, y "requiere": la lista de
-## ingredientes válidos para avanzar (con soltar UNO de la lista alcanza).
-## Si "requiere" está vacía, el paso se avanza con el botón "Siguiente".
+## Cada paso: texto de Nancy y "requiere" (ingredientes válidos para
+## avanzar solo; vacío = se avanza con el botón "Siguiente").
 var pasos: Array = [
 	{
-		"texto": "¡Hola! Soy Nancy, tu hermana. Antes de que te quedes tú sola/o a cargo del puesto, déjame enseñarte cómo se prepara una buena michelada. Ahí abajo tienes los ingredientes y el vaso: vamos a prepararla juntos.",
+		"texto": "¡Hola! Soy Nancy, tu hermana. Aquí se preparan dos bebidas: la Michelada y el Azulito. Te voy a enseñar los pasos con una Michelada — el Azulito se prepara casi igual.",
 		"requiere": [],
 	},
 	{
-		"texto": "Primero se moja el borde del vaso con LIMÓN. Arrástralo al vaso para continuar.",
+		"texto": "Todo empieza igual: no hay ningún vaso puesto todavía. Arrastra un VASO al centro de la mesa para crear una bebida nueva.",
+		"requiere": ["vaso"],
+	},
+	{
+		"texto": "Ahora dale sabor al borde con CHAMOY: rojo o azul, el que gustes (aquí vamos a usar el rojo).",
+		"requiere": ["chamoy_cafe", "chamoy_azul"],
+	},
+	{
+		"texto": "Encima del chamoy va el CHILE EN POLVO (el escarchado): también rojo o azul.",
+		"requiere": ["escarchado_cafe", "escarchado_azul"],
+	},
+	{
+		"texto": "Aquí el camino se divide en dos: si sigues con LIMÓN, es una Michelada; si sigues con VODKA, es un Azulito. Vamos a hacer una Michelada — dale LIMÓN.",
 		"requiere": ["limon"],
 	},
 	{
-		"texto": "¡Muy bien! Ahora, si quieres, escarcha el borde con SAL, o con uno de los dos escarchados (café o azul) — nunca los tres juntos. Prueba con cualquiera de ellos.",
-		"requiere": ["sal", "escarchado_cafe", "escarchado_azul"],
+		"texto": "Después del limón va la CERVEZA. (Si hubieras elegido vodka, aquí iría GATORLITE en su lugar.)",
+		"requiere": ["cerveza"],
 	},
 	{
-		"texto": "Perfecto. Ahora agrega el HIELO.",
-		"requiere": ["hielo"],
+		"texto": "Por último, unas GOMITAS para decorar — y con eso la bebida ya queda lista.",
+		"requiere": ["gomitas"],
 	},
 	{
-		"texto": "Por último, la CERVEZA (o la cerveza azul, para los que quieren algo distinto). Ojo: en cuanto la sirvas, ¡la michelada queda lista y no se le puede agregar nada más!",
-		"requiere": ["cerveza", "cerveza_azul"],
+		"texto": "Para servirla, ya no hay botón: arrastra el VASO COMPLETO directo hacia el cliente al que se la vas a dar. Así, si hay dos o tres clientes a la vez, no hay forma de confundirte.",
+		"requiere": [],
 	},
 	{
-		"texto": "¡Así se prepara una michelada! Una regla de la casa muy importante: si el cliente es MENOR DE EDAD, jamás le sirvas cerveza. Prepárale una michelada sin alcohol y va a quedar igual de contento/a.",
+		"texto": "Última regla, muy importante: tanto la Michelada (cerveza) como el Azulito (vodka) llevan alcohol. Si el cliente es MENOR DE EDAD, mejor no le completes ninguna de las dos.",
 		"requiere": [],
 	},
 	{
@@ -100,6 +93,10 @@ func _ready() -> void:
 	if vaso != null:
 		vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
 	nombre_label.text = "Nancy"
+	# Nancy tiene que verse desde YA (no solo cuando se llama a mostrar()),
+	# porque el tutorial arranca visible por defecto apenas carga la escena.
+	if nancy_portrait:
+		nancy_portrait.visible = true
 	mostrar_paso(0)
 
 
@@ -132,13 +129,8 @@ func mostrar_paso(i: int) -> void:
 	_actualizar_ingredientes(requiere)
 
 
-## Muestra/oculta el mensaje de pista y resalta/bloquea los ingredientes
-## según lo que se necesite en el paso actual.
 func _actualizar_ingredientes(requiere: Array) -> void:
 	if requiere.is_empty():
-		# Paso informativo (sin acción): no toca mover nada todavía, así
-		# que bloqueamos TODOS los ingredientes para que el jugador no se
-		# adelante y desordene el vaso antes de que le toque.
 		pista_label.text = ""
 		_quitar_resaltados()
 		_bloquear_ingredientes(["__ninguno__"])
@@ -160,16 +152,14 @@ func _actualizar_ingredientes(requiere: Array) -> void:
 
 func _nombre_bonito(id: String) -> String:
 	var mapa := {
-		"limon": "el limón", "sal": "la sal", "escarchado_cafe": "el escarchado café",
-		"escarchado_azul": "el escarchado azul", "hielo": "el hielo",
-		"cerveza": "la cerveza", "cerveza_azul": "la cerveza azul",
+		"vaso": "el vaso", "chamoy_cafe": "el chamoy rojo", "chamoy_azul": "el chamoy azul",
+		"escarchado_cafe": "el chile en polvo rojo", "escarchado_azul": "el chile en polvo azul",
+		"limon": "el limón", "cerveza": "la cerveza", "vodka": "el vodka",
+		"gatorlite": "el gatorlite", "gomitas": "las gomitas",
 	}
 	return mapa.get(id, id)
 
 
-## Deja arrastrables SOLO los ingredientes en {permitidos}; si la lista
-## viene vacía, deja TODOS arrastrables de nuevo (usado al terminar el
-## tutorial y en los pasos que no requieren ninguna acción).
 func _bloquear_ingredientes(permitidos: Array) -> void:
 	if ingredientes_grid == null:
 		return
@@ -239,8 +229,10 @@ func _on_saltar_pressed() -> void:
 
 func _terminar() -> void:
 	_quitar_resaltados()
-	_bloquear_ingredientes([]) # deja todo desbloqueado para el juego real
+	_bloquear_ingredientes([])
 	visible = false
 	if nancy_portrait:
 		nancy_portrait.visible = false
+	if vaso != null:
+		vaso.reset()
 	tutorial_terminado.emit()

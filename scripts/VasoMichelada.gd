@@ -2,88 +2,78 @@ class_name VasoMichelada
 extends Panel
 ## VasoMichelada.gd
 ## -----------------
-## Es la "zona de soltar" (drop zone): representa el vaso. Godot llama
-## _can_drop_data() para preguntar si puede aceptar lo que se está
-## arrastrando, y _drop_data() cuando el jugador suelta el mouse aquí.
+## El vaso YA NO existe siempre: por defecto no hay ningún vaso en el
+## centro de la mesa. El jugador tiene que arrastrar el ícono "vaso" (el
+## archivo mesa.png en la bandeja de ingredientes) hasta aquí para crear
+## una michelada nueva (existe = true). Antes de eso, no se puede agregar
+## ningún otro ingrediente.
+##
+## Cuando el vaso ya existe y tiene contenido, este mismo Panel se vuelve
+## ARRASTRABLE (_get_drag_data): el jugador lo agarra y lo suelta encima
+## del cliente al que se lo quiere servir (ver ClienteSlotDrop.gd). Al
+## servirse, Main.gd llama a reset() y el vaso vuelve a desaparecer del
+## centro hasta que se arrastre uno nuevo.
+##
+## DOS RECETAS POSIBLES
+## ---------------------
+## Michelada: vaso -> chamoy (rojo o azul) -> chile en polvo/escarchado
+##            (rojo o azul) -> LIMÓN -> CERVEZA -> gomitas
+## Azulito:   vaso -> chamoy (rojo o azul) -> chile en polvo/escarchado
+##            (rojo o azul) -> VODKA -> GATORLITE -> gomitas
+## Los primeros 3 pasos son iguales para las dos bebidas; el camino se
+## decide en automático según si el jugador pone limón (Michelada) o
+## vodka (Azulito) — después de eso ya no se puede cambiar de camino.
 ##
 ## SISTEMA DE CAPAS
-## -------------------------
-## En vez de tener UN sprite distinto por cada combinación posible de
-## ingredientes, el vaso se dibuja apilando varias capas (una por
-## ingrediente, más el vidrio y el contorno). Cada capa es un TextureRect
-## que se muestra u oculta según si ese ingrediente está en el vaso. Al
-## estar unas encima de otras (con transparencia), el motor las "encima"
-## visualmente y genera cualquier combinación sin necesitar un PNG por
-## combinación.
-##
-## Orden de las capas de abajo hacia arriba (ver CAPAS):
-##   1. vidrio_base       (siempre visible)
-##   2. líquido (cerveza / cerveza azul)
-##   3. hielo
-##   4. escarchado del borde (sal / escarchado café / escarchado azul)
-##   5. limón (gajo decorativo)
-##   6. contorno           (siempre visible, va arriba de todo)
-##
-## ORDEN DE INGREDIENTES EXIGIDO
-## -------------------------------
-##   1) Escarchado del borde (opcional): primero limón, luego (opcional)
-##      sal O escarchado café O escarchado azul (solo uno).
-##   2) Hielo.
-##   3) Cerveza O cerveza azul (requiere que ya haya hielo; es el último
-##      paso — después de la cerveza el vaso queda cerrado).
-##
-## CÓMO INTEGRARLO EN LA ESCENA (Main.tscn):
-##  - Dentro de este Panel, agrega un nodo Control hijo llamado
-##    "VasoCapas", y dentro de él un TextureRect por cada capa, con el
-##    nombre exacto que aparece en CAPAS (ver más abajo) y todos del mismo
-##    tamaño/posición (para que calcen perfectamente al superponerse).
-##  - Copia la carpeta assets/michelada_capas/ (incluida en este paquete) a
-##    res://assets/michelada_capas/ en tu proyecto.
-##  - Cuando empiece un cliente nuevo, llama a vaso.reset().
+## ------------------
+## Igual que antes: cada ingrediente es una capa (TextureRect) que se
+## muestra/oculta según el estado. Cuando no existe vaso, TODAS las capas
+## están ocultas (ni siquiera se ve el vidrio).
 
 ## --- Catálogo de ingredientes -------------------------------------------
-const LIMON := "limon"
-const SAL := "sal"
+const VASO := "vaso"
+const CHAMOY_CAFE := "chamoy_cafe"
+const CHAMOY_AZUL := "chamoy_azul"
 const ESCARCHADO_CAFE := "escarchado_cafe"
 const ESCARCHADO_AZUL := "escarchado_azul"
-const HIELO := "hielo"
+const LIMON := "limon"
 const CERVEZA := "cerveza"
-const CERVEZA_AZUL := "cerveza_azul"
+const VODKA := "vodka"
+const GATORLITE := "gatorlite"
+const GOMITAS := "gomitas"
 
-const RIM_COATS := [SAL, ESCARCHADO_CAFE, ESCARCHADO_AZUL] # solo se puede elegir UNO
-const CERVEZAS := [CERVEZA, CERVEZA_AZUL]                   # solo se puede elegir UNA
+const CHAMOYS := [CHAMOY_CAFE, CHAMOY_AZUL]
+const ESCARCHADOS := [ESCARCHADO_CAFE, ESCARCHADO_AZUL]
 
-## Mapa ingrediente -> nombre del nodo TextureRect (capa) que lo representa
-## dentro de $VasoCapas. "sal" / "escarchado_cafe" / "escarchado_azul"
-## comparten la misma "ranura" visual (el borde del vaso) pero cada uno
-## tiene su propia capa, porque solo una puede estar visible a la vez.
+## Mapa ingrediente -> nombre del nodo TextureRect (capa) dentro de
+## $VasoCapas. "vaso" no tiene capa propia: su capa es "VidrioBase" +
+## "Contorno", que se muestran juntas apenas existe el vaso.
 const CAPAS := {
-	LIMON: "Limon",
-	SAL: "RimSal",
+	CHAMOY_CAFE: "ChamoyCafe",
+	CHAMOY_AZUL: "ChamoyAzul",
 	ESCARCHADO_CAFE: "RimEscarchadoCafe",
 	ESCARCHADO_AZUL: "RimEscarchadoAzul",
-	HIELO: "Hielo",
+	LIMON: "Limon",
 	CERVEZA: "LiquidoCerveza",
-	CERVEZA_AZUL: "LiquidoCervezaAzul",
+	VODKA: "LiquidoVodka",
+	GATORLITE: "LiquidoGatorlite",
+	GOMITAS: "Gomitas",
 }
 
 ## --- Señales --------------------------------------------------------------
 signal ingrediente_soltado(ingrediente_id: String)
 signal ingrediente_rechazado(ingrediente_id: String, motivo: String)
-## Emite la lista de ingredientes presentes cada vez que el vaso cambia
-## (por si alguna UI externa quiere reaccionar a esto).
 signal vaso_actualizado(ingredientes_presentes: Array)
 
 ## --- Estado -----------------------------------------------------------
-## Set de ingredientes presentes en el vaso. Es un Dictionary usado como
-## "set": si la llave existe, el ingrediente está puesto. No guardamos
-## cuántas veces se soltó cada uno a propósito (el vaso no "cuenta" toppings,
-## y visualmente tampoco: la capa de "hielo" se ve igual si se soltó 1 o 10
-## veces, porque solo se muestra/oculta, nunca se duplica).
+## true si ahora mismo hay un vaso creado en el centro. Falso por defecto:
+## no existe nada hasta que se arrastra "vaso" aquí.
+var existe: bool = false
 var ingredientes_agregados: Dictionary = {}
 
-## Contenedor de las capas visuales. Ajusta el path si lo ubicas distinto.
 @onready var capas_root: Node = $VasoCapas
+@onready var vidrio_base: CanvasItem = $VasoCapas/VidrioBase
+@onready var contorno: CanvasItem = $VasoCapas/Contorno
 
 
 func _ready() -> void:
@@ -98,12 +88,35 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	intentar_agregar(data["ingrediente_id"])
 
 
-## Intenta agregar un ingrediente al vaso respetando el orden. Devuelve
-## true si quedó agregado (o ya estaba agregado), false si se rechazó.
+## El vaso mismo se puede arrastrar (para servírselo a un cliente) SOLO si
+## ya existe. Godot llama esto cuando el jugador empieza a arrastrar desde
+## este Panel.
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if not existe:
+		return null
+	var preview := TextureRect.new()
+	preview.texture = vidrio_base.texture
+	preview.custom_minimum_size = Vector2(70, 110)
+	preview.expand_mode = 1
+	preview.stretch_mode = 5
+	set_drag_preview(preview)
+	return {"es_vaso": true}
+
+
+## Intenta agregar un ingrediente (o crear el vaso, si id == "vaso").
+## Devuelve true si quedó agregado/creado, false si se rechazó.
 func intentar_agregar(id: String) -> bool:
+	if id == VASO:
+		if existe:
+			ingrediente_rechazado.emit(id, "ya_hay_vaso")
+			return false
+		existe = true
+		ingredientes_agregados.clear()
+		ingrediente_soltado.emit(id)
+		_actualizar_capas()
+		return true
+
 	if ingredientes_agregados.has(id):
-		# Ya estaba puesto: no pasa nada. Así evitamos que "contar" repeticiones
-		# afecte el vaso o la receta.
 		return true
 
 	var motivo := _validar_orden(id)
@@ -120,47 +133,76 @@ func intentar_agregar(id: String) -> bool:
 ## Devuelve "" si {id} se puede agregar ahora mismo, o un código de motivo
 ## de rechazo si no.
 func _validar_orden(id: String) -> String:
-	var ya_hay_hielo := ingredientes_agregados.has(HIELO)
-	var ya_hay_cerveza := ingredientes_agregados.has(CERVEZA) or ingredientes_agregados.has(CERVEZA_AZUL)
+	if not existe:
+		return "falta_vaso_primero"
 
-	# Nada se agrega después de la cerveza: la michelada ya está lista.
-	if ya_hay_cerveza:
+	var ya_chamoy: bool = ingredientes_agregados.has(CHAMOY_CAFE) or ingredientes_agregados.has(CHAMOY_AZUL)
+	var ya_escarchado: bool = ingredientes_agregados.has(ESCARCHADO_CAFE) or ingredientes_agregados.has(ESCARCHADO_AZUL)
+	var ya_segundo: bool = ingredientes_agregados.has(CERVEZA) or ingredientes_agregados.has(GATORLITE)
+	var ya_gomitas: bool = ingredientes_agregados.has(GOMITAS)
+
+	if ya_gomitas:
 		return "vaso_completo"
 
-	if id == LIMON:
-		if ya_hay_hielo:
-			return "escarchado_fuera_de_tiempo"
+	if id in CHAMOYS:
+		for otro in CHAMOYS:
+			if otro != id and ingredientes_agregados.has(otro):
+				return "solo_un_chamoy"
+		if ya_escarchado:
+			return "chamoy_fuera_de_tiempo"
 		return ""
 
-	if id in RIM_COATS:
+	if id in ESCARCHADOS:
+		if not ya_chamoy:
+			return "falta_chamoy_primero"
+		for otro in ESCARCHADOS:
+			if otro != id and ingredientes_agregados.has(otro):
+				return "solo_un_escarchado"
+		return ""
+
+	if id == LIMON:
+		if not ya_escarchado:
+			return "falta_escarchado_primero"
+		if ingredientes_agregados.has(VODKA):
+			return "ya_es_azulito"
+		if ya_segundo:
+			return "orden_incorrecto"
+		return ""
+
+	if id == VODKA:
+		if not ya_escarchado:
+			return "falta_escarchado_primero"
+		if ingredientes_agregados.has(LIMON):
+			return "ya_es_michelada"
+		if ya_segundo:
+			return "orden_incorrecto"
+		return ""
+
+	if id == CERVEZA:
 		if not ingredientes_agregados.has(LIMON):
 			return "falta_limon_primero"
-		for otro_coat in RIM_COATS:
-			if otro_coat != id and ingredientes_agregados.has(otro_coat):
-				return "solo_un_escarchado"
-		if ya_hay_hielo:
-			return "escarchado_fuera_de_tiempo"
 		return ""
 
-	if id == HIELO:
+	if id == GATORLITE:
+		if not ingredientes_agregados.has(VODKA):
+			return "falta_vodka_primero"
 		return ""
 
-	if id in CERVEZAS:
-		if not ya_hay_hielo:
-			return "falta_hielo_primero"
-		for otra_cerveza in CERVEZAS:
-			if otra_cerveza != id and ingredientes_agregados.has(otra_cerveza):
-				return "solo_una_cerveza"
+	if id == GOMITAS:
+		if not ya_segundo:
+			return "falta_segundo_paso"
 		return ""
 
 	return "ingrediente_desconocido"
 
 
-## Muestra/oculta cada capa según los ingredientes presentes.
 func _actualizar_capas() -> void:
 	if capas_root == null:
 		push_warning("VasoMichelada: no se encontró el nodo VasoCapas. Revisa la escena.")
 		return
+
+	vidrio_base.visible = existe
+	contorno.visible = existe
 
 	for id in CAPAS:
 		var nombre_nodo: String = CAPAS[id]
@@ -168,22 +210,24 @@ func _actualizar_capas() -> void:
 		if nodo == null:
 			push_warning("VasoMichelada: falta la capa '%s' dentro de VasoCapas." % nombre_nodo)
 			continue
-		nodo.visible = ingredientes_agregados.has(id)
+		nodo.visible = existe and ingredientes_agregados.has(id)
 
 	vaso_actualizado.emit(obtener_ingredientes())
 
 
-## Vacía el vaso (llamar al empezar a atender a un cliente nuevo).
+## Vacía y hace desaparecer el vaso del centro (llamar tras servir a un
+## cliente, o cuando el jugador presiona "Vaciar vaso").
 func reset() -> void:
 	ingredientes_agregados.clear()
+	existe = false
 	_actualizar_capas()
 
 
-## Devuelve la lista de ingredientes actualmente en el vaso (sin conteo).
 func obtener_ingredientes() -> Array:
 	return ingredientes_agregados.keys()
 
 
-## true si el vaso contiene alcohol (útil para el dilema de venta a menores).
+## true si el vaso contiene alcohol (cerveza O vodka) — útil para el
+## dilema de venta a menores.
 func tiene_alcohol() -> bool:
-	return ingredientes_agregados.has(CERVEZA) or ingredientes_agregados.has(CERVEZA_AZUL)
+	return ingredientes_agregados.has(CERVEZA) or ingredientes_agregados.has(VODKA)

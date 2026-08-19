@@ -1,93 +1,113 @@
-# 4 cambios grandes: Nancy detrás de la mesa, paciencia gradual, hasta 3 clientes a la vez, sin salsa/chile
+# Rediseño grande: vaso arrastrable, arrastrar al cliente, Michelada/Azulito, y 3 bugs corregidos
 
-## 1) Nancy también detrás de la mesa
-Igual que hicimos con los clientes: moví el retrato de Nancy
-(`NancyPortrait`) para que ya NO viva dentro de `TutorialLayer`, sino como
-hermano directo de `Mesa` en el árbol de `Main.tscn`, colocado ANTES que
-`Mesa`. Así la mesa se dibuja encima de ella y le tapa la parte de abajo
-—como si estuviera parada detrás del mostrador— en vez de cortarse contra
-un rectángulo. `TutorialOverlay.gd` ahora solo la muestra/oculta
-(`nancy_portrait.visible = true/false`) según si el tutorial está activo;
-el cuadro de diálogo de Nancy se quedó flotando arriba, sin taparla del
-todo, para que se le siga viendo la cara mientras habla.
+## ⚠️ Un supuesto que hice (revísalo primero)
+Me diste 10 nombres de archivo: `cerveza, gatorlite, chamoy_azul, chamoy_cafe,
+escarchado_azul, escarchado_cafe, gomitas, limon, mesa, vodka`. Las recetas
+que diste empiezan las dos con "vaso", pero "vaso" no aparece en esa lista
+de 10 archivos — así que asumí que **`mesa.png` es el archivo del vaso/vidrio
+vacío** (es el único de los 10 que no es un ingrediente de sabor). Si me
+equivoqué y `mesa.png` es otra cosa, dime qué es y ajusto el mapeo — está
+centralizado en un solo lugar (`Main.tscn`, el `ext_resource` con id `43`
+apuntando a `res://assets/sprites/ingredients/vaso.png`, más el ícono que
+generé yo mismo bajo ese nombre como marcador de posición).
 
-## 2) La paciencia dura más, y baja gradualmente día a día
-Antes la paciencia de cada cliente era un valor fijo (definido en
-`CharacterDB.gd`, ej. 14 segundos). Ahora ese valor se multiplica según en
-qué día vas:
-- **Día 1**: toda la paciencia se multiplica por **2.2** (más del doble de
-  tiempo — mucho más manejable para aprender).
-- **Último día**: se multiplica por **1.1** (ligeramente más generoso que
-  el valor "de diseño" original, pero ya casi al ritmo pensado).
-- Entre esos dos puntos baja de forma lineal, día a día, así que la
-  dificultad sube gradualmente en vez de sentirse igual de difícil todo el
-  juego o dar un salto brusco.
+## Los 3 bugs que reportaste
 
-Esto está en `Main.gd` → `_paciencia_para_cliente()` / `_progreso_dificultad()`.
-Los números (2.2 y 1.1) son constantes al principio del archivo
-(`PACIENCIA_MULTIPLICADOR_DIA1` / `PACIENCIA_MULTIPLICADOR_MINIMO`) por si
-quieres ajustarlos sin tocar el resto de la lógica.
+**1) Nancy no se veía en su tutorial.**
+Encontré la causa: `TutorialOverlay.gd` solo hacía `nancy_portrait.visible = true`
+dentro de la función `mostrar()`, pero `Main.gd` nunca llamaba a `mostrar()`
+— solo conectaba la señal de "tutorial terminado". Como el tutorial arranca
+visible por defecto (sin que nadie llame a `mostrar()`), Nancy se quedaba
+invisible para siempre. Lo arreglé poniendo `nancy_portrait.visible = true`
+también dentro de `_ready()`, que sí se ejecuta siempre al cargar la escena.
 
-## 3) Hasta 3 clientes al mismo tiempo, nunca repetidos
-Esto fue el cambio más grande. Antes había un solo cliente a la vez
-(`cliente_actual`); ahora hay **3 "puestos" fijos** en pantalla
-(`ClienteSlot0/1/2`, uno a la izquierda, uno al centro, uno a la derecha,
-sin encimarse) y cada uno puede estar vacío u ocupado por un cliente con su
-propia barra de paciencia independiente.
+**2) El oficial Erick no dejaba servirle nada — y no debía.**
+Este personaje nunca compra (`quiere_michelada: false`), así que estaba
+bien que no se le pudiera "servir". El problema real era que antes SOLO
+había una forma de que se fuera: esperar a que se le acabara toda la
+paciencia. Ahora, con el nuevo sistema de slots, basta con **tocar/hacer
+clic en su puesto** para atenderlo de inmediato (se despide con su diálogo
+y se va) — ya no hay que esperarlo. Cualquier cliente que no quiere
+michelada funciona igual.
 
-- **Selección**: tocas/clickeas el retrato de un cliente para
-  "seleccionarlo" (se ve resaltado — el resto se atenúa un poco). El botón
-  "Servir michelada" siempre sirve al que esté seleccionado en ese momento.
-- **Cuántos aparecen a la vez**: los primeros días, casi siempre aparece
-  UN cliente y el próximo entra hasta que el anterior se va. Con el paso de
-  los días, sube gradualmente la probabilidad de que se llenen 2 o incluso
-  los 3 puestos de golpe (`_probabilidad_simultaneos`, del 5% el día 1 al
-  80% en el último día). Un tercer cliente simultáneo solo empieza a ser
-  posible más adelante en la semana.
-- **Nunca se repite el mismo personaje en dos puestos a la vez**: al
-  llenar un puesto, el juego busca en la fila del día el primer cliente
-  cuyo `id` NO esté ya ocupando otro puesto (`_tomar_siguiente_no_repetido`).
-  Si el único que queda en la fila ya está activo en otro puesto, ese
-  puesto se queda vacío hasta que se libere.
-- **Vaso compartido**: sigue habiendo un solo vaso/una sola michelada a la
-  vez (igual que antes) — el jugador prepara y sirve de a uno, eligiendo a
-  quién. Si el cliente seleccionado se resuelve (se le sirve o se le acaba
-  la paciencia), el vaso se vacía para el siguiente; pero si a un cliente
-  NO seleccionado se le acaba la paciencia mientras preparas la bebida de
-  otro, el vaso no se toca.
-- Agregué **3 personajes nuevos** a `CharacterDB.gd` (Doña Carmen, Greg el
-  turista y Fer la estudiante) para tener más variedad de recetas y caras
-  cuando hay varios clientes en pantalla a la vez.
+**3) Se trababa si ponías el hielo (ahora: cualquier ingrediente) fuera de
+orden.**
+Con el sistema de ingredientes viejo, si te adelantabas con un paso podías
+quedar en un estado del que ya no se podía recuperar ningún otro
+ingrediente. Con el rediseño completo de abajo, cada intento fuera de
+orden simplemente SE RECHAZA (no se agrega nada, no se corrompe el vaso) y
+puedes seguir intentando con el ingrediente correcto — nunca se "traba" el
+vaso completo por un solo error. Y si de plano quieres empezar de cero,
+"Vaciar vaso" siempre está ahí.
 
-## 4) Se eliminó la salsa de tomate y el chile líquido
-Saqué `salsa_tomate` y `chile_liquido` de todos lados:
-- `VasoMichelada.gd`: ya no existen esos ingredientes ni esa capa del vaso.
-  El orden quedó más corto: escarchado (opcional) → hielo → cerveza.
-- `Main.tscn`: se quitaron esos 2 íconos de la mesa (ahora son 7
-  ingredientes en vez de 9: limón, sal, escarchado café, escarchado azul,
-  hielo, cerveza, cerveza azul) y esas 2 capas visuales del vaso.
-- `Main.gd` / `TutorialOverlay.gd`: se quitaron las referencias, textos y
-  el paso del tutorial que hablaba de ellos (el tutorial ahora tiene 7
-  pasos en vez de 8).
-- `CharacterDB.gd`: se actualizaron las recetas y los pedidos de texto de
-  los personajes que los mencionaban (Don Ramiro, Chavo de prepa, Señora
-  Lupe y Tony).
-- Borré los PNG que ya no se usan (`salsa_tomate.png`, `chile_liquido.png`,
-  `liquido_salsa_tomate.png`, `liquido_chile_liquido.png`) del paquete.
-  Si tu proyecto los sigue teniendo, puedes borrarlos también; no pasa
-  nada si se quedan, simplemente ya nadie los usa.
+## Los cambios grandes que pediste
+
+### El vaso ahora es un ingrediente que se arrastra
+Por defecto **no existe ningún vaso** en el centro de la mesa. Hay un
+nuevo ícono "Vaso" en la bandeja de ingredientes: al arrastrarlo al
+centro, ahí se crea una bebida nueva. Antes de eso, no se puede poner
+nada más (se rechaza con el mensaje "Primero arrastra un vaso al
+centro"). Cuando sirves esa bebida (ver siguiente punto) o le das
+"Vaciar vaso", el vaso desaparece del centro otra vez hasta que arrastres
+uno nuevo.
+
+### Servir = arrastrar el vaso al cliente
+Ya no hay botón "Servir michelada". Ahora **arrastras el vaso ya
+preparado directo hacia el cliente** al que se lo quieres dar (a su
+retrato/puesto). Así, con dos o tres clientes en pantalla, nunca hay
+ambigüedad de a quién le tocaba cuál bebida — literalmente se la llevas
+tú mismo/a con el mouse.
+
+### Las dos recetas: Michelada y Azulito
+Reescribí todo el orden de `VasoMichelada.gd` según diste:
+- **Michelada**: vaso → chamoy (rojo o azul) → chile en polvo/escarchado
+  (rojo o azul) → limón → cerveza → gomitas
+- **Azulito**: vaso → chamoy (rojo o azul) → chile en polvo/escarchado
+  (rojo o azul) → vodka → gatorlite → gomitas
+
+Los primeros dos pasos (chamoy, chile en polvo) son iguales para las dos;
+el camino se decide solo cuando pones limón (Michelada) o vodka (Azulito)
+— después de eso ya no puedes cambiar de camino (si intentas mezclar,
+se rechaza con un mensaje claro, ej. "ya le pusiste vodka: este va a ser
+un Azulito").
+
+**Nota importante sobre el dilema de menores de edad**: con las dos
+recetas que diste, AMBAS bebidas llevan alcohol (cerveza o vodka) — ya no
+existe una versión "sin alcohol" dentro de las reglas que especificaste.
+Así que `vaso.tiene_alcohol()` ahora es prácticamente siempre `true` para
+cualquier bebida completa, y actualicé el diálogo de Nancy para reflejar
+esto ("ninguna de las dos es apta para menores"). Si más adelante quieres
+una tercera opción sin alcohol, dime y la agrego.
+
+### Slots de clientes aleatorios
+Ya lo tenían implementado desde el paquete anterior (izquierda/centro/
+derecha, sin encimarse); ahora además **el orden en que se llenan los
+huecos es aleatorio** (`vacios.shuffle()` antes de repartir), así los
+clientes no siempre aparecen del mismo lado.
+
+### Texto amarillo del tutorial ya no se encima
+El cuadro de diálogo de Nancy tenía el texto normal (`TextoLabel`) y la
+pista amarilla (`PistaLabel`) ocupando el mismo rectángulo — cuando las
+dos estaban visibles a la vez, se veían encimadas. Les di cada una su
+propia fila (una arriba de la otra) dentro del cuadro.
+
+## Ingredientes eliminados / cambiados desde la entrega anterior
+`sal`, `hielo` y `cerveza_azul` ya NO existen (no estaban en tu lista de
+10 archivos). Todas las recetas de `CharacterDB.gd` se reescribieron con
+los ingredientes nuevos.
 
 ## Qué reemplaza este paquete (todo, completo)
 `Main.gd`, `Main.tscn`, `VasoMichelada.gd`, `CharacterDB.gd`,
-`TutorialOverlay.gd`, y las carpetas `assets/michelada_capas/` y
-`assets/sprites/` (ya sin los archivos de salsa/chile). Reemplaza los 5
-scripts/escena y copia las carpetas de assets tal cual, sobrescribiendo.
+`TutorialOverlay.gd`, **`ClienteSlotDrop.gd` (archivo nuevo — cópialo a
+`res://scripts/`)**, y las carpetas `assets/michelada_capas/` y
+`assets/sprites/` completas (sobrescribe).
 
-## Un pendiente para ti
-Los 3 personajes nuevos (`dona_carmen`, `turista_greg`, `estudiante_fer`)
-usan retratos en rutas que todavía no existen como archivos
-(`res://assets/sprites/dona_carmen.png`, etc. — igual que los personajes
-que ya tenías, como `don_ramiro.png`). Si no subes esas imágenes, el juego
-no truena: cae automáticamente al placeholder
-(`res://assets/sprites/placeholder.png`), pero se van a ver todos iguales
-hasta que agregues su arte.
+## Pendientes de tu lado
+- Confirma si `mesa.png` = vaso (ver el aviso arriba).
+- Los íconos y capas de chamoy/gatorlite/gomitas/vaso que generé son
+  marcadores de posición (arte simple hecho por código) — reemplázalos
+  con tus PNG reales usando los MISMOS nombres de archivo
+  (`chamoy_cafe.png`, `chamoy_azul.png`, `gatorlite.png`, `gomitas.png`,
+  `vodka.png`, `vaso.png` en `assets/sprites/ingredients/`, y las
+  versiones de capa dentro de `assets/michelada_capas/`) y todo debería
+  seguir funcionando sin tocar código.

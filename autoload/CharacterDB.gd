@@ -2,30 +2,19 @@ extends Node
 ## CharacterDB
 ## -----------
 ## Lista de todos los personajes que pueden llegar al puesto.
-## Usamos Dictionary (diccionarios) en vez de crear "Resources" personalizados
-## porque para el MVP es más simple de editar y entender siendo nueva/o en Godot.
-## Más adelante, si quieres, esto se puede migrar a archivos .tres (Resources)
-## para poder editarlos visualmente desde el editor de Godot.
 ##
 ## Campos de cada personaje:
-##   id              -> identificador único (String, sin espacios)
-##   nombre          -> nombre que se muestra en pantalla
-##   es_menor        -> true si es menor de edad (dispara el dilema moral SOLO
-##                      si además la michelada que le sirves lleva cerveza)
-##   especial        -> true si tiene diálogo extra que revela historia
-##   puede_repetir   -> true si este personaje SÍ puede aparecer otra vez el
-##                      mismo día (nunca al mismo tiempo que él mismo: Main.gd
-##                      evita que dos slots simultáneos tengan el mismo id)
-##   precio_base     -> precio "de lista" de una michelada (se multiplica según calidad)
-##   quiere_michelada-> false si el personaje NO compra (solo viene a hablar)
-##   pedido_texto    -> frase que describe cómo la quiere (se muestra en el minijuego)
-##   paciencia       -> segundos base de paciencia (Main.gd lo ajusta según el día)
-##   receta          -> Dictionary con los ingredientes que SÍ quiere, en true.
-##                      Ids válidos: limon, sal, escarchado_cafe, escarchado_azul,
-##                      hielo, cerveza, cerveza_azul. Cualquier ingrediente que
-##                      no aparezca se interpreta como "no lo quiere" (ver
-##                      Main.gd -> _calcular_calidad).
-##   dialogo         -> array de posibles frases si especial == true
+##   id, nombre, es_menor, especial, puede_repetir, precio_base,
+##   quiere_michelada, pedido_texto, paciencia -> igual que antes.
+##   receta -> Dictionary con los ingredientes que SÍ quiere, en true.
+##      Ids válidos: chamoy_cafe, chamoy_azul, escarchado_cafe,
+##      escarchado_azul, limon, cerveza, vodka, gatorlite, gomitas.
+##      (El "vaso" no cuenta como preferencia: es solo el recipiente.)
+##      Hay dos bebidas posibles:
+##        Michelada: chamoy(*) + escarchado(*) + limon + cerveza [+ gomitas]
+##        Azulito:   chamoy(*) + escarchado(*) + vodka + gatorlite [+ gomitas]
+##      (*) rojo (café) o azul, cualquiera de los dos.
+##   dialogo -> array de posibles frases si especial == true
 
 var personajes: Array = [
 	{
@@ -37,9 +26,12 @@ var personajes: Array = [
 		"puede_repetir": true,
 		"precio_base": 35,
 		"quiere_michelada": true,
-		"pedido_texto": "Como siempre, m'ija/o: bien equilibradita.",
+		"pedido_texto": "Como siempre, m'ija/o: una michelada bien clásica, con gomitas.",
 		"paciencia": 18.0,
-		"receta": {"limon": true, "sal": true, "hielo": true, "cerveza": true},
+		"receta": {
+			"chamoy_cafe": true, "escarchado_cafe": true, "limon": true,
+			"cerveza": true, "gomitas": true,
+		},
 		"dialogo": [
 			"Antes este puesto lo llevaba mi compadre... hasta que dejó de pagar la cuota.",
 			"Cuídate, aquí las cosas se ponen feas para el que no coopera.",
@@ -54,12 +46,14 @@ var personajes: Array = [
 		"puede_repetir": false,
 		"precio_base": 40,
 		"quiere_michelada": true,
-		"pedido_texto": "Bien cargada, porfa.",
+		"pedido_texto": "Quiero un Azulito, bien cargado.",
 		"paciencia": 10.0,
-		# OJO: pide cerveza siendo menor de edad. Este es justo el dilema:
-		# tú decides si se la sirves con cerveza o le preparas una versión
-		# sin alcohol (lo cual bajará la "calidad" pero evita el problema legal).
-		"receta": {"limon": true, "escarchado_cafe": true, "hielo": true, "cerveza": true},
+		# OJO: el Azulito lleva vodka (alcohol) y este cliente es menor de
+		# edad. Este es justo el dilema: tú decides si se lo completas o no.
+		"receta": {
+			"chamoy_azul": true, "escarchado_azul": true, "vodka": true,
+			"gatorlite": true, "gomitas": true,
+		},
 		"dialogo": [],
 	},
 	{
@@ -71,9 +65,9 @@ var personajes: Array = [
 		"puede_repetir": true,
 		"precio_base": 30,
 		"quiere_michelada": true,
-		"pedido_texto": "Bien sencilla: sin escarchado, y sin cerveza, de esas preparadas.",
+		"pedido_texto": "Una michelada normal, pero sin gomitas, porfa.",
 		"paciencia": 14.0,
-		"receta": {"limon": true, "hielo": true},
+		"receta": {"chamoy_cafe": true, "escarchado_cafe": true, "limon": true, "cerveza": true},
 		"dialogo": [],
 	},
 	{
@@ -101,9 +95,12 @@ var personajes: Array = [
 		"puede_repetir": true,
 		"precio_base": 32,
 		"quiere_michelada": true,
-		"pedido_texto": "Con harta sal en el borde, así la disfruto.",
+		"pedido_texto": "Con harta gomita, así la disfruto.",
 		"paciencia": 13.0,
-		"receta": {"limon": true, "sal": true, "hielo": true, "cerveza": true},
+		"receta": {
+			"chamoy_cafe": true, "escarchado_azul": true, "limon": true,
+			"cerveza": true, "gomitas": true,
+		},
 		"dialogo": [],
 	},
 	{
@@ -117,7 +114,10 @@ var personajes: Array = [
 		"quiere_michelada": true,
 		"pedido_texto": "Una clasiquísima, como las de antes.",
 		"paciencia": 20.0,
-		"receta": {"limon": true, "sal": true, "hielo": true, "cerveza": true},
+		"receta": {
+			"chamoy_cafe": true, "escarchado_cafe": true, "limon": true,
+			"cerveza": true, "gomitas": true,
+		},
 		"dialogo": [],
 	},
 	{
@@ -129,9 +129,12 @@ var personajes: Array = [
 		"puede_repetir": false,
 		"precio_base": 45,
 		"quiere_michelada": true,
-		"pedido_texto": "Quiero probar algo... diferente. ¿Qué es eso azul?",
+		"pedido_texto": "Quiero probar el Azulito, ese que se ve bien llamativo.",
 		"paciencia": 9.0,
-		"receta": {"limon": true, "escarchado_azul": true, "hielo": true, "cerveza_azul": true},
+		"receta": {
+			"chamoy_azul": true, "escarchado_azul": true, "vodka": true,
+			"gatorlite": true, "gomitas": true,
+		},
 		"dialogo": [],
 	},
 	{
@@ -143,9 +146,9 @@ var personajes: Array = [
 		"puede_repetir": true,
 		"precio_base": 20,
 		"quiere_michelada": true,
-		"pedido_texto": "Nomás limón y hielo, ando bien bruja de dinero.",
+		"pedido_texto": "Lo básico nomás, ando bien bruja de dinero.",
 		"paciencia": 11.0,
-		"receta": {"limon": true, "hielo": true},
+		"receta": {"chamoy_cafe": true, "escarchado_cafe": true, "limon": true, "cerveza": true},
 		"dialogo": [],
 	},
 ]

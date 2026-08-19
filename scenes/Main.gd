@@ -2,23 +2,22 @@ extends Control
 ## Main.gd
 ## -------
 ## Escena única del juego, 100% automática:
-##  - Hasta 3 clientes pueden estar en la mesa AL MISMO TIEMPO (ver
-##    "slots" más abajo). Cada uno tiene su propia barra de paciencia que
-##    se agota con el tiempo; si se agota, ese cliente se va sin comprar.
-##  - Los primeros días casi siempre aparece un cliente a la vez; conforme
-##    avanzan los días, sube la probabilidad de que aparezcan 2 o 3 al
-##    mismo tiempo (ver _probabilidad_simultaneos).
-##  - El jugador elige a cuál cliente atender tocando/clickeando su
-##    retrato (eso lo "selecciona"); el botón "Servir michelada" siempre
-##    actúa sobre el cliente seleccionado.
-##  - Nunca hay dos slots con el mismo personaje al mismo tiempo (ver
-##    _tomar_siguiente_no_repetido).
-##  - Los ingredientes están siempre visibles en la mesa de abajo, listos
-##    para arrastrarse al vaso.
-##  - El vaso (VasoMichelada.gd) valida el ORDEN en el que se agregan los
-##    ingredientes y cambia de aspecto según la combinación actual.
-##  - La calidad promedio del día sube o baja cuántos clientes llegan
-##    al día siguiente (reputación).
+##  - Hasta 3 clientes pueden estar en la mesa AL MISMO TIEMPO, en 3
+##    "puestos" fijos (izquierda / centro / derecha) que nunca se
+##    encimian. Cuál puesto ocupa cada cliente nuevo es aleatorio.
+##  - Cada cliente tiene su propia barra de paciencia; si se agota, se va
+##    sin comprar.
+##  - Por defecto NO hay ningún vaso en el centro de la mesa: hay que
+##    arrastrar el ícono "vaso" desde la bandeja de ingredientes para
+##    crear uno nuevo (ver VasoMichelada.gd).
+##  - Para servir, SE ARRASTRA el vaso ya preparado directo hacia el
+##    cliente que lo va a recibir (no hay botón "Servir"). Así nunca hay
+##    confusión de a quién le tocaba qué bebida cuando hay varios clientes
+##    a la vez.
+##  - A los clientes que NO quieren comprar (solo vienen a hablar) se les
+##    atiende con un toque/clic directo, sin necesidad de vaso.
+##  - La calidad promedio del día sube o baja cuántos clientes llegan al
+##    día siguiente (reputación).
 
 const NUM_SLOTS := 3
 
@@ -29,14 +28,14 @@ const NUM_SLOTS := 3
 @onready var vaso: VasoMichelada = $Mesa/Vaso
 @onready var vaso_label: Label = $Mesa/Vaso/VasoLabel
 @onready var reiniciar_btn: Button = $Mesa/ReiniciarBtn
-@onready var servir_btn: Button = $Mesa/ServirBtn
 @onready var result_label: Label = $Mesa/ResultLabel
 
 @onready var tutorial: TutorialOverlay = $TutorialLayer
 
-## Nodos de los 3 "puestos" de cliente, en orden. Cada uno es un Control
-## clickeable con un TextureRect (retrato), Label (nombre), TextureRect
-## (emoji), ProgressBar (paciencia) y Label (diálogo) adentro.
+## Nodos de los 3 "puestos" de cliente, en orden. Cada uno es un
+## ClienteSlotDrop (Control clickeable + zona de soltar el vaso) con un
+## TextureRect (retrato), Label (nombre), TextureRect (emoji), ProgressBar
+## (paciencia) y Label (diálogo) adentro.
 @onready var slot_nodes: Array = [$ClienteSlot0, $ClienteSlot1, $ClienteSlot2]
 @onready var slot_portraits: Array = [
 	$ClienteSlot0/Portrait, $ClienteSlot1/Portrait, $ClienteSlot2/Portrait,
@@ -58,49 +57,54 @@ const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
 const CARA_NEUTRAL := preload("res://assets/sprites/faces/neutral.png")
 const CARA_ENOJADA := preload("res://assets/sprites/faces/angry.png")
 
-## Todos los ingredientes posibles, en el mismo orden canónico que usa
-## VasoMichelada.gd (res://scripts/VasoMichelada.gd).
+## Todos los ingredientes que SÍ cuentan para la calidad de la bebida (el
+## "vaso" no cuenta: es solo el recipiente, no una preferencia de sabor).
 const ORDEN_CANONICO := [
-	"limon", "sal", "escarchado_cafe", "escarchado_azul", "hielo", "cerveza", "cerveza_azul",
+	"chamoy_cafe", "chamoy_azul", "escarchado_cafe", "escarchado_azul",
+	"limon", "vodka", "cerveza", "gatorlite", "gomitas",
 ]
 
-## Nombres bonitos para mostrar en pantalla.
 const ETIQUETAS := {
+	"chamoy_cafe": "Chamoy (rojo)",
+	"chamoy_azul": "Chamoy azul",
+	"escarchado_cafe": "Chile en polvo (rojo)",
+	"escarchado_azul": "Chile en polvo azul",
 	"limon": "Limón",
-	"sal": "Sal",
-	"escarchado_cafe": "Escarchado (café/tajín)",
-	"escarchado_azul": "Escarchado azul",
-	"hielo": "Hielo",
+	"vodka": "Vodka",
 	"cerveza": "Cerveza",
-	"cerveza_azul": "Cerveza azul",
+	"gatorlite": "Gatorlite",
+	"gomitas": "Gomitas",
 }
 
 ## Texto que se le muestra al jugador cuando VasoMichelada rechaza un
 ## ingrediente por estar fuera de orden.
 const MOTIVOS_TEXTO := {
-	"falta_limon_primero": "Primero hay que escarchar con limón.",
-	"solo_un_escarchado": "El borde ya tiene sal o escarchado. Solo se usa uno.",
-	"escarchado_fuera_de_tiempo": "El escarchado va antes del hielo.",
-	"falta_hielo_primero": "Primero hay que poner el hielo.",
-	"solo_una_cerveza": "Ya hay una cerveza en el vaso.",
-	"vaso_completo": "¡La michelada ya está lista! Sírvela o vacíala.",
+	"falta_vaso_primero": "Primero arrastra un vaso al centro.",
+	"ya_hay_vaso": "Ya hay un vaso aquí. Sírvelo o vacíalo antes de poner otro.",
+	"solo_un_chamoy": "El borde ya tiene chamoy. Solo se usa un color.",
+	"chamoy_fuera_de_tiempo": "El chamoy va justo después del vaso.",
+	"falta_chamoy_primero": "Primero hay que ponerle chamoy.",
+	"solo_un_escarchado": "El borde ya tiene chile en polvo. Solo se usa un color.",
+	"falta_escarchado_primero": "Primero hay que ponerle chile en polvo.",
+	"ya_es_azulito": "Ya le pusiste vodka: este va a ser un Azulito, no una Michelada.",
+	"ya_es_michelada": "Ya le pusiste limón: esta va a ser una Michelada, no un Azulito.",
+	"orden_incorrecto": "Eso no va en este paso.",
+	"falta_limon_primero": "Antes de la cerveza va el limón.",
+	"falta_vodka_primero": "Antes del gatorlite va el vodka.",
+	"falta_segundo_paso": "Falta completar el paso anterior antes de las gomitas.",
+	"vaso_completo": "¡Esta bebida ya está lista! Sírvela (arrástrala al cliente) o vacíala.",
 	"ingrediente_desconocido": "Ese ingrediente no se reconoce.",
 }
 
 ## --- Paciencia: dura más al principio, y se acorta poco a poco cada día
-## para que el juego se ponga más difícil gradualmente en vez de golpear
-## duro desde el día 1.
+## para que el juego se ponga más difícil gradualmente.
 const PACIENCIA_MULTIPLICADOR_DIA1 := 2.2
 const PACIENCIA_MULTIPLICADOR_MINIMO := 1.1
-
-## --- Cuántos clientes simultáneos: probabilidad de que aparezca más de
-## uno a la vez sube gradualmente con los días (ver _probabilidad_simultaneos).
 
 ## slots[i] es null (vacío) o {"cliente": Dictionary, "paciencia_actual":
 ## float, "paciencia_maxima": float}.
 var slots: Array = [null, null, null]
 var resolviendo_slot: Array = [false, false, false]
-var slot_seleccionado := -1
 
 var cola_del_dia: Array = []
 var total_clientes_dia := 0
@@ -108,8 +112,6 @@ var clientes_resueltos := 0
 var calidades_del_dia: Array = []
 var jornada_activa := false # false mientras se muestra el resumen del día o el tutorial
 
-# Se pone en true un momentito cuando se rechaza un ingrediente, para no
-# pisar ese mensaje con la actualización normal de la etiqueta del vaso.
 var _mostrando_rechazo := false
 
 
@@ -120,16 +122,16 @@ func _ready() -> void:
 	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
 	vaso.ingrediente_rechazado.connect(_on_ingrediente_rechazado)
 	reiniciar_btn.pressed.connect(_vaciar_vaso)
-	servir_btn.pressed.connect(_on_servir_pressed)
 
 	for i in range(NUM_SLOTS):
 		slot_nodes[i].gui_input.connect(_on_slot_gui_input.bind(i))
+		slot_nodes[i].vaso_recibido.connect(_on_vaso_recibido)
 		_actualizar_slot_ui(i)
 
 	_actualizar_info_bar()
 
 	# El día 1 no arranca de inmediato: primero Nancy explica cómo se
-	# prepara una michelada (ver TutorialOverlay.gd). jornada_activa sigue
+	# preparan las bebidas (ver TutorialOverlay.gd). jornada_activa sigue
 	# en false mientras tanto, así que _process() no hace avanzar ninguna
 	# paciencia hasta que el tutorial termine.
 	tutorial.tutorial_terminado.connect(_iniciar_dia)
@@ -158,7 +160,6 @@ func _iniciar_dia() -> void:
 	clientes_resueltos = 0
 	slots = [null, null, null]
 	resolviendo_slot = [false, false, false]
-	slot_seleccionado = -1
 	calidades_del_dia.clear()
 	result_label.text = ""
 	_construir_timeline()
@@ -169,8 +170,6 @@ func _iniciar_dia() -> void:
 
 func _fin_del_dia() -> void:
 	jornada_activa = false
-	servir_btn.disabled = true
-	slot_seleccionado = -1
 	for i in range(NUM_SLOTS):
 		slots[i] = null
 		_actualizar_slot_ui(i)
@@ -206,11 +205,9 @@ func _fin_del_dia() -> void:
 
 
 # ---------------------------------------------------------------------
-# SLOTS: llenar, seleccionar, resolver
+# SLOTS: llenar (aleatorio), resolver, recibir el vaso arrastrado
 # ---------------------------------------------------------------------
 
-## Llena huecos vacíos con clientes de la cola. Cuántos llena de golpe
-## depende del día (ver _decidir_cuantos_llenar / _probabilidad_simultaneos).
 func _rellenar_slots() -> void:
 	var vacios: Array = []
 	for i in range(NUM_SLOTS):
@@ -225,14 +222,16 @@ func _rellenar_slots() -> void:
 			_fin_del_dia()
 		return
 
+	# Aleatorizamos EN CUÁL de los puestos vacíos entra el primero, para
+	# que los clientes no siempre aparezcan del mismo lado.
+	vacios.shuffle()
+
 	var cuantos := _decidir_cuantos_llenar(vacios.size())
 	for k in range(cuantos):
 		var candidato := _tomar_siguiente_no_repetido()
 		if candidato.is_empty():
 			break
 		_colocar_cliente(vacios[k], candidato)
-
-	_actualizar_seleccion_automatica()
 
 
 func _todos_los_slots_vacios() -> bool:
@@ -243,8 +242,6 @@ func _todos_los_slots_vacios() -> bool:
 
 
 ## Cuántos clientes nuevos aparecen de golpe cuando hay {max_vacios} huecos.
-## Los primeros días casi siempre es 1; con los días sube la probabilidad
-## de que sean 2 o incluso 3 a la vez.
 func _decidir_cuantos_llenar(max_vacios: int) -> int:
 	if max_vacios <= 1:
 		return max_vacios
@@ -258,22 +255,17 @@ func _decidir_cuantos_llenar(max_vacios: int) -> int:
 	return 2
 
 
-## 0.0 el día 1, 1.0 el último día (GameManager.TOTAL_DAYS).
 func _progreso_dificultad() -> float:
 	var total_dias: int = max(GameManager.TOTAL_DAYS, 1)
 	return clamp(float(GameManager.current_day - 1) / float(max(total_dias - 1, 1)), 0.0, 1.0)
 
 
-## Probabilidad de que, al llenar huecos, aparezca más de un cliente a la
-## vez. Empieza muy baja (día 1) y sube gradualmente.
 func _probabilidad_simultaneos() -> float:
 	return lerp(0.05, 0.8, _progreso_dificultad())
 
 
 ## Saca de la cola el primer cliente cuyo id NO esté ya en algún slot activo
-## (para que nunca se repita el mismo personaje al mismo tiempo). Si todos
-## los que quedan en la cola ya están activos en algún slot, devuelve {}
-## (se reintentará la próxima vez que se libere un slot).
+## (para que nunca se repita el mismo personaje al mismo tiempo).
 func _tomar_siguiente_no_repetido() -> Dictionary:
 	var ids_activos: Array = []
 	for s in slots:
@@ -298,9 +290,6 @@ func _colocar_cliente(idx: int, cliente: Dictionary) -> void:
 	_actualizar_slot_ui(idx)
 
 
-## Paciencia base del personaje (CharacterDB) ajustada por el día actual:
-## el día 1 dura PACIENCIA_MULTIPLICADOR_DIA1 veces más, y baja poco a poco
-## hasta PACIENCIA_MULTIPLICADOR_MINIMO en el último día.
 func _paciencia_para_cliente(cliente: Dictionary) -> float:
 	var base: float = cliente.get("paciencia", 14.0)
 	var rango := PACIENCIA_MULTIPLICADOR_DIA1 - PACIENCIA_MULTIPLICADOR_MINIMO
@@ -308,49 +297,42 @@ func _paciencia_para_cliente(cliente: Dictionary) -> float:
 	return base * multiplicador
 
 
+## Clic/toque en un puesto: si ese cliente NO quiere michelada (solo vino a
+## hablar), se le atiende de inmediato — no hace falta arrastrarle nada.
+## Si SÍ quiere michelada, tocar su puesto no hace nada por sí solo: hay
+## que arrastrarle el vaso (ver _on_vaso_recibido).
 func _on_slot_gui_input(event: InputEvent, idx: int) -> void:
 	if not jornada_activa:
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_seleccionar_slot(idx)
-
-
-func _seleccionar_slot(idx: int) -> void:
+	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		return
 	if slots[idx] == null or resolviendo_slot[idx]:
 		return
-	slot_seleccionado = idx
-	for j in range(NUM_SLOTS):
-		var activo: bool = slots[j] != null
-		slot_nodes[j].modulate = Color(1, 1, 1, 1) if j == idx else Color(1, 1, 1, 0.7 if activo else 0.35)
 	var cliente: Dictionary = slots[idx]["cliente"]
-	servir_btn.disabled = not cliente.get("quiere_michelada", true)
+	if not cliente.get("quiere_michelada", true):
+		_resolver_slot(idx, false)
 
 
-## Si el slot seleccionado ya no es válido (vacío), selecciona
-## automáticamente el primer slot activo que encuentre.
-func _actualizar_seleccion_automatica() -> void:
-	if slot_seleccionado != -1 and slots[slot_seleccionado] != null:
+## Soltaron el vaso (arrastrado desde VasoMichelada.gd) encima del puesto
+## {idx}: si hay alguien ahí y quiere comprar, se le sirve lo que trae el
+## vaso ahora mismo.
+func _on_vaso_recibido(idx: int) -> void:
+	if not jornada_activa:
 		return
-	for i in range(NUM_SLOTS):
-		if slots[i] != null:
-			_seleccionar_slot(i)
-			return
-	slot_seleccionado = -1
-	servir_btn.disabled = true
-
-
-func _on_servir_pressed() -> void:
-	if slot_seleccionado == -1 or not jornada_activa:
+	if slots[idx] == null or resolviendo_slot[idx]:
 		return
-	_resolver_slot(slot_seleccionado, true)
+	if not vaso.existe:
+		return
+	var cliente: Dictionary = slots[idx]["cliente"]
+	if not cliente.get("quiere_michelada", true):
+		return
+	_resolver_slot(idx, true)
 
 
 func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 	if slots[idx] == null or resolviendo_slot[idx]:
 		return
 	resolviendo_slot[idx] = true
-	if idx == slot_seleccionado:
-		servir_btn.disabled = true
 
 	var cliente: Dictionary = slots[idx]["cliente"]
 	var mensaje := ""
@@ -365,7 +347,7 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		var precio_final := int(round(precio_base * multiplicador))
 
 		# El dilema ético solo se activa si el cliente ES menor de edad Y la
-		# michelada que le serviste SÍ lleva alcohol (cerveza o cerveza azul).
+		# bebida que le serviste SÍ lleva alcohol (cerveza o vodka).
 		var es_menor: bool = cliente.get("es_menor", false)
 		var tiene_alcohol := false
 		if vaso != null:
@@ -375,16 +357,11 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		GameManager.registrar_venta(cliente.get("id", ""), precio_final, es_venta_de_alcohol_a_menor)
 		calidades_del_dia.append(calidad)
 		mensaje = _texto_resultado(calidad, precio_final)
+		_vaciar_vaso() # el vaso ya se sirvió: desaparece del centro
 	else:
 		calidades_del_dia.append(0.0)
 		mensaje = "%s se cansó de esperar y se fue sin comprar." % cliente.get("nombre", "El cliente")
 
-	# Solo vaciamos el vaso si el cliente que se resolvió era el que estaba
-	# seleccionado (para el que se estaba preparando la michelada). Si se le
-	# acabó la paciencia a otro cliente no seleccionado, el vaso se deja
-	# intacto: puede que el jugador siga preparando la bebida de alguien más.
-	if idx == slot_seleccionado:
-		_vaciar_vaso()
 	slot_dialogos[idx].text = mensaje
 	clientes_resueltos += 1
 	_actualizar_timeline()
@@ -394,10 +371,7 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 	slots[idx] = null
 	resolviendo_slot[idx] = false
 	_actualizar_slot_ui(idx)
-	if slot_seleccionado == idx:
-		slot_seleccionado = -1
 	_rellenar_slots()
-	_actualizar_seleccion_automatica()
 
 
 # ---------------------------------------------------------------------
@@ -448,13 +422,13 @@ func _actualizar_slot_ui(i: int) -> void:
 		var lineas: Array = cliente["dialogo"]
 		slot_dialogos[i].text = lineas[randi() % lineas.size()]
 	elif cliente.get("quiere_michelada", true):
-		slot_dialogos[i].text = "\"%s\"" % cliente.get("pedido_texto", "Quiere una michelada.")
+		slot_dialogos[i].text = "\"%s\"" % cliente.get("pedido_texto", "Quiere una bebida.")
 	else:
-		slot_dialogos[i].text = "Solo vino a platicar."
+		slot_dialogos[i].text = "Solo vino a platicar (toca aquí para atenderlo/a)."
 
 	slot_barras[i].max_value = slot["paciencia_maxima"]
 	slot_barras[i].value = slot["paciencia_actual"]
-	slot_nodes[i].modulate = Color(1, 1, 1, 1) if i == slot_seleccionado else Color(1, 1, 1, 0.7)
+	slot_nodes[i].modulate = Color(1, 1, 1, 1)
 	_actualizar_emoji_slot(i)
 
 
@@ -483,18 +457,18 @@ func _actualizar_emoji_slot(i: int) -> void:
 # MESA / VASO (arrastrar y soltar)
 # ---------------------------------------------------------------------
 # El contenido del vaso YA NO se guarda aquí: VasoMichelada.gd es la única
-# fuente de verdad (vaso.ingredientes_agregados). Aquí solo reaccionamos a
-# sus señales para actualizar la etiqueta de texto.
+# fuente de verdad. Aquí solo reaccionamos a sus señales para actualizar
+# la etiqueta de texto bajo el vaso.
 
 func _on_ingrediente_soltado(_ingrediente_id: String) -> void:
 	_actualizar_vaso_label()
 
 
 func _on_ingrediente_rechazado(ingrediente_id: String, motivo: String) -> void:
-	var etiqueta: String = ETIQUETAS.get(ingrediente_id, ingrediente_id)
+	var etiqueta: String = ETIQUETAS.get(ingrediente_id, "el vaso" if ingrediente_id == "vaso" else ingrediente_id)
 	var explicacion: String = MOTIVOS_TEXTO.get(motivo, "No se puede agregar ahora.")
 	_mostrando_rechazo = true
-	vaso_label.text = "❌ %s: %s" % [etiqueta, explicacion]
+	vaso_label.text = "❌ %s" % explicacion
 
 	await get_tree().create_timer(1.4).timeout
 	_mostrando_rechazo = false
@@ -509,6 +483,10 @@ func _vaciar_vaso() -> void:
 
 func _actualizar_vaso_label() -> void:
 	if _mostrando_rechazo:
+		return
+
+	if not vaso.existe:
+		vaso_label.text = "No hay vaso.\nArrastra uno aquí para empezar."
 		return
 
 	var presentes: Array = vaso.obtener_ingredientes()
@@ -526,10 +504,6 @@ func _actualizar_vaso_label() -> void:
 # ---------------------------------------------------------------------
 # CÁLCULO DE CALIDAD Y PRECIO
 # ---------------------------------------------------------------------
-# receta: Dictionary con los ingredientes que el cliente SÍ quiere, marcados
-# como true. Cualquier ingrediente de ORDEN_CANONICO que no aparezca en la
-# receta se interpreta como "no lo quiere". La calidad es el % de
-# ingredientes en los que el vaso coincide exactamente con lo pedido.
 
 func _calcular_calidad(receta: Dictionary) -> float:
 	if receta.is_empty():
@@ -562,7 +536,7 @@ func _texto_resultado(calidad: float, precio: int) -> String:
 	if calidad >= 0.85:
 		return "¡Excelente! Le encantó. Paga $%d." % precio
 	elif calidad >= 0.6:
-		return "Buena michelada. Paga $%d." % precio
+		return "Buena bebida. Paga $%d." % precio
 	elif calidad >= 0.35:
 		return "Meh... no era lo que pidió. Paga solo $%d." % precio
 	else:
