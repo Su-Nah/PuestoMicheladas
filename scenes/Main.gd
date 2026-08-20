@@ -192,8 +192,6 @@ func _fin_del_dia() -> void:
 	mensaje += "Calidad promedio del día: %d%%\n" % int(round(promedio * 100))
 	mensaje += "Mañana esperas %d clientes." % GameManager.clientes_por_dia
 
-	result_label.text = mensaje
-
 	var resultado := GameManager.avanzar_dia()
 	if resultado == "":
 		_actualizar_info_bar()

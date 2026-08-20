@@ -75,7 +75,7 @@ anchors_preset = 0
 offset_left = 40.0
 offset_top = 118.0
 offset_right = 620.0
-offset_bottom = 917.0
+offset_bottom = 913.0
 script = ExtResource("4")
 
 [node name="Portrait" type="TextureRect" parent="ClienteSlot0" unique_id=63804866]
@@ -129,7 +129,7 @@ anchors_preset = 0
 offset_left = 660.0
 offset_top = 118.0
 offset_right = 1240.0
-offset_bottom = 919.0
+offset_bottom = 913.0
 script = ExtResource("4")
 slot_index = 1
 
@@ -247,6 +247,7 @@ mouse_filter = 2
 texture = ExtResource("32")
 expand_mode = 1
 stretch_mode = 5
+flip_h = true
 
 [node name="Mesa" type="ColorRect" parent="." unique_id=1573789620]
 z_index = 1

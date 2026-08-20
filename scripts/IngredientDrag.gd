@@ -6,10 +6,6 @@ extends TextureRect
 ## MicheladaMixer.tscn; aquí solo definimos su identificador y el preview
 ## que se ve mientras arrastras.
 
-@export var ingrediente_id: String = "clamato"  # clamato | limon | chile | sal
-@export var etiqueta: String = "Clamato"
-
-@onready var label: Label = $Label
 
 
 func _ready() -> void:
