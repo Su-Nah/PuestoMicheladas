@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://vltr1jtoclx3" path="res://scenes/Main.gd" id="1"]
 [ext_resource type="Script" uid="uid://cbdawe1i17kdq" path="res://scripts/IngredientDrag.gd" id="2"]
+[ext_resource type="FontFile" uid="uid://e07c6is6ur5k" path="res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf" id="2_v0vrg"]
 [ext_resource type="Script" uid="uid://wa7elcp6n1mu" path="res://scripts/VasoMichelada.gd" id="3"]
 [ext_resource type="Script" uid="uid://bex4fhnyuxitn" path="res://scripts/ClienteSlotDrop.gd" id="4"]
 [ext_resource type="Texture2D" uid="uid://cjx7cmyw6n0nq" path="res://assets/sprites/ingredients/limon.png" id="5"]
@@ -19,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://ck20t8v1lh86j" path="res://assets/michelada_capas/limon.png" id="29"]
 [ext_resource type="Texture2D" uid="uid://doj041xycu0i3" path="res://assets/michelada_capas/contorno.png" id="30"]
 [ext_resource type="Script" uid="uid://brata5s6568mm" path="res://scripts/TutorialOverlay.gd" id="31"]
+[ext_resource type="FontFile" uid="uid://bdgoxwge0j1y" path="res://assets/fonts/Sedgwick_Ave_Display/SedgwickAveDisplay-Regular.ttf" id="31_dg70y"]
 [ext_resource type="Texture2D" uid="uid://b773mjm7wbcm6" path="res://assets/sprites/nancy_la_hermana.png" id="32"]
 [ext_resource type="Texture2D" uid="uid://ddk54pec27n7p" path="res://assets/sprites/ingredients/chamoy_cafe.png" id="40"]
 [ext_resource type="Texture2D" uid="uid://dcq0qn3jn1wly" path="res://assets/sprites/ingredients/chamoy_azul.png" id="41"]
@@ -30,7 +32,57 @@
 [ext_resource type="Texture2D" uid="uid://cb713lud4dh1b" path="res://assets/michelada_capas/gomitas.png" id="47"]
 [ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/mesa.png" id="50"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_ngfvx"]
+font = ExtResource("31_dg70y")
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_ydfnm"]
+font = ExtResource("31_dg70y")
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_cobve"]
+font = ExtResource("31_dg70y")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_kxyth"]
+font = ExtResource("2_v0vrg")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_2c4at"]
+font = ExtResource("31_dg70y")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_hq6as"]
+font = ExtResource("2_v0vrg")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_pnhog"]
+font = ExtResource("31_dg70y")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_dg70y"]
+font = ExtResource("2_v0vrg")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_a3g7j"]
+font = ExtResource("2_v0vrg")
+font_size = 20
+
 [sub_resource type="LabelSettings" id="LabelSettings_e2s0e"]
+font = ExtResource("31_dg70y")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_otm8d"]
+font = ExtResource("2_v0vrg")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_l5h8a"]
+font = ExtResource("2_v0vrg")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_v0vrg"]
+font = ExtResource("2_v0vrg")
+font_size = 25
 
 [node name="Main" type="Control" unique_id=173019364]
 layout_mode = 3
@@ -52,6 +104,7 @@ offset_bottom = 70.0
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Día 1 / 7"
+label_settings = SubResource("LabelSettings_ngfvx")
 
 [node name="Spacer" type="Control" parent="InfoBar" unique_id=1142104026]
 custom_minimum_size = Vector2(60, 0)
@@ -61,6 +114,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Dinero: $0"
+label_settings = SubResource("LabelSettings_ydfnm")
 
 [node name="DayTimeline" type="HBoxContainer" parent="." unique_id=1399139259]
 layout_mode = 0
@@ -93,6 +147,7 @@ offset_left = 10.0
 offset_right = 570.0
 offset_bottom = 32.0
 theme_override_font_sizes/font_size = 22
+label_settings = SubResource("LabelSettings_cobve")
 
 [node name="EmojiIcon" type="TextureRect" parent="ClienteSlot0" unique_id=63804868]
 layout_mode = 0
@@ -123,6 +178,7 @@ offset_top = 80.0
 offset_right = 570.0
 offset_bottom = 128.0
 theme_override_font_sizes/font_size = 14
+label_settings = SubResource("LabelSettings_kxyth")
 autowrap_mode = 3
 
 [node name="ClienteSlot1" type="Control" parent="." unique_id=63804965]
@@ -150,6 +206,7 @@ offset_left = 10.0
 offset_right = 570.0
 offset_bottom = 32.0
 theme_override_font_sizes/font_size = 22
+label_settings = SubResource("LabelSettings_2c4at")
 
 [node name="EmojiIcon" type="TextureRect" parent="ClienteSlot1" unique_id=63804968]
 layout_mode = 0
@@ -180,6 +237,7 @@ offset_top = 80.0
 offset_right = 570.0
 offset_bottom = 128.0
 theme_override_font_sizes/font_size = 14
+label_settings = SubResource("LabelSettings_hq6as")
 autowrap_mode = 3
 
 [node name="ClienteSlot2" type="Control" parent="." unique_id=63805065]
@@ -207,6 +265,7 @@ offset_left = 10.0
 offset_right = 570.0
 offset_bottom = 32.0
 theme_override_font_sizes/font_size = 22
+label_settings = SubResource("LabelSettings_pnhog")
 
 [node name="EmojiIcon" type="TextureRect" parent="ClienteSlot2" unique_id=63805068]
 layout_mode = 0
@@ -237,6 +296,7 @@ offset_top = 80.0
 offset_right = 570.0
 offset_bottom = 128.0
 theme_override_font_sizes/font_size = 14
+label_settings = SubResource("LabelSettings_dg70y")
 autowrap_mode = 3
 
 [node name="NancyPortrait" type="TextureRect" parent="." unique_id=63704867]
@@ -263,7 +323,7 @@ color = Color(0.4, 0.26, 0.14, 1)
 
 [node name="MesaFondo" type="TextureRect" parent="Mesa" unique_id=1573789700]
 layout_mode = 0
-offset_left = -2.0
+offset_left = -9.0
 offset_top = -5.0
 offset_right = 1915.0
 offset_bottom = 335.0
@@ -288,11 +348,12 @@ etiqueta = "Chamoy rojo"
 
 [node name="VasoIcon" type="TextureRect" parent="Mesa" unique_id=1811468700]
 layout_mode = 0
-offset_left = -37.0
-offset_top = 15.0
-offset_right = 203.0
-offset_bottom = 255.0
+offset_left = 17.0
+offset_top = -45.0
+offset_right = 150.0
+offset_bottom = 242.0
 texture = ExtResource("43")
+expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
 ingrediente_id = "vaso"
@@ -548,13 +609,14 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -130.0
-offset_right = 130.0
+offset_left = -149.0
+offset_right = 149.0
 offset_bottom = 258.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 17
 text = "No hay vaso.
 Arrastra uno aquí para empezar."
+label_settings = SubResource("LabelSettings_a3g7j")
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -564,7 +626,8 @@ offset_left = 795.0
 offset_top = 237.0
 offset_right = 1113.0
 offset_bottom = 297.0
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("31_dg70y")
+theme_override_font_sizes/font_size = 21
 text = "Vaciar vaso"
 
 [node name="TutorialLayer" type="Control" parent="." unique_id=63704865]
@@ -611,6 +674,7 @@ offset_right = 1507.0
 offset_bottom = 37.0
 theme_override_font_sizes/font_size = 15
 text = "Paso 1 de 10"
+label_settings = SubResource("LabelSettings_otm8d")
 horizontal_alignment = 2
 
 [node name="TextoLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704871]
@@ -621,31 +685,37 @@ offset_right = 1503.0
 offset_bottom = 358.0
 theme_override_font_sizes/font_size = 18
 text = "..."
+label_settings = SubResource("LabelSettings_l5h8a")
 autowrap_mode = 3
 
 [node name="PistaLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704874]
 visible = false
 layout_mode = 0
-offset_left = 24.0
-offset_top = 134.0
-offset_right = 1816.0
-offset_bottom = 170.0
+offset_left = 16.0
+offset_top = 323.0
+offset_right = 1361.0
+offset_bottom = 359.0
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 16
+label_settings = SubResource("LabelSettings_v0vrg")
 autowrap_mode = 3
 
 [node name="SaltarBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704872]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 366.0
-offset_right = 212.0
-offset_bottom = 406.0
+offset_left = 17.0
+offset_top = 380.0
+offset_right = 213.0
+offset_bottom = 420.0
+theme_override_fonts/font = ExtResource("31_dg70y")
+theme_override_font_sizes/font_size = 21
 text = "Saltar tutorial"
 
 [node name="SiguienteBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704873]
 layout_mode = 0
-offset_left = 232.0
-offset_top = 368.0
-offset_right = 428.0
-offset_bottom = 408.0
+offset_left = 238.0
+offset_top = 370.0
+offset_right = 434.0
+offset_bottom = 429.0
+theme_override_fonts/font = ExtResource("31_dg70y")
+theme_override_font_sizes/font_size = 21
 text = "Siguiente ▶"
