@@ -21,36 +21,51 @@ extends Control
 
 const NUM_SLOTS := 3
 
-@onready var day_label: Label = $InfoBar/DayLabel
-@onready var money_label: Label = $InfoBar/MoneyLabel
-@onready var day_timeline: HBoxContainer = $DayTimeline
+## NOTA IMPORTANTE: los nodos de UI puramente informativos (etiqueta de
+## día, de dinero, resultado, línea de tiempo, tutorial) ahora se buscan
+## con get_node_or_null() en vez de "$Nodo" directo. La diferencia es que
+## "$Nodo" hace TRONAR el juego entero si ese nodo no existe en la escena
+## (por ejemplo, si se borró la etiqueta de dinero al editar Main.tscn);
+## get_node_or_null() simplemente devuelve null, y el resto del código ya
+## revisa "if money_label:" antes de usarlo. Así, si falta o se renombra
+## algún nodo puramente decorativo, el juego sigue siendo JUGABLE (solo se
+## deja de ver ese textito), en vez de trabarse por completo.
+@onready var day_label: Label = get_node_or_null("InfoBar/DayLabel")
+@onready var money_label: Label = get_node_or_null("InfoBar/MoneyLabel")
+@onready var day_timeline: HBoxContainer = get_node_or_null("DayTimeline")
 
-@onready var vaso: VasoMichelada = $Mesa/Vaso
-@onready var vaso_label: Label = $Mesa/Vaso/VasoLabel
-@onready var reiniciar_btn: Button = $Mesa/ReiniciarBtn
-@onready var result_label: Label = $Mesa/ResultLabel
+## Estos SÍ son parte del juego (no solo informativos): si faltan, el
+## juego de verdad no puede funcionar, así que se buscan igual con
+## get_node_or_null() pero se avisa fuerte por consola para que sea fácil
+## detectar el problema en vez de fallar en silencio más adelante.
+@onready var vaso: VasoMichelada = get_node_or_null("Mesa/Vaso")
+@onready var vaso_label: Label = get_node_or_null("Mesa/Vaso/VasoLabel")
+@onready var reiniciar_btn: Button = get_node_or_null("Mesa/ReiniciarBtn")
+@onready var result_label: Label = get_node_or_null("Mesa/ResultLabel")
 
-@onready var tutorial: TutorialOverlay = $TutorialLayer
+@onready var tutorial: TutorialOverlay = get_node_or_null("TutorialLayer")
 
 ## Nodos de los 3 "puestos" de cliente, en orden. Cada uno es un
 ## ClienteSlotDrop (Control clickeable + zona de soltar el vaso) con un
 ## TextureRect (retrato), Label (nombre), TextureRect (emoji), ProgressBar
 ## (paciencia) y Label (diálogo) adentro.
-@onready var slot_nodes: Array = [$ClienteSlot0, $ClienteSlot1, $ClienteSlot2]
+@onready var slot_nodes: Array = [
+	get_node_or_null("ClienteSlot0"), get_node_or_null("ClienteSlot1"), get_node_or_null("ClienteSlot2"),
+]
 @onready var slot_portraits: Array = [
-	$ClienteSlot0/Portrait, $ClienteSlot1/Portrait, $ClienteSlot2/Portrait,
+	get_node_or_null("ClienteSlot0/Portrait"), get_node_or_null("ClienteSlot1/Portrait"), get_node_or_null("ClienteSlot2/Portrait"),
 ]
 @onready var slot_nombres: Array = [
-	$ClienteSlot0/NombreLabel, $ClienteSlot1/NombreLabel, $ClienteSlot2/NombreLabel,
+	get_node_or_null("ClienteSlot0/NombreLabel"), get_node_or_null("ClienteSlot1/NombreLabel"), get_node_or_null("ClienteSlot2/NombreLabel"),
 ]
 @onready var slot_emojis: Array = [
-	$ClienteSlot0/EmojiIcon, $ClienteSlot1/EmojiIcon, $ClienteSlot2/EmojiIcon,
+	get_node_or_null("ClienteSlot0/EmojiIcon"), get_node_or_null("ClienteSlot1/EmojiIcon"), get_node_or_null("ClienteSlot2/EmojiIcon"),
 ]
 @onready var slot_barras: Array = [
-	$ClienteSlot0/PatienceBar, $ClienteSlot1/PatienceBar, $ClienteSlot2/PatienceBar,
+	get_node_or_null("ClienteSlot0/PatienceBar"), get_node_or_null("ClienteSlot1/PatienceBar"), get_node_or_null("ClienteSlot2/PatienceBar"),
 ]
 @onready var slot_dialogos: Array = [
-	$ClienteSlot0/DialogueLabel, $ClienteSlot1/DialogueLabel, $ClienteSlot2/DialogueLabel,
+	get_node_or_null("ClienteSlot0/DialogueLabel"), get_node_or_null("ClienteSlot1/DialogueLabel"), get_node_or_null("ClienteSlot2/DialogueLabel"),
 ]
 
 const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
@@ -116,12 +131,21 @@ var _mostrando_rechazo := false
 
 
 func _ready() -> void:
+	if vaso == null:
+		push_error("Main.gd: no se encontró Mesa/Vaso. Revisa Main.tscn — el juego no puede funcionar sin él.")
+		return
+	for i in range(NUM_SLOTS):
+		if slot_nodes[i] == null:
+			push_error("Main.gd: no se encontró ClienteSlot%d. Revisa Main.tscn." % i)
+			return
+
 	GameManager.money_changed.connect(_on_money_changed)
 	GameManager.game_over.connect(_on_game_over)
 
 	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
 	vaso.ingrediente_rechazado.connect(_on_ingrediente_rechazado)
-	reiniciar_btn.pressed.connect(_vaciar_vaso)
+	if reiniciar_btn:
+		reiniciar_btn.pressed.connect(_vaciar_vaso)
 
 	for i in range(NUM_SLOTS):
 		slot_nodes[i].gui_input.connect(_on_slot_gui_input.bind(i))
@@ -130,11 +154,16 @@ func _ready() -> void:
 
 	_actualizar_info_bar()
 
-	# El día 1 no arranca de inmediato: primero Nancy explica cómo se
-	# preparan las bebidas (ver TutorialOverlay.gd). jornada_activa sigue
-	# en false mientras tanto, así que _process() no hace avanzar ninguna
-	# paciencia hasta que el tutorial termine.
-	tutorial.tutorial_terminado.connect(_iniciar_dia)
+	# El día 1 no arranca de inmediato: primero el tutorial (si existe)
+	# explica cómo se preparan las bebidas (ver TutorialOverlay.gd).
+	# jornada_activa sigue en false mientras tanto, así que _process() no
+	# hace avanzar ninguna paciencia hasta que el tutorial termine.
+	# Si ya no tienes el nodo del tutorial en la escena, el juego arranca
+	# directo en vez de quedarse esperando una señal que nunca llegaría.
+	if tutorial:
+		tutorial.tutorial_terminado.connect(_iniciar_dia)
+	else:
+		_iniciar_dia()
 
 
 func _process(delta: float) -> void:
@@ -161,6 +190,8 @@ func _iniciar_dia() -> void:
 	slots = [null, null, null]
 	resolviendo_slot = [false, false, false]
 	calidades_del_dia.clear()
+	if result_label:
+		result_label.text = ""
 	_construir_timeline()
 	for i in range(NUM_SLOTS):
 		_actualizar_slot_ui(i)
@@ -192,11 +223,17 @@ func _fin_del_dia() -> void:
 	mensaje += "Calidad promedio del día: %d%%\n" % int(round(promedio * 100))
 	mensaje += "Mañana esperas %d clientes." % GameManager.clientes_por_dia
 
+	# OJO: esta línea faltaba en la versión que subiste — por eso el
+	# resumen del día nunca se veía en pantalla. La regresé.
+	if result_label:
+		result_label.text = mensaje
+
 	var resultado := GameManager.avanzar_dia()
 	if resultado == "":
 		_actualizar_info_bar()
 		await get_tree().create_timer(3.0).timeout
-		result_label.text = ""
+		if result_label:
+			result_label.text = ""
 		_iniciar_dia()
 	# Si resultado != "", GameManager ya emitió game_over.
 
@@ -220,7 +257,12 @@ func _rellenar_slots() -> void:
 		return
 
 	# Aleatorizamos EN CUÁL de los puestos vacíos entra el primero, para
-	# que los clientes no siempre aparezcan del mismo lado.
+	# que los clientes no siempre aparezcan del mismo lado. Si de todas
+	# formas los ves siempre en el centro, revisa en Main.tscn que
+	# ClienteSlot0 / ClienteSlot1 / ClienteSlot2 tengan offsets DISTINTOS
+	# (izquierda / centro / derecha) — este shuffle() elige el ÍNDICE al
+	# azar, pero si los 3 nodos están en la misma posición en la escena,
+	# siempre se va a VER igual sin importar cuál se llene.
 	vacios.shuffle()
 
 	var cuantos := _decidir_cuantos_llenar(vacios.size())
@@ -359,7 +401,8 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		calidades_del_dia.append(0.0)
 		mensaje = "%s se cansó de esperar y se fue sin comprar." % cliente.get("nombre", "El cliente")
 
-	slot_dialogos[idx].text = mensaje
+	if slot_dialogos[idx]:
+		slot_dialogos[idx].text = mensaje
 	clientes_resueltos += 1
 	_actualizar_timeline()
 
@@ -376,6 +419,8 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 # ---------------------------------------------------------------------
 
 func _construir_timeline() -> void:
+	if day_timeline == null:
+		return
 	for child in day_timeline.get_children():
 		child.queue_free()
 	for i in range(total_clientes_dia):
@@ -386,6 +431,8 @@ func _construir_timeline() -> void:
 
 
 func _actualizar_timeline() -> void:
+	if day_timeline == null:
+		return
 	var segmentos := day_timeline.get_children()
 	for i in range(segmentos.size()):
 		var segmento: ColorRect = segmentos[i]
@@ -399,39 +446,53 @@ func _actualizar_timeline() -> void:
 func _actualizar_slot_ui(i: int) -> void:
 	var slot = slots[i]
 	if slot == null:
-		slot_portraits[i].texture = null
-		slot_nombres[i].text = ""
-		slot_barras[i].max_value = 1.0
-		slot_barras[i].value = 0.0
+		if slot_portraits[i]:
+			slot_portraits[i].texture = null
+		if slot_nombres[i]:
+			slot_nombres[i].text = ""
+		if slot_barras[i]:
+			slot_barras[i].max_value = 1.0
+			slot_barras[i].value = 0.0
 		slot_nodes[i].modulate = Color(1, 1, 1, 0.35)
 		return
 
 	var cliente: Dictionary = slot["cliente"]
-	slot_nombres[i].text = cliente.get("nombre", "Cliente")
+	if slot_nombres[i]:
+		slot_nombres[i].text = cliente.get("nombre", "Cliente")
 
-	var ruta_retrato: String = cliente.get("retrato", "")
-	if ruta_retrato != "" and ResourceLoader.exists(ruta_retrato):
-		slot_portraits[i].texture = load(ruta_retrato)
-	else:
-		slot_portraits[i].texture = load("res://assets/sprites/placeholder.png")
+	if slot_portraits[i]:
+		var ruta_retrato: String = cliente.get("retrato", "")
+		if ruta_retrato != "" and ResourceLoader.exists(ruta_retrato):
+			slot_portraits[i].texture = load(ruta_retrato)
+		else:
+			slot_portraits[i].texture = load("res://assets/sprites/placeholder.png")
 
-	if cliente.get("especial", false) and cliente.get("dialogo", []).size() > 0:
-		var lineas: Array = cliente["dialogo"]
-		slot_dialogos[i].text = lineas[randi() % lineas.size()]
-	elif cliente.get("quiere_michelada", true):
-		slot_dialogos[i].text = "\"%s\"" % cliente.get("pedido_texto", "Quiere una bebida.")
-	else:
-		slot_dialogos[i].text = "Solo vino a platicar (toca aquí para atenderlo/a)."
+	if slot_dialogos[i]:
+		if cliente.get("especial", false) and cliente.get("dialogo", []).size() > 0:
+			var lineas: Array = cliente["dialogo"]
+			slot_dialogos[i].text = lineas[randi() % lineas.size()]
+		elif cliente.get("quiere_michelada", true):
+			slot_dialogos[i].text = "\"%s\"" % cliente.get("pedido_texto", "Quiere una bebida.")
+		else:
+			slot_dialogos[i].text = "Solo vino a platicar (toca aquí para atenderlo/a)."
 
-	slot_barras[i].max_value = slot["paciencia_maxima"]
-	slot_barras[i].value = slot["paciencia_actual"]
+	if slot_barras[i]:
+		slot_barras[i].max_value = slot["paciencia_maxima"]
+		slot_barras[i].value = slot["paciencia_actual"]
+
+	# Este modulate SOLO cambia la opacidad (el canal alfa) para marcar un
+	# puesto vacío vs. ocupado — nunca toca "scale", así que no debería
+	# agrandar a nadie. Si en tu escena ves que el puesto de la izquierda
+	# crece, busca en Main.tscn (o en cualquier script) algo que le esté
+	# poniendo un valor a "scale" o a "custom_minimum_size" de
+	# ClienteSlot0 o de su Portrait — este script no lo hace.
 	slot_nodes[i].modulate = Color(1, 1, 1, 1)
 	_actualizar_emoji_slot(i)
 
 
 func _actualizar_barra_paciencia(i: int) -> void:
 	var slot = slots[i]
-	if slot == null:
+	if slot == null or slot_barras[i] == null:
 		return
 	slot_barras[i].value = max(slot["paciencia_actual"], 0.0)
 	_actualizar_emoji_slot(i)
@@ -439,7 +500,7 @@ func _actualizar_barra_paciencia(i: int) -> void:
 
 func _actualizar_emoji_slot(i: int) -> void:
 	var slot = slots[i]
-	if slot == null or slot["paciencia_maxima"] <= 0.0:
+	if slot == null or slot["paciencia_maxima"] <= 0.0 or slot_emojis[i] == null:
 		return
 	var ratio: float = slot["paciencia_actual"] / slot["paciencia_maxima"]
 	if ratio > 0.66:
@@ -462,6 +523,8 @@ func _on_ingrediente_soltado(_ingrediente_id: String) -> void:
 
 
 func _on_ingrediente_rechazado(ingrediente_id: String, motivo: String) -> void:
+	if vaso_label == null:
+		return
 	var etiqueta: String = ETIQUETAS.get(ingrediente_id, "el vaso" if ingrediente_id == "vaso" else ingrediente_id)
 	var explicacion: String = MOTIVOS_TEXTO.get(motivo, "No se puede agregar ahora.")
 	_mostrando_rechazo = true
@@ -479,7 +542,7 @@ func _vaciar_vaso() -> void:
 
 
 func _actualizar_vaso_label() -> void:
-	if _mostrando_rechazo:
+	if vaso_label == null or _mostrando_rechazo:
 		return
 
 	if not vaso.existe:
@@ -545,12 +608,15 @@ func _texto_resultado(calidad: float, precio: int) -> String:
 # ---------------------------------------------------------------------
 
 func _on_money_changed(new_amount: int) -> void:
-	money_label.text = "Dinero: $%d" % new_amount
+	if money_label:
+		money_label.text = "Dinero: $%d" % new_amount
 
 
 func _actualizar_info_bar() -> void:
-	day_label.text = "Día %d / %d" % [GameManager.current_day, GameManager.TOTAL_DAYS]
-	money_label.text = "Dinero: $%d" % GameManager.money
+	if day_label:
+		day_label.text = "Día %d / %d" % [GameManager.current_day, GameManager.TOTAL_DAYS]
+	if money_label:
+		money_label.text = "Dinero: $%d" % GameManager.money
 
 
 func _on_game_over(_ending_id: String) -> void:

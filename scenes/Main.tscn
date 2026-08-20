@@ -84,6 +84,8 @@ offset_top = 130.0
 offset_right = 580.0
 offset_bottom = 780.0
 mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="NombreLabel" type="Label" parent="ClienteSlot0" unique_id=63804867]
 layout_mode = 0
@@ -238,6 +240,7 @@ theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
 
 [node name="NancyPortrait" type="TextureRect" parent="." unique_id=63704867]
+visible = false
 layout_mode = 0
 offset_left = 8.0
 offset_top = 212.0

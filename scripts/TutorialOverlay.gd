@@ -17,11 +17,25 @@ signal tutorial_terminado
 @onready var siguiente_btn: Button = $DialogBox/SiguienteBtn
 @onready var saltar_btn: Button = $DialogBox/SaltarBtn
 
-## Nancy, el vaso y la bandeja de ingredientes viven como hermanos de este
-## nodo (todos hijos directos de Main). Ajusta los paths si mueves algo.
-@onready var vaso: VasoMichelada = get_node("../Mesa/Vaso")
-@onready var ingredientes_grid: Node = get_node("../Mesa/IngredientesGrid")
-@onready var nancy_portrait: CanvasItem = get_node("../NancyPortrait")
+## El vaso y los íconos de ingredientes viven como hermanos/nietos de este
+## nodo (todos dentro de Main). Se usa get_node_or_null en vez de get_node
+## para que, si algo se renombra o se borra en Main.tscn, el tutorial se
+## desactive solo (con un aviso en consola) en vez de trabar el juego.
+##
+## OJO: "IngredientesGrid" ya no existe como contenedor propio — los
+## íconos de ingredientes (VodkaIcon, LimonIcon, etc.) ahora son hijos
+## directos de "Mesa". Por eso buscamos "../Mesa" y no
+## "../Mesa/IngredientesGrid" (ese path viejo ya no resuelve a nada y
+## dejaba sin funcionar el resaltado/bloqueo de ingredientes del tutorial).
+##
+## Nancy SÍ sigue en la escena (es la narradora del tutorial), pero ahora
+## empieza con visible = false en Main.tscn: nunca es un "cliente" al que
+## se le sirve nada, así que no vive en CharacterDB ni ocupa un puesto.
+## Este mismo script la muestra (mostrar_paso/mostrar) y la oculta
+## (_terminar) cuando corresponde.
+@onready var vaso: VasoMichelada = get_node_or_null("../Mesa/Vaso")
+@onready var ingredientes_grid: Node = get_node_or_null("../Mesa")
+@onready var nancy_portrait: CanvasItem = get_node_or_null("../NancyPortrait")
 
 ## Ingrediente -> nombre del nodo icono dentro de IngredientesGrid.
 const NODOS_INGREDIENTE := {
