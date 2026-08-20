@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://vltr1jtoclx3" path="res://scenes/Main.gd" id="1"]
 [ext_resource type="Script" uid="uid://cbdawe1i17kdq" path="res://scripts/IngredientDrag.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/fondo.png" id="2_dg70y"]
 [ext_resource type="FontFile" uid="uid://e07c6is6ur5k" path="res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf" id="2_v0vrg"]
 [ext_resource type="Script" uid="uid://wa7elcp6n1mu" path="res://scripts/VasoMichelada.gd" id="3"]
 [ext_resource type="Script" uid="uid://bex4fhnyuxitn" path="res://scripts/ClienteSlotDrop.gd" id="4"]
@@ -18,7 +19,6 @@
 [ext_resource type="Texture2D" uid="uid://bdfs2c8raliin" path="res://assets/michelada_capas/rim_escarchado_cafe.png" id="27"]
 [ext_resource type="Texture2D" uid="uid://gg33dn6wtijr" path="res://assets/michelada_capas/rim_escarchado_azul.png" id="28"]
 [ext_resource type="Texture2D" uid="uid://ck20t8v1lh86j" path="res://assets/michelada_capas/limon.png" id="29"]
-[ext_resource type="Texture2D" uid="uid://doj041xycu0i3" path="res://assets/michelada_capas/contorno.png" id="30"]
 [ext_resource type="Script" uid="uid://brata5s6568mm" path="res://scripts/TutorialOverlay.gd" id="31"]
 [ext_resource type="FontFile" uid="uid://bdgoxwge0j1y" path="res://assets/fonts/Sedgwick_Ave_Display/SedgwickAveDisplay-Regular.ttf" id="31_dg70y"]
 [ext_resource type="Texture2D" uid="uid://b773mjm7wbcm6" path="res://assets/sprites/nancy_la_hermana.png" id="32"]
@@ -92,6 +92,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+
+[node name="Fondo" type="TextureRect" parent="." unique_id=665829630]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 1920.0
+offset_bottom = 743.0
+texture = ExtResource("2_dg70y")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="InfoBar" type="HBoxContainer" parent="." unique_id=536354376]
 layout_mode = 0
@@ -479,9 +488,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -160.0
-offset_top = -319.0
+offset_top = -322.0
 offset_right = 160.0
-offset_bottom = -29.0
+offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("3")
@@ -493,6 +502,46 @@ offset_top = 14.0
 offset_right = 300.0
 offset_bottom = 266.0
 mouse_filter = 2
+
+[node name="Limon" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262401]
+visible = false
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 252.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262395]
+visible = false
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 252.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262396]
+visible = false
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 252.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262412]
+visible = false
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 252.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="VidrioBase" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262392]
 visible = false
@@ -544,46 +593,6 @@ texture = ExtResource("28")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LiquidoCerveza" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262395]
-visible = false
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 252.0
-mouse_filter = 2
-texture = ExtResource("23")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoVodka" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262396]
-visible = false
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 252.0
-mouse_filter = 2
-texture = ExtResource("24")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoGatorlite" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262412]
-visible = false
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 252.0
-mouse_filter = 2
-texture = ExtResource("44")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Limon" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262401]
-visible = false
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 252.0
-mouse_filter = 2
-texture = ExtResource("29")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="Gomitas" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262413]
 visible = false
 layout_mode = 0
@@ -594,24 +603,15 @@ texture = ExtResource("47")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Contorno" type="TextureRect" parent="Mesa/Vaso/VasoCapas" unique_id=1560262402]
-visible = false
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 252.0
-mouse_filter = 2
-texture = ExtResource("30")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="VasoLabel" type="Label" parent="Mesa/Vaso" unique_id=1013007674]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -149.0
+offset_top = -2.0
 offset_right = 149.0
-offset_bottom = 258.0
+offset_bottom = 256.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 17
 text = "No hay vaso.
@@ -622,10 +622,10 @@ autowrap_mode = 3
 
 [node name="ReiniciarBtn" type="Button" parent="Mesa" unique_id=1707587747]
 layout_mode = 0
-offset_left = 795.0
-offset_top = 237.0
-offset_right = 1113.0
-offset_bottom = 297.0
+offset_left = 797.0
+offset_top = 233.0
+offset_right = 1115.0
+offset_bottom = 293.0
 theme_override_fonts/font = ExtResource("31_dg70y")
 theme_override_font_sizes/font_size = 21
 text = "Vaciar vaso"
@@ -653,7 +653,7 @@ layout_mode = 0
 offset_left = 397.0
 offset_top = 276.0
 offset_right = 1921.0
-offset_bottom = 739.0
+offset_bottom = 743.0
 mouse_filter = 1
 
 [node name="NombreLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704869]

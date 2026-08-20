@@ -47,7 +47,6 @@ const ESCARCHADOS := [ESCARCHADO_CAFE, ESCARCHADO_AZUL]
 
 ## Mapa ingrediente -> nombre del nodo TextureRect (capa) dentro de
 ## $VasoCapas. "vaso" no tiene capa propia: su capa es "VidrioBase" +
-## "Contorno", que se muestran juntas apenas existe el vaso.
 const CAPAS := {
 	CHAMOY_CAFE: "ChamoyCafe",
 	CHAMOY_AZUL: "ChamoyAzul",
@@ -73,7 +72,6 @@ var ingredientes_agregados: Dictionary = {}
 
 @onready var capas_root: Node = $VasoCapas
 @onready var vidrio_base: CanvasItem = $VasoCapas/VidrioBase
-@onready var contorno: CanvasItem = $VasoCapas/Contorno
 
 
 func _ready() -> void:
@@ -202,7 +200,6 @@ func _actualizar_capas() -> void:
 		return
 
 	vidrio_base.visible = existe
-	contorno.visible = existe
 
 	for id in CAPAS:
 		var nombre_nodo: String = CAPAS[id]
