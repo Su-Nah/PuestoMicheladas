@@ -32,6 +32,30 @@
 [ext_resource type="Texture2D" uid="uid://cb713lud4dh1b" path="res://assets/michelada_capas/gomitas.png" id="47"]
 [ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/mesa.png" id="50"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_burbuja"]
+bg_color = Color(1, 1, 1, 0.95)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.15, 0.15, 0.15, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_burbuja_punto"]
+bg_color = Color(1, 1, 1, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.15, 0.15, 0.15, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
 [sub_resource type="LabelSettings" id="LabelSettings_ngfvx"]
 font = ExtResource("31_dg70y")
 font_size = 40
@@ -190,6 +214,148 @@ theme_override_font_sizes/font_size = 14
 label_settings = SubResource("LabelSettings_kxyth")
 autowrap_mode = 3
 
+[node name="PedidoBubble" type="Control" parent="ClienteSlot0" unique_id=90100011]
+visible = false
+layout_mode = 0
+offset_left = 300.0
+offset_top = 88.0
+offset_right = 580.0
+offset_bottom = 248.0
+mouse_filter = 2
+
+[node name="BG" type="Panel" parent="ClienteSlot0/PedidoBubble" unique_id=90100012]
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 160.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja")
+
+[node name="Punto1" type="Panel" parent="ClienteSlot0/PedidoBubble" unique_id=90100013]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 152.0
+offset_right = 44.0
+offset_bottom = 178.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
+
+[node name="Punto2" type="Panel" parent="ClienteSlot0/PedidoBubble" unique_id=90100014]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 184.0
+offset_right = 20.0
+offset_bottom = 200.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
+
+[node name="MiniVaso" type="Control" parent="ClienteSlot0/PedidoBubble" unique_id=90100015]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 20.0
+offset_right = 207.0
+offset_bottom = 140.0
+mouse_filter = 2
+
+[node name="VidrioBase" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100016]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("20")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChamoyCafe" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100017]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("45")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChamoyAzul" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100018]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("46")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RimEscarchadoCafe" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100019]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("27")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RimEscarchadoAzul" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100020]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("28")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Limon" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100021]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100022]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100023]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100024]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Gomitas" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100025]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("47")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="ClienteSlot1" type="Control" parent="." unique_id=63804965]
 modulate = Color(1, 1, 1, 0.35)
 anchors_preset = 0
@@ -248,6 +414,148 @@ offset_bottom = 128.0
 theme_override_font_sizes/font_size = 14
 label_settings = SubResource("LabelSettings_hq6as")
 autowrap_mode = 3
+
+[node name="PedidoBubble" type="Control" parent="ClienteSlot1" unique_id=90200011]
+visible = false
+layout_mode = 0
+offset_left = 300.0
+offset_top = 88.0
+offset_right = 580.0
+offset_bottom = 248.0
+mouse_filter = 2
+
+[node name="BG" type="Panel" parent="ClienteSlot1/PedidoBubble" unique_id=90200012]
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 160.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja")
+
+[node name="Punto1" type="Panel" parent="ClienteSlot1/PedidoBubble" unique_id=90200013]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 152.0
+offset_right = 44.0
+offset_bottom = 178.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
+
+[node name="Punto2" type="Panel" parent="ClienteSlot1/PedidoBubble" unique_id=90200014]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 184.0
+offset_right = 20.0
+offset_bottom = 200.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
+
+[node name="MiniVaso" type="Control" parent="ClienteSlot1/PedidoBubble" unique_id=90200015]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 20.0
+offset_right = 207.0
+offset_bottom = 140.0
+mouse_filter = 2
+
+[node name="VidrioBase" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200016]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("20")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChamoyCafe" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200017]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("45")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChamoyAzul" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200018]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("46")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RimEscarchadoCafe" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200019]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("27")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RimEscarchadoAzul" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200020]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("28")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Limon" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200021]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200022]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200023]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200024]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Gomitas" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200025]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("47")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="ClienteSlot2" type="Control" parent="." unique_id=63805065]
 modulate = Color(1, 1, 1, 0.35)
@@ -308,18 +616,147 @@ theme_override_font_sizes/font_size = 14
 label_settings = SubResource("LabelSettings_dg70y")
 autowrap_mode = 3
 
-[node name="NancyPortrait" type="TextureRect" parent="." unique_id=63704867]
+[node name="PedidoBubble" type="Control" parent="ClienteSlot2" unique_id=90300011]
 visible = false
 layout_mode = 0
-offset_left = 8.0
-offset_top = 212.0
-offset_right = 439.0
-offset_bottom = 864.0
+offset_left = 300.0
+offset_top = 88.0
+offset_right = 580.0
+offset_bottom = 248.0
 mouse_filter = 2
-texture = ExtResource("32")
+
+[node name="BG" type="Panel" parent="ClienteSlot2/PedidoBubble" unique_id=90300012]
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 160.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja")
+
+[node name="Punto1" type="Panel" parent="ClienteSlot2/PedidoBubble" unique_id=90300013]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 152.0
+offset_right = 44.0
+offset_bottom = 178.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
+
+[node name="Punto2" type="Panel" parent="ClienteSlot2/PedidoBubble" unique_id=90300014]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 184.0
+offset_right = 20.0
+offset_bottom = 200.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
+
+[node name="MiniVaso" type="Control" parent="ClienteSlot2/PedidoBubble" unique_id=90300015]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 20.0
+offset_right = 207.0
+offset_bottom = 140.0
+mouse_filter = 2
+
+[node name="VidrioBase" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300016]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("20")
 expand_mode = 1
 stretch_mode = 5
-flip_h = true
+
+[node name="ChamoyCafe" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300017]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("45")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChamoyAzul" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300018]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("46")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RimEscarchadoCafe" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300019]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("27")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RimEscarchadoAzul" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300020]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("28")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Limon" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300021]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300022]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300023]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300024]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Gomitas" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300025]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("47")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Mesa" type="ColorRect" parent="." unique_id=1573789620]
 z_index = 1
@@ -481,6 +918,7 @@ ingrediente_id = "gomitas"
 etiqueta = "Gomitas"
 
 [node name="Vaso" type="Panel" parent="Mesa" unique_id=1001578185]
+self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -647,6 +1085,19 @@ offset_right = 1920.0
 offset_bottom = 743.0
 mouse_filter = 2
 color = Color(0, 0, 0, 0.6)
+
+[node name="NancyPortrait" type="TextureRect" parent="TutorialLayer" unique_id=63704867]
+visible = false
+layout_mode = 0
+offset_left = 8.0
+offset_top = 212.0
+offset_right = 439.0
+offset_bottom = 864.0
+mouse_filter = 2
+texture = ExtResource("32")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
 
 [node name="DialogBox" type="Panel" parent="TutorialLayer" unique_id=63704868]
 layout_mode = 0

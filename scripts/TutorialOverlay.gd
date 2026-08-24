@@ -29,13 +29,17 @@ signal tutorial_terminado
 ## dejaba sin funcionar el resaltado/bloqueo de ingredientes del tutorial).
 ##
 ## Nancy SÍ sigue en la escena (es la narradora del tutorial), pero ahora
-## empieza con visible = false en Main.tscn: nunca es un "cliente" al que
-## se le sirve nada, así que no vive en CharacterDB ni ocupa un puesto.
-## Este mismo script la muestra (mostrar_paso/mostrar) y la oculta
-## (_terminar) cuando corresponde.
+## vive DENTRO de TutorialLayer, justo encima de "Dim" (el rectángulo negro
+## semitransparente que oscurece el fondo). Antes vivía como hermana de
+## Mesa, es decir POR DEBAJO de Dim en el orden de dibujado — por eso Dim
+## la oscurecía a ella también y se veía como si tuviera menos opacidad,
+## aunque su alpha propio siempre fue 1.0. Ahora que está encima de Dim
+## (y sigue detrás de DialogBox, para no tapar el texto), se ve al 100%.
+## Tampoco es un "cliente" al que se le sirve nada, así que no vive en
+## CharacterDB ni ocupa un puesto.
 @onready var vaso: VasoMichelada = get_node_or_null("../Mesa/Vaso")
 @onready var ingredientes_grid: Node = get_node_or_null("../Mesa")
-@onready var nancy_portrait: CanvasItem = get_node_or_null("../NancyPortrait")
+@onready var nancy_portrait: CanvasItem = get_node_or_null("NancyPortrait")
 
 ## Ingrediente -> nombre del nodo icono dentro de IngredientesGrid.
 const NODOS_INGREDIENTE := {

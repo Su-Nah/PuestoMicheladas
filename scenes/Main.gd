@@ -68,6 +68,16 @@ const NUM_SLOTS := 3
 	get_node_or_null("ClienteSlot0/DialogueLabel"), get_node_or_null("ClienteSlot1/DialogueLabel"), get_node_or_null("ClienteSlot2/DialogueLabel"),
 ]
 
+## Globo de cómic con el "pedido" del cliente (una michelada/azulito en
+## miniatura, armada con las mismas capas que el vaso real). Ver
+## _mostrar_pedido_burbuja() / _ocultar_pedido_burbuja() más abajo.
+@onready var slot_burbujas: Array = [
+	get_node_or_null("ClienteSlot0/PedidoBubble"), get_node_or_null("ClienteSlot1/PedidoBubble"), get_node_or_null("ClienteSlot2/PedidoBubble"),
+]
+@onready var slot_burbuja_vasos: Array = [
+	get_node_or_null("ClienteSlot0/PedidoBubble/MiniVaso"), get_node_or_null("ClienteSlot1/PedidoBubble/MiniVaso"), get_node_or_null("ClienteSlot2/PedidoBubble/MiniVaso"),
+]
+
 const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
 const CARA_NEUTRAL := preload("res://assets/sprites/faces/neutral.png")
 const CARA_ENOJADA := preload("res://assets/sprites/faces/angry.png")
@@ -90,6 +100,13 @@ const ETIQUETAS := {
 	"gatorlite": "Gatorlite",
 	"gomitas": "Gomitas",
 }
+
+## Nombre del nodo TextureRect (capa) dentro de PedidoBubble/MiniVaso para
+## cada ingrediente. Es EXACTAMENTE el mismo mapeo que usa el vaso real
+## (VasoMichelada.CAPAS), así que lo reutilizamos en vez de duplicarlo:
+## así, si algún día cambia un nombre de capa allá, no hay que acordarse
+## de tocarlo aquí también.
+var CAPAS_BURBUJA: Dictionary = VasoMichelada.CAPAS
 
 ## Texto que se le muestra al jugador cuando VasoMichelada rechaza un
 ## ingrediente por estar fuera de orden.
@@ -454,6 +471,7 @@ func _actualizar_slot_ui(i: int) -> void:
 			slot_barras[i].max_value = 1.0
 			slot_barras[i].value = 0.0
 		slot_nodes[i].modulate = Color(1, 1, 1, 0.35)
+		_ocultar_pedido_burbuja(i)
 		return
 
 	var cliente: Dictionary = slot["cliente"]
@@ -475,6 +493,11 @@ func _actualizar_slot_ui(i: int) -> void:
 			slot_dialogos[i].text = "\"%s\"" % cliente.get("pedido_texto", "Quiere una bebida.")
 		else:
 			slot_dialogos[i].text = "Solo vino a platicar (toca aquí para atenderlo/a)."
+
+	if cliente.get("quiere_michelada", true) and cliente.get("receta", {}).size() > 0:
+		_mostrar_pedido_burbuja(i, cliente["receta"])
+	else:
+		_ocultar_pedido_burbuja(i)
 
 	if slot_barras[i]:
 		slot_barras[i].max_value = slot["paciencia_maxima"]
@@ -509,6 +532,29 @@ func _actualizar_emoji_slot(i: int) -> void:
 		slot_emojis[i].texture = CARA_NEUTRAL
 	else:
 		slot_emojis[i].texture = CARA_ENOJADA
+
+
+## Muestra el globo de cómic con una miniatura de la bebida que ese
+## cliente quiere (misma idea que las capas del vaso real: se prende la
+## capa VidrioBase + una capa por cada ingrediente de su receta).
+func _mostrar_pedido_burbuja(i: int, receta: Dictionary) -> void:
+	if slot_burbujas[i] == null or slot_burbuja_vasos[i] == null:
+		return
+	var mini_vaso: Node = slot_burbuja_vasos[i]
+	var vidrio: Node = mini_vaso.get_node_or_null("VidrioBase")
+	if vidrio:
+		vidrio.visible = true
+	for id in CAPAS_BURBUJA:
+		var nombre_nodo: String = CAPAS_BURBUJA[id]
+		var capa: Node = mini_vaso.get_node_or_null(nombre_nodo)
+		if capa:
+			capa.visible = receta.get(id, false)
+	slot_burbujas[i].visible = true
+
+
+func _ocultar_pedido_burbuja(i: int) -> void:
+	if slot_burbujas[i]:
+		slot_burbujas[i].visible = false
 
 
 # ---------------------------------------------------------------------

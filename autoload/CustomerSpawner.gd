@@ -14,8 +14,59 @@ extends Node
 ##
 ## Guardamos ese último dato en una variable de este mismo Autoload para
 ## que "recuerde" el día anterior.
+##
+## PEDIDO ALEATORIO (nuevo)
+## -------------------------
+## Cada vez que un cliente entra a la fila, se le arma un pedido nuevo con
+## generar_pedido_aleatorio(): siempre sigue uno de los 8 órdenes VÁLIDOS de
+## VasoMichelada.gd (chamoy rojo/azul x chile en polvo rojo/azul x
+## Michelada-con-limón/Azulito-con-vodka), elegido al azar. Así, hasta un
+## mismo personaje que se repite dos veces en el día puede pedir algo
+## distinto cada vez.
 
 var personajes_que_repitieron_2_ayer: Array = []
+
+const CHAMOYS := ["chamoy_cafe", "chamoy_azul"]
+const ESCARCHADOS := ["escarchado_cafe", "escarchado_azul"]
+
+## Cada "camino" decide si la bebida termina siendo Michelada o Azulito
+## (ver VasoMichelada.gd: limón -> Michelada, vodka -> Azulito).
+const CAMINOS := [
+	{"segundo": "limon", "tercero": "cerveza", "bebida": "Michelada"},
+	{"segundo": "vodka", "tercero": "gatorlite", "bebida": "Azulito"},
+]
+
+const NOMBRES_BONITOS := {
+	"chamoy_cafe": "chamoy rojo", "chamoy_azul": "chamoy azul",
+	"escarchado_cafe": "chile en polvo rojo", "escarchado_azul": "chile en polvo azul",
+	"limon": "limón", "cerveza": "cerveza", "vodka": "vodka",
+	"gatorlite": "gatorlite", "gomitas": "gomitas",
+}
+
+
+## Arma un pedido nuevo y al azar, siguiendo siempre uno de los 8 órdenes
+## válidos. Devuelve {"receta": Dictionary, "pedido_texto": String}.
+func generar_pedido_aleatorio() -> Dictionary:
+	var chamoy: String = CHAMOYS[randi() % CHAMOYS.size()]
+	var escarchado: String = ESCARCHADOS[randi() % ESCARCHADOS.size()]
+	var camino: Dictionary = CAMINOS[randi() % CAMINOS.size()]
+
+	var receta := {
+		chamoy: true,
+		escarchado: true,
+		camino["segundo"]: true,
+		camino["tercero"]: true,
+		"gomitas": true,
+	}
+
+	var texto := "Quiero un %s: %s, %s y %s." % [
+		camino["bebida"],
+		NOMBRES_BONITOS[chamoy],
+		NOMBRES_BONITOS[escarchado],
+		NOMBRES_BONITOS["gomitas"],
+	]
+
+	return {"receta": receta, "pedido_texto": texto}
 
 
 func generar_dia(num_slots: int) -> Array:
@@ -42,7 +93,13 @@ func generar_dia(num_slots: int) -> Array:
 
 	while fila.size() < num_slots and intentos < intentos_max:
 		intentos += 1
-		var candidato: Dictionary = pool[randi() % pool.size()]
+		# OJO: .duplicate(true) es importante. Sin esto, "candidato" es la
+		# MISMA Dictionary que vive en CharacterDB.personajes; si el mismo
+		# personaje se repite 2 veces en el día, las dos apariciones
+		# terminarían compartiendo el mismo pedido (porque serían
+		# literalmente el mismo objeto), y el pedido de la segunda pisaría
+		# el de la primera.
+		var candidato: Dictionary = pool[randi() % pool.size()].duplicate(true)
 		var cid: String = candidato["id"]
 
 		# Regla 1: no repetir inmediatamente el mismo personaje.
@@ -54,6 +111,12 @@ func generar_dia(num_slots: int) -> Array:
 
 		if veces_usado >= limite:
 			continue
+
+		# Le armamos su propio pedido al azar (si de verdad quiere bebida).
+		if candidato.get("quiere_michelada", true):
+			var pedido := generar_pedido_aleatorio()
+			candidato["receta"] = pedido["receta"]
+			candidato["pedido_texto"] = pedido["pedido_texto"]
 
 		fila.append(candidato)
 		conteo[cid] = veces_usado + 1
