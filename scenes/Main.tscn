@@ -256,6 +256,46 @@ offset_right = 207.0
 offset_bottom = 140.0
 mouse_filter = 2
 
+[node name="Limon" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100021]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100022]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100023]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100024]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="VidrioBase" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100016]
 visible = false
 layout_mode = 0
@@ -303,46 +343,6 @@ offset_right = 133.0
 offset_bottom = 120.0
 mouse_filter = 2
 texture = ExtResource("28")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Limon" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100021]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("29")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100022]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("23")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100023]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("24")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100024]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("44")
 expand_mode = 1
 stretch_mode = 5
 
@@ -457,6 +457,46 @@ offset_right = 207.0
 offset_bottom = 140.0
 mouse_filter = 2
 
+[node name="Limon" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200021]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200022]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200023]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200024]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="VidrioBase" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200016]
 visible = false
 layout_mode = 0
@@ -504,46 +544,6 @@ offset_right = 133.0
 offset_bottom = 120.0
 mouse_filter = 2
 texture = ExtResource("28")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Limon" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200021]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("29")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200022]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("23")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200023]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("24")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200024]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("44")
 expand_mode = 1
 stretch_mode = 5
 
@@ -658,6 +658,46 @@ offset_right = 207.0
 offset_bottom = 140.0
 mouse_filter = 2
 
+[node name="Limon" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300021]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("29")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300022]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300023]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300024]
+visible = false
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="VidrioBase" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300016]
 visible = false
 layout_mode = 0
@@ -705,46 +745,6 @@ offset_right = 133.0
 offset_bottom = 120.0
 mouse_filter = 2
 texture = ExtResource("28")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Limon" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300021]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("29")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoCerveza" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300022]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("23")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoVodka" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300023]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("24")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LiquidoGatorlite" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300024]
-visible = false
-layout_mode = 0
-offset_right = 133.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("44")
 expand_mode = 1
 stretch_mode = 5
 
