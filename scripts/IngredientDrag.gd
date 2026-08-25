@@ -49,6 +49,12 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	# arriba-izquierda para que quede centrado justo en el cursor.
 	preview.position = -preview.custom_minimum_size / 2.0
 
+	# El nodo "Mesa" de Main.tscn tiene z_index = 1 y se dibuja encima de
+	# todo lo de z_index 0 — incluidos los previews de arrastre. Sin esta
+	# línea, el ingrediente que llevas en la mano se vuelve INVISIBLE justo
+	# cuando pasa sobre la mesa (que es casi todo el trayecto al vaso).
+	preview.z_index = 10
+
 	set_drag_preview(preview)
 
 	return {"ingrediente_id": ingrediente_id}

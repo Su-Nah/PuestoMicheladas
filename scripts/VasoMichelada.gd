@@ -45,6 +45,13 @@ const GOMITAS := "gomitas"
 const CHAMOYS := [CHAMOY_CAFE, CHAMOY_AZUL]
 const ESCARCHADOS := [ESCARCHADO_CAFE, ESCARCHADO_AZUL]
 
+## Ingredientes LÍQUIDOS de verdad (los que se bambolean dentro del vaso).
+const LIQUIDOS := [CERVEZA, VODKA, GATORLITE]
+## Lo que se pierde en un derrame: los líquidos y las gomitas (van flotando
+## encima, así que se van con el líquido). El chamoy, el escarchado y el
+## limón viven pegados al BORDE del vaso: esos aguantan la sacudida.
+const DERRAMABLES := [CERVEZA, VODKA, GATORLITE, GOMITAS]
+
 ## Mapa ingrediente -> nombre del nodo TextureRect (capa) dentro de
 ## $VasoCapas. "vaso" no tiene capa propia: su capa es "VidrioBase" +
 const CAPAS := {
@@ -63,6 +70,10 @@ const CAPAS := {
 signal ingrediente_soltado(ingrediente_id: String)
 signal ingrediente_rechazado(ingrediente_id: String, motivo: String)
 signal vaso_actualizado(ingredientes_presentes: Array)
+## Se emite cuando el jugador sacude tanto el mouse llevando el vaso que el
+## contenido se derrama (ver BamboleoDrag.gd). Trae la lista de ingredientes
+## que se perdieron, por si la UI quiere nombrarlos.
+signal liquido_derramado(ingredientes_perdidos: Array)
 
 ## --- Estado -----------------------------------------------------------
 ## true si ahora mismo hay un vaso creado en el centro. Falso por defecto:
@@ -89,16 +100,31 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 ## El vaso mismo se puede arrastrar (para servírselo a un cliente) SOLO si
 ## ya existe. Godot llama esto cuando el jugador empieza a arrastrar desde
 ## este Panel.
+##
+## El preview ya no es una foto fija del vidrio: es un BamboleoDrag (ver
+## scripts/BamboleoDrag.gd), una copia del vaso CON su contenido que se
+## inclina según qué tan brusco mueves el mouse — y si lo sacudes de más,
+## el líquido se derrama de verdad (nos llama a derramar_liquidos()).
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if not existe:
 		return null
-	var preview := TextureRect.new()
-	preview.texture = vidrio_base.texture
-	preview.custom_minimum_size = Vector2(70, 110)
-	preview.expand_mode = 1
-	preview.stretch_mode = 5
-	set_drag_preview(preview)
+	set_drag_preview(BamboleoDrag.crear(self))
 	return {"es_vaso": true}
+
+
+## Mientras el vaso "va en la mano" (su propio arrastre está activo), el que
+## se queda en la mesa se ve translúcido — así se lee como "lo levantaste",
+## no como si hubiera dos vasos. Godot manda estas notificaciones a TODOS
+## los Controls cuando empieza/termina cualquier arrastre, por eso hay que
+## revisar que el dato arrastrado sea justamente el vaso (y no un
+## ingrediente).
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_BEGIN:
+		var data: Variant = get_viewport().gui_get_drag_data()
+		if typeof(data) == TYPE_DICTIONARY and data.get("es_vaso", false) == true:
+			capas_root.modulate = Color(1, 1, 1, 0.35)
+	elif what == NOTIFICATION_DRAG_END:
+		capas_root.modulate = Color(1, 1, 1, 1)
 
 
 ## Intenta agregar un ingrediente (o crear el vaso, si id == "vaso").
@@ -228,3 +254,34 @@ func obtener_ingredientes() -> Array:
 ## dilema de venta a menores.
 func tiene_alcohol() -> bool:
 	return ingredientes_agregados.has(CERVEZA) or ingredientes_agregados.has(VODKA)
+
+
+## true si el vaso trae algún líquido servido — si no, no hay nada que
+## derramar por más que se sacuda (un vaso escarchado y vacío aguanta todo).
+func tiene_liquido() -> bool:
+	for id in LIQUIDOS:
+		if ingredientes_agregados.has(id):
+			return true
+	return false
+
+
+## ¡Se derramó! Quita del vaso todo lo DERRAMABLE (líquidos + gomitas) y
+## avisa con la señal liquido_derramado. Devuelve la lista de lo perdido
+## (BamboleoDrag la usa para vaciar también su copia visual).
+##
+## Ojo: NO es reset() — el vaso sigue existiendo, con su chamoy, su
+## escarchado y su limón intactos. El validador de orden (_validar_orden)
+## ya permite volver a servir el líquido y las gomitas después de esto,
+## así que el verdadero castigo es el TIEMPO perdido mientras la paciencia
+## de los clientes sigue corriendo.
+func derramar_liquidos() -> Array:
+	var perdidos: Array = []
+	for id in DERRAMABLES:
+		if ingredientes_agregados.has(id):
+			ingredientes_agregados.erase(id)
+			perdidos.append(id)
+	if perdidos.is_empty():
+		return perdidos
+	_actualizar_capas()
+	liquido_derramado.emit(perdidos)
+	return perdidos
