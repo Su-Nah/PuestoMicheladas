@@ -108,6 +108,9 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if not existe:
 		return null
+	# Sonido de "agarrar" del vaso (para cuando lo levantas y lo llevas
+	# hacia un cliente, antes de que empiece a bambolearse).
+	SFX.play_agarrar(VASO)
 	set_drag_preview(BamboleoDrag.crear(self))
 	return {"es_vaso": true}
 
@@ -137,6 +140,7 @@ func intentar_agregar(id: String) -> bool:
 		existe = true
 		ingredientes_agregados.clear()
 		ingrediente_soltado.emit(id)
+		SFX.play_soltar(id) # sonido de "soltar" el vaso sobre la mesa
 		_actualizar_capas()
 		return true
 
@@ -150,6 +154,7 @@ func intentar_agregar(id: String) -> bool:
 
 	ingredientes_agregados[id] = true
 	ingrediente_soltado.emit(id)
+	SFX.play_soltar(id) # sonido de "soltar" propio de ESTE ingrediente
 	_actualizar_capas()
 	return true
 
@@ -282,6 +287,11 @@ func derramar_liquidos() -> Array:
 			perdidos.append(id)
 	if perdidos.is_empty():
 		return perdidos
+	# EXTRA (no lo pediste, pero como agregaste un evento nuevo -el
+	# derrame- te dejo el gancho de sonido listo; bórralo si no lo
+	# quieres). Necesita SFX.play_derrame() en SFX.gd, ver el archivo
+	# actualizado.
+	SFX.play_derrame()
 	_actualizar_capas()
 	liquido_derramado.emit(perdidos)
 	return perdidos

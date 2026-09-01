@@ -34,6 +34,10 @@ func _ready() -> void:
 
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
+	# Sonido de "agarrar" propio de este ingrediente (usa ingrediente_id
+	# para elegir cuál de los 10 sonidos de SFX.gd le toca).
+	SFX.play_agarrar(ingrediente_id)
+
 	# El preview es una copia visual que sigue al mouse mientras arrastras.
 	var preview := TextureRect.new()
 	preview.texture = texture

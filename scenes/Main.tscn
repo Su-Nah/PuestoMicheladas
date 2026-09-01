@@ -32,6 +32,22 @@
 [ext_resource type="Texture2D" uid="uid://cb713lud4dh1b" path="res://assets/michelada_capas/gomitas.png" id="47"]
 [ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/mesa.png" id="50"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_ngfvx"]
+font = ExtResource("31_dg70y")
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_ydfnm"]
+font = ExtResource("31_dg70y")
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_cobve"]
+font = ExtResource("31_dg70y")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_kxyth"]
+font = ExtResource("2_v0vrg")
+font_size = 30
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_burbuja"]
 bg_color = Color(1, 1, 1, 0.95)
 border_width_left = 4
@@ -55,22 +71,6 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
-
-[sub_resource type="LabelSettings" id="LabelSettings_ngfvx"]
-font = ExtResource("31_dg70y")
-font_size = 40
-
-[sub_resource type="LabelSettings" id="LabelSettings_ydfnm"]
-font = ExtResource("31_dg70y")
-font_size = 40
-
-[sub_resource type="LabelSettings" id="LabelSettings_cobve"]
-font = ExtResource("31_dg70y")
-font_size = 30
-
-[sub_resource type="LabelSettings" id="LabelSettings_kxyth"]
-font = ExtResource("2_v0vrg")
-font_size = 30
 
 [sub_resource type="LabelSettings" id="LabelSettings_2c4at"]
 font = ExtResource("31_dg70y")
@@ -216,7 +216,7 @@ autowrap_mode = 3
 
 [node name="PedidoBubble" type="Control" parent="ClienteSlot0" unique_id=90100011]
 visible = false
-layout_mode = 0
+anchors_preset = 0
 offset_left = 300.0
 offset_top = 88.0
 offset_right = 580.0
@@ -249,7 +249,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
 
 [node name="MiniVaso" type="Control" parent="ClienteSlot0/PedidoBubble" unique_id=90100015]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 74.0
 offset_top = 20.0
 offset_right = 207.0
@@ -417,7 +417,7 @@ autowrap_mode = 3
 
 [node name="PedidoBubble" type="Control" parent="ClienteSlot1" unique_id=90200011]
 visible = false
-layout_mode = 0
+anchors_preset = 0
 offset_left = 300.0
 offset_top = 88.0
 offset_right = 580.0
@@ -450,7 +450,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
 
 [node name="MiniVaso" type="Control" parent="ClienteSlot1/PedidoBubble" unique_id=90200015]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 74.0
 offset_top = 20.0
 offset_right = 207.0
@@ -618,7 +618,7 @@ autowrap_mode = 3
 
 [node name="PedidoBubble" type="Control" parent="ClienteSlot2" unique_id=90300011]
 visible = false
-layout_mode = 0
+anchors_preset = 0
 offset_left = 300.0
 offset_top = 88.0
 offset_right = 580.0
@@ -651,7 +651,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
 
 [node name="MiniVaso" type="Control" parent="ClienteSlot2/PedidoBubble" unique_id=90300015]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 74.0
 offset_top = 20.0
 offset_right = 207.0
