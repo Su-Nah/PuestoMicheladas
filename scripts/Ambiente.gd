@@ -105,8 +105,8 @@ func _ready() -> void:
 	MUSICA_FONDO = _cargar("res://assets/audio/musica_fondo.ogg")
 	RUIDO_FONDO = _cargar("res://assets/audio/ruido_fondo.ogg")
 	SONIDOS_AMBIENTE = [
-		_cargar("res://assets/audio/ambiente_1.ogg"),
-		_cargar("res://assets/audio/ambiente_2.ogg"),
+		_cargar("res://assets/audio/tamales.ogg"),
+		_cargar("res://assets/audio/fierroviejo.wav"),
 		_cargar("res://assets/audio/ambiente_3.ogg"),
 		_cargar("res://assets/audio/ambiente_4.ogg"),
 		_cargar("res://assets/audio/ambiente_5.ogg"),

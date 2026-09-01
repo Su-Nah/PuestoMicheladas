@@ -23,8 +23,8 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 GameManager="*res://autoload/GameManager.gd"
 CharacterDB="*res://autoload/CharacterDB.gd"
 CustomerSpawner="*res://autoload/CustomerSpawner.gd"
-Ambiente="*uid://bb6nty8ce8efg"
 SFX="*uid://ij7osauepew0"
+Ambiente="*uid://bb6nty8ce8efg"
 
 [display]
 
