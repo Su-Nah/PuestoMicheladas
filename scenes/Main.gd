@@ -197,6 +197,10 @@ const COLOR_NOCHE_MESA := Color(0.50, 0.56, 0.82, 1.0)
 ## golpe al nuevo tono. Súbelo para una transición más lenta/suave.
 const DURACION_TRANSICION_TINTE := 1.5
 
+## Cuánto tarda el "amanecer" entre el fin de un día y el inicio del
+## siguiente (ver _amanecer() y _fin_del_dia() más abajo).
+const DURACION_AMANECER := 2.0
+
 
 ## Llamar cada vez que cambie cuántos clientes del día ya se resolvieron.
 ## progreso: 0.0 = arranca el día (colores normales), 1.0 = ya se fue el
@@ -227,6 +231,27 @@ func _progreso_del_dia() -> float:
 	if total_clientes_dia <= 0:
 		return 0.0
 	return clamp(float(clientes_resueltos) / float(total_clientes_dia), 0.0, 1.0)
+
+
+## "Amanece": anima los 3 grupos de vuelta a colores de día normales, y
+## SE ESPERA (await) a que termine. A diferencia de _actualizar_oscurecido()
+## (que se dispara y sigue, sin bloquear nada, mientras el día transcurre),
+## aquí sí queremos bloquear: ni el indicador de "Día X" ni los clientes
+## del día siguiente deben aparecer hasta que la pantalla ya se vea
+## completamente de día otra vez. Se usa desde _fin_del_dia().
+func _amanecer() -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+
+	for portrait in slot_portraits:
+		if portrait:
+			tween.tween_property(portrait, "modulate", COLOR_DIA, DURACION_AMANECER)
+	if fondo:
+		tween.tween_property(fondo, "modulate", COLOR_DIA, DURACION_AMANECER)
+	if mesa:
+		tween.tween_property(mesa, "modulate", COLOR_DIA, DURACION_AMANECER)
+
+	await tween.finished
 
 
 func _ready() -> void:
@@ -330,10 +355,14 @@ func _fin_del_dia() -> void:
 
 	var resultado := GameManager.avanzar_dia()
 	if resultado == "":
-		_actualizar_info_bar()
 		await get_tree().create_timer(3.0).timeout
 		if result_label:
 			result_label.text = ""
+		# Primero amanece del todo (colores normales)...
+		await _amanecer()
+		# ...y SOLO ya que amaneció se actualiza el indicador de "Día X"
+		# de arriba y empiezan a llegar los clientes del día siguiente.
+		_actualizar_info_bar()
 		_iniciar_dia()
 	# Si resultado != "", GameManager ya emitió game_over.
 
