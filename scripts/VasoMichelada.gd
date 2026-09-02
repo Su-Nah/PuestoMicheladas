@@ -108,9 +108,9 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if not existe:
 		return null
-	# Sonido de "agarrar" del vaso (para cuando lo levantas y lo llevas
-	# hacia un cliente, antes de que empiece a bambolearse).
-	SFX.play_agarrar(VASO)
+	# Sonido propio de agarrar el vaso YA ARMADO (distinto del sonido de
+	# agarrar el ícono de vaso vacío desde la bandeja).
+	SFX.play_agarrar_vaso_listo()
 	set_drag_preview(BamboleoDrag.crear(self))
 	return {"es_vaso": true}
 

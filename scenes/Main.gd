@@ -162,7 +162,7 @@ func _ready() -> void:
 	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
 	vaso.ingrediente_rechazado.connect(_on_ingrediente_rechazado)
 	if reiniciar_btn:
-		reiniciar_btn.pressed.connect(_vaciar_vaso)
+		reiniciar_btn.pressed.connect(_on_reiniciar_btn_pressed)
 
 	for i in range(NUM_SLOTS):
 		slot_nodes[i].gui_input.connect(_on_slot_gui_input.bind(i))
@@ -581,8 +581,18 @@ func _on_ingrediente_rechazado(ingrediente_id: String, motivo: String) -> void:
 	_actualizar_vaso_label()
 
 
-func _vaciar_vaso() -> void:
+## Este SÍ lleva el sonido de clic, porque es lo que corre cuando el
+## JUGADOR presiona el botón "Vaciar vaso" con el mouse. _vaciar_vaso()
+## (sin el "_on_..._pressed") es la lógica pura de reiniciar el vaso, y
+## también la usa _resolver_slot() para limpiar el vaso después de
+## servir a un cliente — ESA llamada no debe sonar a clic de botón,
+## porque ahí nadie le dio clic a nada.
+func _on_reiniciar_btn_pressed() -> void:
 	SFX.play_boton()
+	_vaciar_vaso()
+
+
+func _vaciar_vaso() -> void:
 	vaso.reset()
 	_mostrando_rechazo = false
 	_actualizar_vaso_label()

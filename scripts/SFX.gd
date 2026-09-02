@@ -108,6 +108,18 @@ const VOLUMEN_BOTON_DB := -3.0
 var SONIDO_DERRAME: AudioStream
 const VOLUMEN_DERRAME_DB := 0.0
 
+## NUEVO: el vaso YA ARMADO (con todos sus ingredientes) usa sonidos
+## propios, distintos a "agarrar_vaso"/"soltar_vaso" (que son para
+## cuando agarras el ícono de vaso VACÍO en la bandeja y lo colocas en
+## la mesa). Son 2 acciones distintas y ahora suenan distinto:
+##   - Agarrar el vaso listo para llevarlo hacia un cliente.
+##   - Soltarlo/entregarlo encima de un cliente.
+var SONIDO_AGARRAR_VASO_LISTO: AudioStream
+const VOLUMEN_AGARRAR_VASO_LISTO_DB := -4.0
+
+var SONIDO_ENTREGAR_VASO: AudioStream
+const VOLUMEN_ENTREGAR_VASO_DB := -2.0
+
 
 func _ready() -> void:
 	for i in CANTIDAD_PLAYERS:
@@ -144,6 +156,8 @@ func _ready() -> void:
 
 	SONIDO_BOTON = _cargar("res://assets/audio/click_boton.wav")
 	SONIDO_DERRAME = _cargar("res://assets/audio/derrame.wav")
+	SONIDO_AGARRAR_VASO_LISTO = _cargar("res://assets/audio/agarrar_vaso_listo.wav")
+	SONIDO_ENTREGAR_VASO = _cargar("res://assets/audio/entregar_vaso.wav")
 
 
 ## Carga un audio SOLO SI el archivo ya existe en el proyecto. Si
@@ -191,3 +205,16 @@ func play_boton(extra_db: float = 0.0) -> void:
 ## NUEVO: sonido de derrame (ver VasoMichelada.derramar_liquidos()).
 func play_derrame(extra_db: float = 0.0) -> void:
 	play(SONIDO_DERRAME, VOLUMEN_DERRAME_DB + extra_db)
+
+
+## NUEVO: agarrar el vaso YA ARMADO para llevarlo a un cliente
+## (distinto de play_agarrar("vaso"), que es agarrar el ícono de vaso
+## vacío desde la bandeja de ingredientes).
+func play_agarrar_vaso_listo(extra_db: float = 0.0) -> void:
+	play(SONIDO_AGARRAR_VASO_LISTO, VOLUMEN_AGARRAR_VASO_LISTO_DB + extra_db)
+
+
+## NUEVO: entregarle el vaso a un cliente (distinto de
+## play_soltar("vaso"), que es colocar el vaso vacío sobre la mesa).
+func play_entregar_vaso(extra_db: float = 0.0) -> void:
+	play(SONIDO_ENTREGAR_VASO, VOLUMEN_ENTREGAR_VASO_DB + extra_db)

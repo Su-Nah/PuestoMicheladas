@@ -17,4 +17,7 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 
 
 func _drop_data(_at_position: Vector2, _data: Variant) -> void:
+	# Sonido propio de ENTREGAR el vaso a un cliente (distinto del
+	# sonido de colocar el vaso vacío sobre la mesa).
+	SFX.play_entregar_vaso()
 	vaso_recibido.emit(slot_index)
