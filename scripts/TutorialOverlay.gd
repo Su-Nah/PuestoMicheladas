@@ -91,10 +91,6 @@ var pasos: Array = [
 		"requiere": [],
 	},
 	{
-		"texto": "Eso sí: llévalo CON CALMA. Si lo agitas muy brusco, el vaso gotea y aparece una BARRITA de peligro a su lado: si se llena (amarillo a rojo), el líquido y las gomitas se derraman y tienes que volver a servirlos (¡mientras la paciencia del cliente sigue corriendo!).",
-		"requiere": [],
-	},
-	{
 		"texto": "Última regla, muy importante: tanto la Michelada (cerveza) como el Azulito (vodka) llevan alcohol. Si el cliente es MENOR DE EDAD, mejor no le completes ninguna de las dos.",
 		"requiere": [],
 	},
@@ -242,10 +238,12 @@ func _avanzar() -> void:
 
 
 func _on_siguiente_pressed() -> void:
+	SFX.play_boton()
 	_avanzar()
 
 
 func _on_saltar_pressed() -> void:
+	SFX.play_boton()
 	_terminar()
 
 
@@ -257,4 +255,7 @@ func _terminar() -> void:
 		nancy_portrait.visible = false
 	if vaso != null:
 		vaso.reset()
+	# El tutorial ya terminó (completo o saltado): a partir de ahora sí
+	# pueden empezar a sonar los sonidos aleatorios de ambiente.
+	Ambiente.iniciar_sonidos_aleatorios()
 	tutorial_terminado.emit()

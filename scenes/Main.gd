@@ -161,7 +161,6 @@ func _ready() -> void:
 
 	vaso.ingrediente_soltado.connect(_on_ingrediente_soltado)
 	vaso.ingrediente_rechazado.connect(_on_ingrediente_rechazado)
-	vaso.liquido_derramado.connect(_on_liquido_derramado)
 	if reiniciar_btn:
 		reiniciar_btn.pressed.connect(_vaciar_vaso)
 
@@ -582,23 +581,8 @@ func _on_ingrediente_rechazado(ingrediente_id: String, motivo: String) -> void:
 	_actualizar_vaso_label()
 
 
-## El jugador sacudió tanto el mouse llevando el vaso que el líquido (y las
-## gomitas) se derramaron (ver BamboleoDrag.gd). El vaso NO se pierde: el
-## chamoy, el escarchado y el limón siguen ahí — solo hay que volver a
-## servir lo derramado. Aquí nada más se lo explicamos al jugador, con el
-## mismo mecanismo de "mensaje temporal" que usan los rechazos.
-func _on_liquido_derramado(_ingredientes_perdidos: Array) -> void:
-	if vaso_label == null:
-		return
-	_mostrando_rechazo = true
-	vaso_label.text = "💦 ¡Lo agitaste demasiado y se derramó!\nVuelve a servir el líquido (y las gomitas)."
-
-	await get_tree().create_timer(2.2).timeout
-	_mostrando_rechazo = false
-	_actualizar_vaso_label()
-
-
 func _vaciar_vaso() -> void:
+	SFX.play_boton()
 	vaso.reset()
 	_mostrando_rechazo = false
 	_actualizar_vaso_label()

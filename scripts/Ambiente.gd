@@ -41,12 +41,10 @@ extends Node
 #   ruido_fondo.ogg       -> "cama" de ambiente de calle/mercado, bajita,
 #                             constante (NO debe tener picos fuertes,
 #                             o se va a notar mucho el loop).
-#   ambiente_1..5.ogg     -> sonidos puntuales y variados, por ejemplo:
-#                             1. campanita de la puerta del puesto
-#                             2. un perro ladrando a lo lejos
-#                             3. gente riéndose/platicando (murmullo)
-#                             4. un coche pasando
-#                             5. hielo cayendo dentro de un vaso
+#   ambiente_1..5.ogg     -> sonidos puntuales y variados. Ahora mismo el
+#                             arreglo de abajo usa: tamales.wav,
+#                             fierroviejo.wav, camotes.wav,
+#                             ambiente_4.ogg y ambiente_5.ogg.
 #
 # OJO CON EL FORMATO: para música/ambiente largos usa .ogg (pesa menos
 # que .wav y se importa igual de fácil). Para sonidos cortos (SFX.gd),
@@ -92,8 +90,17 @@ const BUS_AMBIENTE := "Master" # cámbialo a "Ambiente" cuando crees el bus
 ## Se elige un número al azar EN ESE RANGO cada vez, para que no se
 ## sienta repetitivo/predecible. Súbelos si sientes que suenan muy
 ## seguido; bájalos si el ambiente se siente muy vacío/silencioso.
-const TIEMPO_MIN_AMBIENTE := 10.0
-const TIEMPO_MAX_AMBIENTE := 25.0
+const TIEMPO_MIN_AMBIENTE := 20.0
+const TIEMPO_MAX_AMBIENTE := 45.0
+
+## Los sonidos aleatorios de ambiente empiezan APAGADOS: no arrancan
+## solos en _ready(). TutorialOverlay.gd llama a
+## iniciar_sonidos_aleatorios() cuando el tutorial termina (se completa
+## O se salta con el botón "Saltar"), para que no empiecen a sonar
+## mientras el jugador todavía está leyendo el tutorial.
+## La música y el ruido de fondo NO se tocan: esos sí siguen sonando
+## desde que arranca el juego, como antes.
+var _ambiente_aleatorio_iniciado := false
 
 var _musica: AudioStreamPlayer
 var _ruido: AudioStreamPlayer
@@ -105,9 +112,9 @@ func _ready() -> void:
 	MUSICA_FONDO = _cargar("res://assets/audio/musica_fondo.ogg")
 	RUIDO_FONDO = _cargar("res://assets/audio/ruido_fondo.ogg")
 	SONIDOS_AMBIENTE = [
-		_cargar("res://assets/audio/tamales.ogg"),
+		_cargar("res://assets/audio/tamales.wav"),
 		_cargar("res://assets/audio/fierroviejo.wav"),
-		_cargar("res://assets/audio/ambiente_3.ogg"),
+		_cargar("res://assets/audio/camotes.wav"),
 		_cargar("res://assets/audio/ambiente_4.ogg"),
 		_cargar("res://assets/audio/ambiente_5.ogg"),
 	]
@@ -123,6 +130,19 @@ func _ready() -> void:
 	add_child(_timer_ambiente)
 	_timer_ambiente.one_shot = true
 	_timer_ambiente.timeout.connect(_reproducir_ambiente_aleatorio)
+	# OJO: aquí YA NO se llama _programar_siguiente_ambiente(). Esperamos
+	# a que TutorialOverlay.gd avise que el tutorial terminó (ver
+	# iniciar_sonidos_aleatorios() más abajo).
+
+
+## Llamar UNA vez que el tutorial termina (completo o saltado), para
+## que empiecen a sonar los 5 sonidos aleatorios de ambiente. El "if"
+## evita que se reinicie el conteo si por alguna razón se llama más de
+## una vez (ej. si _terminar() se disparara dos veces).
+func iniciar_sonidos_aleatorios() -> void:
+	if _ambiente_aleatorio_iniciado:
+		return
+	_ambiente_aleatorio_iniciado = true
 	_programar_siguiente_ambiente()
 
 
