@@ -45,6 +45,14 @@ const NUM_SLOTS := 3
 
 @onready var tutorial: TutorialOverlay = get_node_or_null("TutorialLayer")
 
+## Usados por el oscurecido de fin de día (ver más abajo): "fondo" es el
+## fondo de toda la pantalla, "mesa" es el contenedor de la mesa (que ya
+## incluye, como hijos, la mesa misma, todos los íconos de ingredientes,
+## y el vaso) — así que basta con teñir a "mesa" para que se tiña TODO lo
+## que hay encima de ella.
+@onready var fondo: TextureRect = get_node_or_null("Fondo")
+@onready var mesa: ColorRect = get_node_or_null("Mesa")
+
 ## Nodos de los 3 "puestos" de cliente, en orden. Cada uno es un
 ## ClienteSlotDrop (Control clickeable + zona de soltar el vaso) con un
 ## TextureRect (retrato), Label (nombre), TextureRect (emoji), ProgressBar
@@ -147,6 +155,80 @@ var jornada_activa := false # false mientras se muestra el resumen del día o el
 var _mostrando_rechazo := false
 
 
+# =====================================================================
+# OSCURECIDO DE FIN DE DÍA (efecto "atardecer")
+# ---------------------------------------------------------------------
+# Conforme avanza el día (se van resolviendo clientes), tres grupos de
+# nodos se ponen progresivamente más oscuros y con un tinte azulado:
+#   1. PERSONAJES -> los retratos de los 3 clientes (slot_portraits).
+#   2. FONDO      -> el fondo de toda la pantalla (nodo "Fondo").
+#   3. MESA       -> el nodo "Mesa" (y, como consecuencia, TODO lo que
+#      cuelga de él: el tablero, los íconos de ingredientes, el vaso).
+#
+# Los indicadores (MoneyLabel, DayLabel, DayTimeline con los clientes
+# que van a aparecer) NUNCA se tocan aquí a propósito, para que sigan
+# siendo legibles pase lo que pase.
+#
+# CÓMO FUNCIONA POR DENTRO: cada CanvasItem (TextureRect, ColorRect,
+# etc.) tiene una propiedad "modulate" — un color que se MULTIPLICA
+# sobre lo que dibuja ese nodo Y TODOS SUS HIJOS. Blanco (1,1,1,1) =
+# "sin filtro, color normal". Bajar los 3 números = oscurecer; subir el
+# azul (el 3er número) por encima del rojo/verde = tinte azul. Aquí
+# simplemente interpolamos (lerp) entre el color de día y un color de
+# "noche" propio de cada grupo, según _progreso_del_dia().
+# =====================================================================
+
+## Color normal ("de día", sin filtro) para los 3 grupos. Prácticamente
+## nunca hace falta tocar esto.
+const COLOR_DIA := Color(1.0, 1.0, 1.0, 1.0)
+
+## <<< AJUSTA AQUÍ EL COLOR "DE NOCHE" DE CADA GRUPO >>>
+## Es el color que alcanza cada grupo justo cuando se fue el ÚLTIMO
+## cliente del día (progreso = 100%). Para cada uno:
+##   - Bájale los 3 números (R, G, B) por igual para oscurecer más.
+##   - Sube el B (azul) por encima de R y G para que se vea más azulado.
+##   - Deja el 4to número (alpha) en 1.0 casi siempre.
+const COLOR_NOCHE_PERSONAJES := Color(0.55, 0.60, 0.85, 1.0)
+const COLOR_NOCHE_FONDO := Color(0.35, 0.42, 0.75, 1.0)
+const COLOR_NOCHE_MESA := Color(0.50, 0.56, 0.82, 1.0)
+
+## Cuánto tarda (en segundos) en verse el cambio de color cada vez que
+## se actualiza (cuando se resuelve un cliente), en vez de saltar de
+## golpe al nuevo tono. Súbelo para una transición más lenta/suave.
+const DURACION_TRANSICION_TINTE := 1.5
+
+
+## Llamar cada vez que cambie cuántos clientes del día ya se resolvieron.
+## progreso: 0.0 = arranca el día (colores normales), 1.0 = ya se fue el
+## último cliente (colores "de noche" al 100%). Anima suavemente hacia
+## el color nuevo en vez de saltar de golpe.
+func _actualizar_oscurecido(progreso: float) -> void:
+	progreso = clamp(progreso, 0.0, 1.0)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+
+	for portrait in slot_portraits:
+		if portrait:
+			tween.tween_property(portrait, "modulate", COLOR_DIA.lerp(COLOR_NOCHE_PERSONAJES, progreso), DURACION_TRANSICION_TINTE)
+
+	if fondo:
+		tween.tween_property(fondo, "modulate", COLOR_DIA.lerp(COLOR_NOCHE_FONDO, progreso), DURACION_TRANSICION_TINTE)
+
+	if mesa:
+		tween.tween_property(mesa, "modulate", COLOR_DIA.lerp(COLOR_NOCHE_MESA, progreso), DURACION_TRANSICION_TINTE)
+
+
+## Qué tan avanzado va el día (0.0 a 1.0), calculado con cuántos de los
+## clientes de HOY ya se resolvieron (fueron atendidos o se cansaron de
+## esperar). No depende de un reloj/tiempo real: avanza por clientes, así
+## que funciona igual sin importar cuánto tarde cada uno.
+func _progreso_del_dia() -> float:
+	if total_clientes_dia <= 0:
+		return 0.0
+	return clamp(float(clientes_resueltos) / float(total_clientes_dia), 0.0, 1.0)
+
+
 func _ready() -> void:
 	if vaso == null:
 		push_error("Main.gd: no se encontró Mesa/Vaso. Revisa Main.tscn — el juego no puede funcionar sin él.")
@@ -209,6 +291,7 @@ func _iniciar_dia() -> void:
 	calidades_del_dia.clear()
 	if result_label:
 		result_label.text = ""
+	_actualizar_oscurecido(0.0) # arranca el día con colores normales
 	_construir_timeline()
 	for i in range(NUM_SLOTS):
 		_actualizar_slot_ui(i)
@@ -422,6 +505,7 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		slot_dialogos[idx].text = mensaje
 	clientes_resueltos += 1
 	_actualizar_timeline()
+	_actualizar_oscurecido(_progreso_del_dia())
 
 	await get_tree().create_timer(1.3).timeout
 
