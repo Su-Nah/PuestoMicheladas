@@ -139,40 +139,44 @@ const PALABRAS_COLOREADAS := {
 ## avanzar solo; vacío = se avanza con el botón "Siguiente").
 var pasos: Array = [
 	{
-		"texto": "¡Hola! Soy Nancy, tu hermana. Aquí se preparan dos bebidas: la Michelada y el Azulito. Te voy a enseñar los pasos con una Michelada — el Azulito se prepara casi igual.",
+		"texto": "Qué onda, carnal. Necesito que me cuides tantito el changarro por siete días en lo que busco otro trabajo para pagar la renta.",
 		"requiere": [],
 	},
 	{
-		"texto": "Todo empieza igual: no hay ningún vaso puesto todavía. Arrastra un VASO al centro de la mesa para crear una bebida nueva.",
+		"texto": "Está bien fácil. Aquí se preparan dos bebidas: la michelada y el azulito.",
+		"requiere": [],
+	},
+	{
+		"texto": "Empecemos con la michelada: arrastra un VASO al centro de la mesa.",
 		"requiere": ["vaso"],
 	},
 	{
-		"texto": "Ahora dale sabor al borde con CHAMOY: rojo o azul, el que gustes (aquí vamos a usar el rojo).",
+		"texto": "Ahora ponle al borde CHAMOY rojo o azul.",
 		"requiere": ["chamoy_cafe", "chamoy_azul"],
 	},
 	{
-		"texto": "Encima del chamoy va el CHILE EN POLVO (el escarchado): también rojo o azul.",
+		"texto": "Encima del chamoy va el CHILE EN POLVO (el escarchado) del color que quieras.",
 		"requiere": ["escarchado_cafe", "escarchado_azul"],
 	},
 	{
-		"texto": "Aquí el camino se divide en dos: si sigues con LIMÓN, es una Michelada; si sigues con VODKA, es un Azulito. Vamos a hacer una Michelada — dale LIMÓN.",
+		"texto": "Como vamos a hacer la michelada sigue el LIMÓN.",
 		"requiere": ["limon"],
 	},
 	{
-		"texto": "Después del limón va la CERVEZA. (Si hubieras elegido vodka, aquí iría GATORLITE en su lugar.)",
+		"texto": "Después del limón va la CERVEZA.",
 		"requiere": ["cerveza"],
 	},
 	{
-		"texto": "Por último, unas GOMITAS para decorar — y con eso la Michelada ya queda lista.",
+		"texto": "Por último, unas GOMITAS para decorar — y con eso la michelada ya queda lista.",
 		"requiere": ["gomitas"],
 	},
 	{
-		"texto": "¡Michelada lista! Ahora te enseño el otro camino: el Azulito. Vamos a vaciar este vaso y armar uno nuevo desde cero.",
+		"texto": "Ahora te enseño a hacer el azulito. Vamos a vaciar este vaso y armar uno nuevo desde cero.",
 		"requiere": [],
 		"vaciar_vaso_al_mostrar": true,
 	},
 	{
-		"texto": "Arrastra un VASO nuevo al centro de la mesa para empezar el Azulito.",
+		"texto": "Arrastra un VASO nuevo al centro de la mesa para empezar el azulito.",
 		"requiere": ["vaso"],
 	},
 	{
@@ -184,7 +188,7 @@ var pasos: Array = [
 		"requiere": ["escarchado_cafe", "escarchado_azul"],
 	},
 	{
-		"texto": "Aquí está la diferencia con la Michelada: en vez de limón, ahora sí dale VODKA — esto es justo lo que hace que sea un Azulito.",
+		"texto": "Aquí está la diferencia con la michelada: en vez de limón, le pones VODKA.",
 		"requiere": ["vodka"],
 	},
 	{
@@ -192,19 +196,15 @@ var pasos: Array = [
 		"requiere": ["gatorlite"],
 	},
 	{
-		"texto": "Y para cerrar, otra vez unas GOMITAS. ¡Tu Azulito ya está listo!",
+		"texto": "¡Ahora ponle unas gomitas y tu azulito está listo!",
 		"requiere": ["gomitas"],
 	},
 	{
-		"texto": "Para servirla, ya no hay botón: arrastra el VASO COMPLETO directo hacia el cliente al que se la vas a dar. Así, si hay dos o tres clientes a la vez, no hay forma de confundirte.",
+		"texto": "¡Casi se me olvida! La michelada y el azulito llevan alcohol. Si viene un MENOR DE EDAD, mejor no le vendas.",
 		"requiere": [],
 	},
 	{
-		"texto": "Última regla, muy importante: tanto la Michelada (cerveza) como el Azulito (vodka) llevan alcohol. Si el cliente es MENOR DE EDAD, mejor no le completes ninguna de las dos.",
-		"requiere": [],
-	},
-	{
-		"texto": "¡Listo! Ya sabes todo lo que necesitas. Ahora sí... ¡a atender el puesto! Buena suerte.",
+		"texto": "Ya para servirla solo arrastras el VASO COMPLETO al cliente. OJO QUE NO SE TE VAYA A CAER.",
 		"requiere": [],
 	},
 ]
@@ -271,11 +271,9 @@ func _process(_delta: float) -> void:
 	_debug_acumulado += _delta if _delta > 0.0 else 0.016
 	if _debug_acumulado >= 1.0:
 		_debug_acumulado = 0.0
-		print("[PARPADEO] moviendo ", nodos_activos.size(), " nodo(s), t=", t)
 
 
 func _ready() -> void:
-	print("[TUTORIAL] Versión del script cargada: v7-sin-tween")
 	siguiente_btn.pressed.connect(_on_siguiente_pressed)
 	saltar_btn.pressed.connect(_on_saltar_pressed)
 	if vaso != null:

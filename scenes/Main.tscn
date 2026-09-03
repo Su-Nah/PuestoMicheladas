@@ -98,10 +98,6 @@ font_size = 50
 font = ExtResource("2_v0vrg")
 font_size = 30
 
-[sub_resource type="LabelSettings" id="LabelSettings_a3g7j"]
-font = ExtResource("2_v0vrg")
-font_size = 20
-
 [node name="Main" type="Control" unique_id=173019364]
 layout_mode = 3
 anchors_preset = 15
@@ -1142,23 +1138,6 @@ mouse_filter = 2
 texture = ExtResource("47")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="VasoLabel" type="Label" parent="Mesa/Vaso" unique_id=1013007674]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -149.0
-offset_top = -2.0
-offset_right = 149.0
-offset_bottom = 256.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 17
-text = "No hay vaso.
-Arrastra uno aquí para empezar."
-label_settings = SubResource("LabelSettings_a3g7j")
-horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="ReiniciarBtn" type="Button" parent="Mesa" unique_id=1707587747]
 layout_mode = 0

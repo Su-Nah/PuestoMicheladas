@@ -75,7 +75,7 @@ var SONIDOS_AMBIENTE: Array[AudioStream] = []
 #              distinga cuando suena, pero sin sobresaltar.
 # =====================================================================
 const VOLUMEN_MUSICA_DB := -10.0
-const VOLUMEN_RUIDO_DB := -20.0
+const VOLUMEN_RUIDO_DB := -13.0
 const VOLUMEN_AMBIENTE_DB := -8.0
 
 ## Buses de audio (opcionales pero recomendados). Créalos en el panel
@@ -90,8 +90,8 @@ const BUS_AMBIENTE := "Master" # cámbialo a "Ambiente" cuando crees el bus
 ## Se elige un número al azar EN ESE RANGO cada vez, para que no se
 ## sienta repetitivo/predecible. Súbelos si sientes que suenan muy
 ## seguido; bájalos si el ambiente se siente muy vacío/silencioso.
-const TIEMPO_MIN_AMBIENTE := 20.0
-const TIEMPO_MAX_AMBIENTE := 45.0
+const TIEMPO_MIN_AMBIENTE := 30.0
+const TIEMPO_MAX_AMBIENTE := 60.0
 
 ## Los sonidos aleatorios de ambiente empiezan APAGADOS: no arrancan
 ## solos en _ready(). TutorialOverlay.gd llama a
@@ -109,8 +109,8 @@ var _timer_ambiente: Timer
 
 
 func _ready() -> void:
-	MUSICA_FONDO = _cargar("res://assets/audio/musica_fondo.ogg")
-	RUIDO_FONDO = _cargar("res://assets/audio/ruido_fondo.ogg")
+	MUSICA_FONDO = _cargar("res://assets/audio/CumbiaInstrumental-SinCopyright-LibreUso.mp3")
+	RUIDO_FONDO = _cargar("res://assets/audio/ruido_mexico.wav")
 	SONIDOS_AMBIENTE = [
 		_cargar("res://assets/audio/tamales.wav"),
 		_cargar("res://assets/audio/fierroviejo.wav"),
