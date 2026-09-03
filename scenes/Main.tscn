@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bex4fhnyuxitn" path="res://scripts/ClienteSlotDrop.gd" id="4"]
 [ext_resource type="Texture2D" uid="uid://cjx7cmyw6n0nq" path="res://assets/sprites/ingredients/limon.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://b5lu0r2p0o70l" path="res://assets/sprites/ajolopeso.png" id="5_2c4at"]
+[ext_resource type="Texture2D" uid="uid://bvhsfe766ks5k" path="res://assets/sprites/pausa.png" id="6_2c4at"]
 [ext_resource type="Texture2D" uid="uid://dv70q2mtycbdh" path="res://assets/sprites/faces/neutral.png" id="10"]
 [ext_resource type="Texture2D" uid="uid://dnh3bk3prd0l8" path="res://assets/sprites/ingredients/escarchado_cafe.png" id="11"]
 [ext_resource type="Texture2D" uid="uid://dbpwy8iy2rt1j" path="res://assets/sprites/ingredients/escarchado_azul.png" id="12"]
@@ -158,6 +159,19 @@ offset_top = 30.0
 offset_right = 1650.0
 offset_bottom = 81.0
 size_flags_horizontal = 3
+
+[node name="pausa" type="TextureRect" parent="." unique_id=738692701]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -97.0
+offset_top = 36.0
+offset_right = -34.0
+offset_bottom = 99.0
+grow_horizontal = 0
+texture = ExtResource("6_2c4at")
+expand_mode = 2
 
 [node name="ClienteSlot0" type="Control" parent="." unique_id=63804865]
 modulate = Color(1, 1, 1, 0.35)

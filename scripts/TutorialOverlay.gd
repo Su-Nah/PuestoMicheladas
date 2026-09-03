@@ -204,7 +204,7 @@ var pasos: Array = [
 		"requiere": [],
 	},
 	{
-		"texto": "Ya para servirla solo arrastras el VASO COMPLETO al cliente. OJO QUE NO SE TE VAYA A CAER.",
+		"texto": "Ya para servirla arrastras el vaso al cliente SIN QUE SE TE CAIGA. Ahora sí, ahí nos vidrios.",
 		"requiere": [],
 	},
 ]
@@ -437,8 +437,6 @@ func _resaltar(ids: Array) -> void:
 	if ids.has("vaso") and _vaso_faltante:
 		_vaso_faltante.pivot_offset = _vaso_faltante.size / 2.0
 		_resaltados.append(_vaso_faltante)
-	print("[TUTORIAL DEBUG] _resaltar() dejó ", _resaltados.size(), " nodo(s) listos para parpadear: ", _resaltados)
-
 
 func _quitar_resaltados() -> void:
 	for nodo in _resaltados:
