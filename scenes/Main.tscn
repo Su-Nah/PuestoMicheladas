@@ -19,7 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://bdfs2c8raliin" path="res://assets/michelada_capas/rim_escarchado_cafe.png" id="27"]
 [ext_resource type="Texture2D" uid="uid://gg33dn6wtijr" path="res://assets/michelada_capas/rim_escarchado_azul.png" id="28"]
 [ext_resource type="Texture2D" uid="uid://ck20t8v1lh86j" path="res://assets/michelada_capas/limon.png" id="29"]
-[ext_resource type="Script" uid="uid://brata5s6568mm" path="res://scripts/TutorialOverlay.gd" id="31"]
+[ext_resource type="Script" uid="uid://ccac2fsj4a3ev" path="res://scripts/TutorialOverlay.gd" id="31"]
 [ext_resource type="FontFile" uid="uid://bdgoxwge0j1y" path="res://assets/fonts/Sedgwick_Ave_Display/SedgwickAveDisplay-Regular.ttf" id="31_dg70y"]
 [ext_resource type="Texture2D" uid="uid://b773mjm7wbcm6" path="res://assets/sprites/nancy_la_hermana.png" id="32"]
 [ext_resource type="Texture2D" uid="uid://ddk54pec27n7p" path="res://assets/sprites/ingredients/chamoy_cafe.png" id="40"]

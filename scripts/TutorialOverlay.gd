@@ -7,6 +7,24 @@ extends Control
 ## cuando el jugador la hace de verdad (arrastrar tal ingrediente, o el
 ## vaso mismo). Los pasos sin acción (intro, explicaciones, cierre) usan
 ## el botón "Siguiente".
+##
+## >>> CAMBIO DE ESTA VERSIÓN (arregla "nada parpadea") <<<
+## El parpadeo YA NO usa Tween. Antes, _crear_parpadeo() armaba un Tween
+## que animaba "scale" y "modulate" — y los Tween en Godot se congelan
+## solitos si en cualquier parte del proyecto quedó activo
+## Engine.time_scale = 0 o get_tree().paused = true (aunque sea en un
+## script que no tiene nada que ver, como Ambiente.gd). Como el resto del
+## juego (botones, sonidos, texto) no depende de Tween, todo eso seguía
+## funcionando mientras el parpadeo se quedaba congelado — exactamente lo
+## que describiste.
+##
+## Ahora el parpadeo se calcula a mano en _process(), usando
+## Time.get_ticks_msec() (el reloj real de milisegundos del sistema, que
+## NO se ve afectado por time_scale ni por pausas) en vez de acumular
+## "delta". Así que sí o sí va a parpadear, sin importar qué esté pasando
+## en el resto del proyecto. Si con esta versión SIGUE sin parpadear nada,
+## el problema ya no es de Tween — revisa la nota junto a _process() más
+## abajo, ahí te digo exactamente qué mirar en la consola de Godot.
 
 signal tutorial_terminado
 
@@ -192,12 +210,72 @@ var pasos: Array = [
 ]
 
 var indice := 0
+
+## --- PARPADEO (sin Tween) -------------------------------------------
+## _resaltados: íconos de ingrediente (+ vaso_faltante) que deben parpadear
+## ahora mismo. _resaltado_boton: el botón "Siguiente", cuando le toca
+## parpadear a él en vez de a los ingredientes. Nunca los dos a la vez.
 var _resaltados: Array = []
-var _tween_ingredientes: Tween
-var _tween_boton: Tween
+var _resaltado_boton: Control = null
+
+## <<< AQUÍ AJUSTAS QUÉ TAN GRANDE Y BRILLANTE SE VE EL PARPADEO >>>
+## PARPADEO_ESCALA: 1.0 = tamaño normal. 1.08 = crece un 8%.
+const PARPADEO_ESCALA := 1.08
+## Qué tan rápido parpadea. Más alto = más rápido.
+const PARPADEO_VELOCIDAD := 4.0
+## Color en el pico del parpadeo (más claro que blanco = "destello").
+const PARPADEO_COLOR_BRILLO := Color(1.6, 1.5, 1.05, 1.0)
+
+## Para el print de diagnóstico de abajo — no lo borres todavía.
+var _debug_acumulado := 0.0
+
+
+## El parpadeo se recalcula cada frame a mano (sin Tween — ver la nota
+## grande junto al "class_name" arriba del archivo). Usamos
+## Time.get_ticks_msec() en vez de sumar "delta" porque ese reloj SIEMPRE
+## avanza a tiempo real, pase lo que pase con Engine.time_scale o con
+## get_tree().paused en cualquier otra parte del proyecto.
+##
+## >>> SI CON ESTA VERSIÓN TODAVÍA NO PARPADEA NADA <<<: corre el juego,
+## llega a un paso que debería parpadear, y mira la consola/Output de
+## Godot (abajo del editor). Cada ~1 segundo debería aparecer una línea
+## así:
+##   [PARPADEO] moviendo 1 nodo(s), t=0.73
+## - Si esa línea NO aparece nunca: este script no se está ejecutando de
+##   verdad (revisa que TutorialLayer, en Main.tscn, tenga este archivo
+##   puesto en su campo "Script" — a veces al copiar/pegar nodos Godot
+##   deja el script viejo pegado, o queda un .gd duplicado en otra
+##   carpeta con el mismo class_name, y Godot carga ese por error).
+## - Si SÍ aparece pero nada se mueve en pantalla: el nodo se está
+##   escalando/iluminando de verdad, pero algo lo tapa o lo tiene detrás
+##   (revisa el orden de nodos y que "clip_contents" esté apagado en los
+##   padres del ícono).
+func _process(_delta: float) -> void:
+	if _resaltados.is_empty() and _resaltado_boton == null:
+		return
+
+	var t_seg: float = Time.get_ticks_msec() / 1000.0
+	var t: float = (sin(t_seg * PARPADEO_VELOCIDAD) + 1.0) / 2.0 # oscila 0..1
+	var escala: float = lerp(1.0, PARPADEO_ESCALA, t)
+	var brillo: Color = Color(1, 1, 1, 1).lerp(PARPADEO_COLOR_BRILLO, t)
+
+	var nodos_activos: Array = _resaltados.duplicate()
+	if _resaltado_boton:
+		nodos_activos.append(_resaltado_boton)
+
+	for nodo in nodos_activos:
+		if is_instance_valid(nodo):
+			nodo.scale = Vector2(escala, escala)
+			nodo.modulate = brillo
+
+	_debug_acumulado += _delta if _delta > 0.0 else 0.016
+	if _debug_acumulado >= 1.0:
+		_debug_acumulado = 0.0
+		print("[PARPADEO] moviendo ", nodos_activos.size(), " nodo(s), t=", t)
 
 
 func _ready() -> void:
+	print("[TUTORIAL] Versión del script cargada: v7-sin-tween")
 	siguiente_btn.pressed.connect(_on_siguiente_pressed)
 	saltar_btn.pressed.connect(_on_saltar_pressed)
 	if vaso != null:
@@ -209,19 +287,15 @@ func _ready() -> void:
 		nancy_portrait.visible = true
 	if texto_label:
 		texto_label.bbcode_enabled = true
+		# <<< AQUÍ CAMBIAS LA FUENTE Y EL TAMAÑO DEL TEXTO DE NANCY >>>
+		texto_label.add_theme_font_override("normal_font", preload("res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf"))
+		texto_label.add_theme_font_size_override("normal_font_size", 50)
 	_crear_vaso_faltante()
 
-	# BUG ARREGLADO: antes, mostrar_paso(0) se llamaba aquí mismo, en el
-	# mismo frame de _ready(). El problema es que Godot llama _ready() de
-	# ABAJO hacia ARRIBA y por RAMAS: como "Mesa" (con todos los íconos de
-	# ingredientes) está en una rama distinta a "TutorialLayer", no había
-	# garantía de que los íconos ya estuvieran completamente listos (con
-	# su propio _ready() ya corrido) en ese instante — y por eso a veces
-	# el bloqueo de "no se puede arrastrar nada todavía" no alcanzaba a
-	# aplicarse a tiempo, dejando TODO arrastrable desde la presentación
-	# de Nancy. "await process_frame" espera a que el árbol COMPLETO de
-	# la escena termine su primer _ready() antes de bloquear/mostrar el
-	# paso 0, así ya no importa en qué orden esté cada nodo.
+	# Esperamos un frame completo antes de mostrar el paso 0, para que
+	# TODOS los nodos de la escena (incluyendo los íconos de "Mesa", que
+	# está en otra rama del árbol) ya hayan corrido su propio _ready()
+	# antes de que este script empiece a bloquear/resaltar cosas.
 	await get_tree().process_frame
 	mostrar_paso(0)
 
@@ -349,6 +423,8 @@ func _bloquear_ingredientes(permitidos: Array) -> void:
 		nodo.modulate = Color(1, 1, 1, 1) if habilitado else Color(1, 1, 1, 0.35)
 
 
+## Arma la lista de nodos que deben parpadear ahora (_process se encarga
+## de animarlos de verdad, frame a frame).
 func _resaltar(ids: Array) -> void:
 	_quitar_resaltados()
 	if ingredientes_grid == null:
@@ -356,23 +432,26 @@ func _resaltar(ids: Array) -> void:
 	for id in ids:
 		var nodo := ingredientes_grid.get_node_or_null(NODOS_INGREDIENTE.get(id, "")) as Control
 		if nodo:
+			nodo.pivot_offset = nodo.size / 2.0
 			_resaltados.append(nodo)
 	# El contorno "vaso_faltante" también debe parpadear mientras haga
 	# falta un vaso, igual que el ícono de la bandeja.
 	if ids.has("vaso") and _vaso_faltante:
+		_vaso_faltante.pivot_offset = _vaso_faltante.size / 2.0
 		_resaltados.append(_vaso_faltante)
-	if _resaltados.is_empty():
-		return
-	_tween_ingredientes = _crear_parpadeo(_resaltados)
+	print("[TUTORIAL DEBUG] _resaltar() dejó ", _resaltados.size(), " nodo(s) listos para parpadear: ", _resaltados)
 
 
 func _quitar_resaltados() -> void:
-	if _tween_ingredientes:
-		_tween_ingredientes.kill()
-		_tween_ingredientes = null
 	for nodo in _resaltados:
 		if is_instance_valid(nodo):
 			nodo.scale = Vector2(1, 1)
+			# OJO: NO tocar nodo.modulate aquí. _bloquear_ingredientes()
+			# ya se encargó, justo antes de esto, de dejar cada ícono en
+			# su opacidad correcta (atenuado si ya no aplica, normal si
+			# sigue permitido). Si aquí lo forzamos de vuelta a blanco
+			# opaco, le pisamos esa atenuación al ícono del paso anterior
+			# y se ve "iluminado" aunque ya no le toque brillar.
 	_resaltados.clear()
 
 
@@ -380,35 +459,15 @@ func _quitar_resaltados() -> void:
 ## clicarlo para avanzar (pasos sin "requiere").
 func _parpadear_boton() -> void:
 	_dejar_de_parpadear_boton()
-	_tween_boton = _crear_parpadeo([siguiente_btn])
+	siguiente_btn.pivot_offset = siguiente_btn.size / 2.0
+	_resaltado_boton = siguiente_btn
+	print("[TUTORIAL DEBUG] _parpadear_boton() activado sobre ", siguiente_btn.name)
 
 
 func _dejar_de_parpadear_boton() -> void:
-	if _tween_boton:
-		_tween_boton.kill()
-		_tween_boton = null
+	_resaltado_boton = null
 	siguiente_btn.scale = Vector2(1, 1)
-
-
-## Motor compartido del parpadeo: agranda y encoge en loop, en paralelo,
-## la lista de nodos que le pases. Lo usan tanto _resaltar() (íconos +
-## vaso_faltante) como _parpadear_boton() (el botón Siguiente).
-func _crear_parpadeo(nodos: Array) -> Tween:
-	for nodo in nodos:
-		nodo.pivot_offset = nodo.size / 2.0
-	var tween := create_tween().set_loops()
-	# OJO: si en algún momento el juego pausa el árbol de escena mientras
-	# se muestra el tutorial (get_tree().paused = true), un Tween normal
-	# se detiene solo — y eso se ve exactamente como "no parpadea nada".
-	# Esta línea obliga a que el parpadeo siga corriendo pase lo que pase.
-	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	tween.set_trans(Tween.TRANS_SINE)
-	for nodo in nodos:
-		tween.parallel().tween_property(nodo, "scale", Vector2(1.18, 1.18), 0.45)
-	tween.chain()
-	for nodo in nodos:
-		tween.parallel().tween_property(nodo, "scale", Vector2(1.0, 1.0), 0.45)
-	return tween
+	siguiente_btn.modulate = Color(1, 1, 1, 1)
 
 
 func _on_ingrediente_soltado(ingrediente_id: String) -> void:
