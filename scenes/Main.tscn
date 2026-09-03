@@ -5,8 +5,10 @@
 [ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/fondo.png" id="2_dg70y"]
 [ext_resource type="FontFile" uid="uid://e07c6is6ur5k" path="res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf" id="2_v0vrg"]
 [ext_resource type="Script" uid="uid://wa7elcp6n1mu" path="res://scripts/VasoMichelada.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://dq5pgafe2ar8m" path="res://assets/sprites/calendario.png" id="3_pnhog"]
 [ext_resource type="Script" uid="uid://bex4fhnyuxitn" path="res://scripts/ClienteSlotDrop.gd" id="4"]
 [ext_resource type="Texture2D" uid="uid://cjx7cmyw6n0nq" path="res://assets/sprites/ingredients/limon.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://b5lu0r2p0o70l" path="res://assets/sprites/ajolopeso.png" id="5_2c4at"]
 [ext_resource type="Texture2D" uid="uid://dv70q2mtycbdh" path="res://assets/sprites/faces/neutral.png" id="10"]
 [ext_resource type="Texture2D" uid="uid://dnh3bk3prd0l8" path="res://assets/sprites/ingredients/escarchado_cafe.png" id="11"]
 [ext_resource type="Texture2D" uid="uid://dbpwy8iy2rt1j" path="res://assets/sprites/ingredients/escarchado_azul.png" id="12"]
@@ -126,21 +128,31 @@ offset_right = 1310.0
 offset_bottom = 81.0
 alignment = 1
 
+[node name="TextureRect" type="TextureRect" parent="InfoBar" unique_id=959433900]
+layout_mode = 2
+texture = ExtResource("3_pnhog")
+expand_mode = 2
+
 [node name="DayLabel" type="Label" parent="InfoBar" unique_id=22815888]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Día 1 / 7"
+text = "1 / 7"
 label_settings = SubResource("LabelSettings_ngfvx")
 
 [node name="Spacer" type="Control" parent="InfoBar" unique_id=1142104026]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 
+[node name="TextureRect2" type="TextureRect" parent="InfoBar" unique_id=1927909980]
+layout_mode = 2
+texture = ExtResource("5_2c4at")
+expand_mode = 2
+
 [node name="MoneyLabel" type="Label" parent="InfoBar" unique_id=2082340388]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 22
-text = "Dinero: $0"
+text = "$0"
 label_settings = SubResource("LabelSettings_ydfnm")
 
 [node name="DayTimeline" type="HBoxContainer" parent="." unique_id=1399139259]

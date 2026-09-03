@@ -779,14 +779,14 @@ func _texto_resultado(calidad: float, precio: int) -> String:
 
 func _on_money_changed(new_amount: int) -> void:
 	if money_label:
-		money_label.text = "Dinero: $%d" % new_amount
+		money_label.text = "$%d" % new_amount
 
 
 func _actualizar_info_bar() -> void:
 	if day_label:
-		day_label.text = "Día %d / %d" % [GameManager.current_day, GameManager.TOTAL_DAYS]
+		day_label.text = "%d / %d" % [GameManager.current_day, GameManager.TOTAL_DAYS]
 	if money_label:
-		money_label.text = "Dinero: $%d" % GameManager.money
+		money_label.text = "$%d" % GameManager.money
 
 
 func _on_game_over(_ending_id: String) -> void:
