@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://doj041xycu0i3"
-path="res://.godot/imported/contorno.png-24466991cfaed33c37f719fc7ba809f0.ctex"
+uid="uid://c4ruc47ecr66"
+path="res://.godot/imported/vaso_faltante.png-f222393c1296cf1e90e693788590882a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/michelada_capas/contorno.png"
-dest_files=["res://.godot/imported/contorno.png-24466991cfaed33c37f719fc7ba809f0.ctex"]
+source_file="res://assets/michelada_capas/vaso_faltante.png"
+dest_files=["res://.godot/imported/vaso_faltante.png-f222393c1296cf1e90e693788590882a.ctex"]
 
 [params]
 

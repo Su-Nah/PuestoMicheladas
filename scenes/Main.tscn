@@ -96,14 +96,6 @@ font_size = 50
 font = ExtResource("2_v0vrg")
 font_size = 30
 
-[sub_resource type="LabelSettings" id="LabelSettings_l5h8a"]
-font = ExtResource("2_v0vrg")
-font_size = 50
-
-[sub_resource type="LabelSettings" id="LabelSettings_v0vrg"]
-font = ExtResource("2_v0vrg")
-font_size = 25
-
 [sub_resource type="LabelSettings" id="LabelSettings_a3g7j"]
 font = ExtResource("2_v0vrg")
 font_size = 20
@@ -821,28 +813,21 @@ text = "Paso 1 de 10"
 label_settings = SubResource("LabelSettings_otm8d")
 horizontal_alignment = 2
 
-[node name="TextoLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704871]
+[node name="TextoLabel" type="RichTextLabel" parent="TutorialLayer/DialogBox" unique_id=561256560]
 layout_mode = 0
 offset_left = 23.0
 offset_top = 55.0
 offset_right = 1503.0
 offset_bottom = 358.0
-theme_override_font_sizes/font_size = 18
 text = "..."
-label_settings = SubResource("LabelSettings_l5h8a")
-autowrap_mode = 3
 
-[node name="PistaLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704874]
+[node name="PistaLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=383915712]
 visible = false
 layout_mode = 0
 offset_left = 16.0
 offset_top = 323.0
 offset_right = 1361.0
-offset_bottom = 359.0
-theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 16
-label_settings = SubResource("LabelSettings_v0vrg")
-autowrap_mode = 3
+offset_bottom = 364.0
 
 [node name="SaltarBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704872]
 layout_mode = 0
