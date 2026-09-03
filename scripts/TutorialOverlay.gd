@@ -220,11 +220,11 @@ var _resaltado_boton: Control = null
 
 ## <<< AQUÍ AJUSTAS QUÉ TAN GRANDE Y BRILLANTE SE VE EL PARPADEO >>>
 ## PARPADEO_ESCALA: 1.0 = tamaño normal. 1.08 = crece un 8%.
-const PARPADEO_ESCALA := 1.08
+const PARPADEO_ESCALA := 1.04
 ## Qué tan rápido parpadea. Más alto = más rápido.
-const PARPADEO_VELOCIDAD := 4.0
+const PARPADEO_VELOCIDAD := 4.5
 ## Color en el pico del parpadeo (más claro que blanco = "destello").
-const PARPADEO_COLOR_BRILLO := Color(1.6, 1.5, 1.05, 1.0)
+const PARPADEO_COLOR_BRILLO := Color(1.2, 1.2, 1.2, 1.0)
 
 ## Para el print de diagnóstico de abajo — no lo borres todavía.
 var _debug_acumulado := 0.0
