@@ -45,6 +45,15 @@ const NUM_SLOTS := 3
 
 @onready var tutorial: TutorialOverlay = get_node_or_null("TutorialLayer")
 
+## Botón de pausa (esquina superior derecha) y su menú.
+@onready var pausa_btn: TextureButton = get_node_or_null("pausa")
+@onready var pause_menu: Control = get_node_or_null("PauseMenu")
+@onready var reanudar_btn: Button = get_node_or_null("PauseMenu/Panel/VBoxContainer/ReanudarBtn")
+@onready var salir_btn: Button = get_node_or_null("PauseMenu/Panel/VBoxContainer/SalirBtn")
+@onready var musica_slider: HSlider = get_node_or_null("PauseMenu/Panel/VBoxContainer/MusicaRow/MusicaSlider")
+@onready var ruido_slider: HSlider = get_node_or_null("PauseMenu/Panel/VBoxContainer/RuidoRow/RuidoSlider")
+@onready var sonidos_slider: HSlider = get_node_or_null("PauseMenu/Panel/VBoxContainer/SonidosRow/SonidosSlider")
+
 ## Usados por el oscurecido de fin de día (ver más abajo): "fondo" es el
 ## fondo de toda la pantalla, "mesa" es el contenedor de la mesa (que ya
 ## incluye, como hijos, la mesa misma, todos los íconos de ingredientes,
@@ -270,6 +279,18 @@ func _ready() -> void:
 	vaso.ingrediente_rechazado.connect(_on_ingrediente_rechazado)
 	if reiniciar_btn:
 		reiniciar_btn.pressed.connect(_on_reiniciar_btn_pressed)
+	if pausa_btn:
+		pausa_btn.pressed.connect(_abrir_pausa)
+	if reanudar_btn:
+		reanudar_btn.pressed.connect(_cerrar_pausa)
+	if salir_btn:
+		salir_btn.pressed.connect(_salir_del_juego)
+	if musica_slider:
+		musica_slider.value_changed.connect(_on_musica_slider_changed)
+	if ruido_slider:
+		ruido_slider.value_changed.connect(_on_ruido_slider_changed)
+	if sonidos_slider:
+		sonidos_slider.value_changed.connect(_on_sonidos_slider_changed)
 
 	for i in range(NUM_SLOTS):
 		slot_nodes[i].gui_input.connect(_on_slot_gui_input.bind(i))
@@ -288,6 +309,71 @@ func _ready() -> void:
 		tutorial.tutorial_terminado.connect(_iniciar_dia)
 	else:
 		_iniciar_dia()
+
+
+## Abre el menú de pausa Y detiene el árbol de escena entero
+## (get_tree().paused = true): así, mientras el menú está abierto, se
+## congela TODO lo que dependa de _process()/Timer/Tween normales —
+## la paciencia de los clientes, el temporizador de sonidos aleatorios
+## de ambiente, los parpadeos del tutorial, etc. — sin que el jugador
+## pierda tiempo real por haber abierto el menú.
+##
+## Para que el propio menú (y sus botones) SÍ sigan funcionando estando
+## pausado, PauseMenu y todos sus hijos tienen process_mode = Always en
+## Main.tscn (si no, ni el botón "Reanudar" respondería al clic).
+func _abrir_pausa() -> void:
+	print("Main: _abrir_pausa() llamado") # DIAGNÓSTICO — bórralo cuando ya funcione bien
+	SFX.play_boton()
+	if pause_menu:
+		pause_menu.visible = true
+	get_tree().paused = true
+
+
+func _cerrar_pausa() -> void:
+	print("Main: _cerrar_pausa() llamado") # DIAGNÓSTICO — bórralo cuando ya funcione bien
+	SFX.play_boton()
+	if pause_menu:
+		pause_menu.visible = false
+	get_tree().paused = false
+
+
+func _salir_del_juego() -> void:
+	print("Main: _salir_del_juego() llamado") # DIAGNÓSTICO — bórralo cuando ya funcione bien
+	SFX.play_boton()
+	get_tree().quit()
+
+
+## Los 3 sliders de volumen del menú de pausa controlan BUSES de audio
+## de Godot (no cada AudioStreamPlayer uno por uno). Por eso Ambiente.gd
+## y SFX.gd ya traen sus reproductores enrutados a los buses "Music",
+## "Ambiente" y "SFX" — pero ESOS BUSES los tienes que crear tú una sola
+## vez en el editor (panel inferior "Audio" -> "Add Bus" -> nómbralos
+## exactamente así). Sin esos buses creados, estos sliders no van a
+## sonar diferente (el audio se sigue enrutando a "Master" en silencio).
+##
+## linear_to_db() convierte el valor del slider (0.0 a 1.0, "porcentaje")
+## a decibeles, que es la unidad real que entiende el audio. En 0.0 no
+## usamos linear_to_db (matemáticamente sería "menos infinito") sino que
+## mute-amos el bus directamente, para un silencio total y limpio.
+func _ajustar_volumen_bus(nombre_bus: String, valor: float) -> void:
+	var idx := AudioServer.get_bus_index(nombre_bus)
+	if idx == -1:
+		return # el bus todavía no existe — créalo en el panel Audio (ver comentario arriba)
+	AudioServer.set_bus_mute(idx, valor <= 0.0)
+	if valor > 0.0:
+		AudioServer.set_bus_volume_db(idx, linear_to_db(valor))
+
+
+func _on_musica_slider_changed(valor: float) -> void:
+	_ajustar_volumen_bus("Music", valor)
+
+
+func _on_ruido_slider_changed(valor: float) -> void:
+	_ajustar_volumen_bus("Ambiente", valor)
+
+
+func _on_sonidos_slider_changed(valor: float) -> void:
+	_ajustar_volumen_bus("SFX", valor)
 
 
 func _process(delta: float) -> void:

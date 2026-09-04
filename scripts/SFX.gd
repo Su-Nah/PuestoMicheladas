@@ -76,7 +76,13 @@ const VOLUMEN_SOLTAR_DB := -2.0
 ## menú de opciones) sin tocar la música. Si todavía no creas ese bus,
 ## deja este valor en "Master" y funciona igual, solo que todo comparte
 ## el mismo control de volumen.
-const BUS := "Master" # cámbialo a "SFX" cuando crees el bus
+## Bus de audio: AHORA SÍ hace falta (lo usa el slider de "Sonidos" del
+## menú de pausa). PASO MANUAL OBLIGATORIO, una sola vez: panel inferior
+## "Audio" del editor -> botón "Add Bus" -> nómbralo EXACTAMENTE "SFX"
+## -> déjalo conectado a "Master". Sin este bus creado, el slider de
+## sonidos del menú de pausa no va a tener ningún efecto (el audio sigue
+## sonando normal, enrutado a "Master").
+const BUS := "SFX"
 
 
 # =====================================================================

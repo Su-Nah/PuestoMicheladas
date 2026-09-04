@@ -99,6 +99,22 @@ font_size = 50
 font = ExtResource("2_v0vrg")
 font_size = 30
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pausa"]
+bg_color = Color(0.98, 0.96, 0.9, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.15, 0.15, 0.15, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+
+[sub_resource type="LabelSettings" id="LabelSettings_pausa_titulo"]
+font = ExtResource("31_dg70y")
+font_size = 46
+
 [node name="Main" type="Control" unique_id=173019364]
 layout_mode = 3
 anchors_preset = 15
@@ -160,7 +176,7 @@ offset_right = 1650.0
 offset_bottom = 81.0
 size_flags_horizontal = 3
 
-[node name="pausa" type="TextureRect" parent="." unique_id=738692701]
+[node name="pausa" type="TextureButton" parent="." unique_id=738692701]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -170,8 +186,9 @@ offset_top = 36.0
 offset_right = -34.0
 offset_bottom = 99.0
 grow_horizontal = 0
-texture = ExtResource("6_2c4at")
-expand_mode = 2
+texture_normal = ExtResource("6_2c4at")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="ClienteSlot0" type="Control" parent="." unique_id=63804865]
 modulate = Color(1, 1, 1, 0.35)
@@ -1162,3 +1179,153 @@ offset_bottom = 293.0
 theme_override_fonts/font = ExtResource("31_dg70y")
 theme_override_font_sizes/font_size = 21
 text = "Vaciar vaso"
+
+[node name="PauseMenu" type="Control" parent="." unique_id=900000001]
+process_mode = 3
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="PauseMenu" unique_id=900000002]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="Panel" type="Panel" parent="PauseMenu" unique_id=900000003]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -280.0
+offset_right = 250.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pausa")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu/Panel" unique_id=900000004]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = 24.0
+offset_right = -28.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TituloLabel" type="Label" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000005]
+process_mode = 3
+layout_mode = 2
+text = "Pausa"
+label_settings = SubResource("LabelSettings_pausa_titulo")
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000006]
+process_mode = 3
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="MusicaRow" type="HBoxContainer" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000010]
+process_mode = 3
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="MusicaLabel" type="Label" parent="PauseMenu/Panel/VBoxContainer/MusicaRow" unique_id=900000011]
+process_mode = 3
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Música"
+
+[node name="MusicaSlider" type="HSlider" parent="PauseMenu/Panel/VBoxContainer/MusicaRow" unique_id=900000012]
+process_mode = 3
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="RuidoRow" type="HBoxContainer" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000013]
+process_mode = 3
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="RuidoLabel" type="Label" parent="PauseMenu/Panel/VBoxContainer/RuidoRow" unique_id=900000014]
+process_mode = 3
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Ruido de fondo"
+
+[node name="RuidoSlider" type="HSlider" parent="PauseMenu/Panel/VBoxContainer/RuidoRow" unique_id=900000015]
+process_mode = 3
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="SonidosRow" type="HBoxContainer" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000016]
+process_mode = 3
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="SonidosLabel" type="Label" parent="PauseMenu/Panel/VBoxContainer/SonidosRow" unique_id=900000017]
+process_mode = 3
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Botones/ingredientes"
+
+[node name="SonidosSlider" type="HSlider" parent="PauseMenu/Panel/VBoxContainer/SonidosRow" unique_id=900000018]
+process_mode = 3
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Spacer1b" type="Control" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000019]
+process_mode = 3
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ReanudarBtn" type="Button" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000007]
+process_mode = 3
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Reanudar"
+
+[node name="Spacer2" type="Control" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000008]
+process_mode = 3
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="SalirBtn" type="Button" parent="PauseMenu/Panel/VBoxContainer" unique_id=900000009]
+process_mode = 3
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Salir del juego"

@@ -83,8 +83,16 @@ const VOLUMEN_AMBIENTE_DB := -8.0
 ## a "Master". Así puedes bajarle solo a la música (ej. un botón de
 ## "silenciar música" en un menú) sin afectar los efectos de sonido.
 ## Si no los creas, deja "Master" y todo comparte el mismo volumen.
-const BUS_MUSICA := "Master" # cámbialo a "Music" cuando crees el bus
-const BUS_AMBIENTE := "Master" # cámbialo a "Ambiente" cuando crees el bus
+## Buses de audio: AHORA SÍ hacen falta (los usa el menú de pausa para
+## los sliders de volumen). PASO MANUAL OBLIGATORIO, una sola vez: panel
+## inferior "Audio" del editor -> botón "Add Bus" (2 veces) -> nómbralos
+## EXACTAMENTE "Music" y "Ambiente" (con mayúscula inicial, sin acentos,
+## tal cual) -> déjalos conectados a "Master" (así viene por default).
+## Si no creas estos buses, Godot enruta el audio a "Master" en
+## silencio (no truena nada), pero los sliders de música/ruido del menú
+## de pausa no van a tener ningún efecto hasta que existan.
+const BUS_MUSICA := "Music"
+const BUS_AMBIENTE := "Ambiente"
 
 ## Cada cuánto suena un sonido aleatorio de ambiente (en segundos).
 ## Se elige un número al azar EN ESE RANGO cada vez, para que no se
