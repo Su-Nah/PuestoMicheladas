@@ -100,7 +100,7 @@ font = ExtResource("2_v0vrg")
 font_size = 30
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pausa"]
-bg_color = Color(0.98, 0.96, 0.9, 1)
+bg_color = Color(0.51, 0.25075, 0.19889998, 1)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
@@ -1182,7 +1182,6 @@ text = "Vaciar vaso"
 
 [node name="PauseMenu" type="Control" parent="." unique_id=900000001]
 process_mode = 3
-visible = false
 z_index = 10
 layout_mode = 1
 anchors_preset = 15
