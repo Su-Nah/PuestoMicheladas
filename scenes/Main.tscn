@@ -1182,6 +1182,7 @@ text = "Vaciar vaso"
 
 [node name="PauseMenu" type="Control" parent="." unique_id=900000001]
 process_mode = 3
+visible = false
 z_index = 10
 layout_mode = 1
 anchors_preset = 15

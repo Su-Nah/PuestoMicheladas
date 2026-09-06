@@ -264,6 +264,13 @@ func _amanecer() -> void:
 
 
 func _ready() -> void:
+	# Por si el árbol se quedó "pausado" de una sesión anterior (por
+	# ejemplo, cambiaste de escena con el menú de pausa abierto): sin
+	# esto, el juego podría arrancar congelado sin que se note por qué.
+	get_tree().paused = false
+	if pause_menu:
+		pause_menu.visible = false
+
 	if vaso == null:
 		push_error("Main.gd: no se encontró Mesa/Vaso. Revisa Main.tscn — el juego no puede funcionar sin él.")
 		return
@@ -666,6 +673,8 @@ func _actualizar_slot_ui(i: int) -> void:
 			slot_portraits[i].texture = null
 		if slot_nombres[i]:
 			slot_nombres[i].text = ""
+		if slot_dialogos[i]:
+			slot_dialogos[i].text = ""
 		if slot_barras[i]:
 			slot_barras[i].max_value = 1.0
 			slot_barras[i].value = 0.0
