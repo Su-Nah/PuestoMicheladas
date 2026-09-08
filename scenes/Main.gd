@@ -677,7 +677,7 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 const TIMELINE_ICONO_RUTA := "res://assets/sprites/ui/cliente_timeline.png"
 
 ## Tamaño en píxeles de cada ícono. Súbelo/bájalo a gusto.
-const TIMELINE_ICONO_TAMANO := Vector2(28, 28)
+const TIMELINE_ICONO_TAMANO := Vector2(40, 40)
 
 ## Colores con los que se tiñe el ícono: PENDIENTE = cliente que todavía
 ## no llega ese día, RESUELTO = cliente ya atendido. Si quieres que el

@@ -200,7 +200,7 @@ var pasos: Array = [
 		"requiere": ["gomitas"],
 	},
 	{
-		"texto": "¡Ah! ¡Casi se me olvida! Cada día te van a cobrar $150 de piso. Mejor págalo si no quieres problemas.",
+		"texto": "¡Ah! ¡Casi se me olvida! Cada día te van a cobrar $150 de piso. Si no pagas por tres días seguidos... ya sabes",
 		"requiere": [],
 	},
 	{
