@@ -81,8 +81,17 @@ const NUM_SLOTS := 3
 @onready var slot_barras: Array = [
 	get_node_or_null("ClienteSlot0/PatienceBar"), get_node_or_null("ClienteSlot1/PatienceBar"), get_node_or_null("ClienteSlot2/PatienceBar"),
 ]
+## Cuadro de diálogo de cada cliente: ahora es un rectángulo beige
+## (DialogoBox/BG) con un texto encima (DialogoBox/TextoLabel), en vez de
+## la sola etiqueta de antes. slot_dialogo_boxes es el CONTENEDOR (lo que
+## se mueve/agranda/oculta); slot_dialogos sigue siendo el texto en sí,
+## para no tener que tocar el resto del código que ya hacía
+## "slot_dialogos[i].text = ...".
+@onready var slot_dialogo_boxes: Array = [
+	get_node_or_null("ClienteSlot0/DialogoBox"), get_node_or_null("ClienteSlot1/DialogoBox"), get_node_or_null("ClienteSlot2/DialogoBox"),
+]
 @onready var slot_dialogos: Array = [
-	get_node_or_null("ClienteSlot0/DialogueLabel"), get_node_or_null("ClienteSlot1/DialogueLabel"), get_node_or_null("ClienteSlot2/DialogueLabel"),
+	get_node_or_null("ClienteSlot0/DialogoBox/TextoLabel"), get_node_or_null("ClienteSlot1/DialogoBox/TextoLabel"), get_node_or_null("ClienteSlot2/DialogoBox/TextoLabel"),
 ]
 
 ## Globo de cómic con el "pedido" del cliente (una michelada/azulito en
@@ -94,6 +103,23 @@ const NUM_SLOTS := 3
 @onready var slot_burbuja_vasos: Array = [
 	get_node_or_null("ClienteSlot0/PedidoBubble/MiniVaso"), get_node_or_null("ClienteSlot1/PedidoBubble/MiniVaso"), get_node_or_null("ClienteSlot2/PedidoBubble/MiniVaso"),
 ]
+
+## <<< CUADRO DE DIÁLOGO: TAMAÑOS Y TIEMPOS >>>
+## "Chico": mientras el cliente espera con su pedido ya armado, el cuadro
+## de diálogo se ve como un cuadrado beige VACÍO (sin texto), del mismo
+## tamaño que la burbuja del pedido pero en el lado opuesto (arriba a la
+## IZQUIERDA en vez de arriba a la derecha).
+const DIALOGO_RECT_CHICO := Rect2(0, 88, 280, 160)
+## "Grande": al resolverse el cliente (michelada servida, o cliente que
+## solo venía a platicar y se despide), el cuadro se estira a este
+## tamaño, centrado en la zona del personaje, y aparece el texto encima.
+const DIALOGO_RECT_GRANDE := Rect2(10, 380, 560, 160)
+## Cuánto tiempo se queda el texto visible antes de que el cliente (y su
+## cuadro) desaparezcan del todo.
+const DIALOGO_DURACION_TEXTO := 4.0
+## Qué tan rápido se estira el cuadro de "chico" a "grande".
+const DIALOGO_DURACION_EXPANSION := 0.35
+
 
 const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
 const CARA_NEUTRAL := preload("res://assets/sprites/faces/neutral.png")
@@ -597,6 +623,7 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 
 	var cliente: Dictionary = slots[idx]["cliente"]
 	var mensaje := ""
+	var mostrar_dialogo := true
 
 	if not cliente.get("quiere_michelada", true):
 		mensaje = "%s se despide y sigue su camino." % cliente.get("nombre", "El cliente")
@@ -607,29 +634,27 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		var precio_base: int = cliente.get("precio_base", 0)
 		var precio_final := int(round(precio_base * multiplicador))
 
-		# El dilema ético solo se activa si el cliente ES menor de edad Y la
-		# bebida que le serviste SÍ lleva alcohol (cerveza o vodka).
-		var es_menor: bool = cliente.get("es_menor", false)
-		var tiene_alcohol := false
-		if vaso != null:
-			tiene_alcohol = vaso.tiene_alcohol()
-		var es_venta_de_alcohol_a_menor: bool = es_menor and tiene_alcohol
-
-		GameManager.registrar_venta(cliente.get("id", ""), precio_final, es_venta_de_alcohol_a_menor)
+		GameManager.registrar_venta(cliente.get("id", ""), precio_final, false)
 		calidades_del_dia.append(calidad)
 		mensaje = _texto_resultado(calidad, precio_final)
 		_vaciar_vaso() # el vaso ya se sirvió: desaparece del centro
+		_ocultar_pedido_burbuja(idx) # su michelada (la burbuja) también se oculta
 	else:
+		# Se le acabó la paciencia esperando su michelada: se va SIN
+		# mostrar ningún diálogo (a diferencia de los otros dos casos).
 		calidades_del_dia.append(0.0)
-		mensaje = "%s se cansó de esperar y se fue sin comprar." % cliente.get("nombre", "El cliente")
+		mostrar_dialogo = false
 
-	if slot_dialogos[idx]:
-		slot_dialogos[idx].text = mensaje
 	clientes_resueltos += 1
 	_actualizar_timeline()
 	_actualizar_oscurecido(_progreso_del_dia())
 
-	await get_tree().create_timer(1.3).timeout
+	if mostrar_dialogo:
+		_mostrar_dialogo_grande(idx, mensaje)
+		await get_tree().create_timer(DIALOGO_DURACION_TEXTO).timeout
+	else:
+		_ocultar_dialogo(idx)
+		await get_tree().create_timer(1.3).timeout
 
 	slots[idx] = null
 	resolviendo_slot[idx] = false
@@ -638,19 +663,51 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 
 
 # ---------------------------------------------------------------------
-# LÍNEA DE TIEMPO DEL DÍA (cuadritos de progreso)
+# LÍNEA DE TIEMPO DEL DÍA (íconos de progreso)
 # ---------------------------------------------------------------------
+
+## <<< AQUÍ PONES TU ÍCONO >>>
+## Pega abajo la ruta ("res://...") del ícono que insertaste al proyecto:
+## en el panel "FileSystem" del editor, clic derecho sobre tu archivo de
+## imagen -> "Copy Path", y pégala reemplazando la ruta de ejemplo.
+## Si la ruta queda mal escrita o el archivo no existe, el juego NO se
+## rompe: vuelve a dibujar los cuadritos de color de antes, para que
+## siempre puedas seguir jugando mientras terminas de ajustar esto.
+const TIMELINE_ICONO_RUTA := "res://assets/sprites/personitabebiendo.png"
+
+## Tamaño en píxeles de cada ícono. Súbelo/bájalo a gusto.
+const TIMELINE_ICONO_TAMANO := Vector2(40, 40)
+
+## Colores con los que se tiñe el ícono: PENDIENTE = cliente que todavía
+## no llega ese día, RESUELTO = cliente ya atendido. Si quieres que el
+## ícono pendiente se vea con sus colores originales (sin ningún tinte),
+## cambia PENDIENTE a Color(1, 1, 1, 1).
+const TIMELINE_COLOR_PENDIENTE := Color(0.6, 0.6, 0.6)
+const TIMELINE_COLOR_RESUELTO := Color(0.3, 0.8, 0.3)
+
 
 func _construir_timeline() -> void:
 	if day_timeline == null:
 		return
 	for child in day_timeline.get_children():
 		child.queue_free()
+	var usar_icono := ResourceLoader.exists(TIMELINE_ICONO_RUTA)
 	for i in range(total_clientes_dia):
-		var segmento := ColorRect.new()
-		segmento.custom_minimum_size = Vector2(30, 20)
-		segmento.color = Color(0.6, 0.6, 0.6)
-		day_timeline.add_child(segmento)
+		if usar_icono:
+			var icono := TextureRect.new()
+			icono.texture = load(TIMELINE_ICONO_RUTA)
+			icono.custom_minimum_size = TIMELINE_ICONO_TAMANO
+			icono.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icono.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icono.modulate = TIMELINE_COLOR_PENDIENTE
+			day_timeline.add_child(icono)
+		else:
+			# Ruta de TIMELINE_ICONO_RUTA no encontrada todavía: se usa
+			# el cuadrito de color de siempre, para no romper el juego.
+			var segmento := ColorRect.new()
+			segmento.custom_minimum_size = Vector2(30, 20)
+			segmento.color = TIMELINE_COLOR_PENDIENTE
+			day_timeline.add_child(segmento)
 
 
 func _actualizar_timeline() -> void:
@@ -658,8 +715,12 @@ func _actualizar_timeline() -> void:
 		return
 	var segmentos := day_timeline.get_children()
 	for i in range(segmentos.size()):
-		var segmento: ColorRect = segmentos[i]
-		segmento.color = Color(0.3, 0.8, 0.3) if i < clientes_resueltos else Color(0.6, 0.6, 0.6)
+		var nodo: Node = segmentos[i]
+		var color: Color = TIMELINE_COLOR_RESUELTO if i < clientes_resueltos else TIMELINE_COLOR_PENDIENTE
+		if nodo is TextureRect:
+			nodo.modulate = color
+		elif nodo is ColorRect:
+			nodo.color = color
 
 
 # ---------------------------------------------------------------------
@@ -673,8 +734,7 @@ func _actualizar_slot_ui(i: int) -> void:
 			slot_portraits[i].texture = null
 		if slot_nombres[i]:
 			slot_nombres[i].text = ""
-		if slot_dialogos[i]:
-			slot_dialogos[i].text = ""
+		_ocultar_dialogo(i)
 		if slot_barras[i]:
 			slot_barras[i].max_value = 1.0
 			slot_barras[i].value = 0.0
@@ -693,19 +753,16 @@ func _actualizar_slot_ui(i: int) -> void:
 		else:
 			slot_portraits[i].texture = load("res://assets/sprites/placeholder.png")
 
-	if slot_dialogos[i]:
-		if cliente.get("especial", false) and cliente.get("dialogo", []).size() > 0:
-			var lineas: Array = cliente["dialogo"]
-			slot_dialogos[i].text = lineas[randi() % lineas.size()]
-		elif cliente.get("quiere_michelada", true):
-			slot_dialogos[i].text = "\"%s\"" % cliente.get("pedido_texto", "Quiere una bebida.")
-		else:
-			slot_dialogos[i].text = "Solo vino a platicar (toca aquí para atenderlo/a)."
-
+	# El cuadro de diálogo YA NO muestra ningún saludo/pedido al llegar el
+	# cliente: se queda vacío (u oculto) hasta que se resuelva su puesto
+	# (ver _resolver_slot -> _mostrar_dialogo_grande). Si el cliente sí
+	# quiere michelada, _mostrar_pedido_burbuja() de abajo lo deja como
+	# cuadrado "chico" mientras espera.
 	if cliente.get("quiere_michelada", true) and cliente.get("receta", {}).size() > 0:
 		_mostrar_pedido_burbuja(i, cliente["receta"])
 	else:
 		_ocultar_pedido_burbuja(i)
+		_ocultar_dialogo(i)
 
 	if slot_barras[i]:
 		slot_barras[i].max_value = slot["paciencia_maxima"]
@@ -758,11 +815,56 @@ func _mostrar_pedido_burbuja(i: int, receta: Dictionary) -> void:
 		if capa:
 			capa.visible = receta.get(id, false)
 	slot_burbujas[i].visible = true
+	_mostrar_dialogo_chico(i)
 
 
 func _ocultar_pedido_burbuja(i: int) -> void:
 	if slot_burbujas[i]:
 		slot_burbujas[i].visible = false
+
+
+## Cuadro de diálogo en su estado "chico": un cuadrado beige vacío (sin
+## texto), del tamaño y posición de DIALOGO_RECT_CHICO. Se usa mientras
+## el cliente todavía está esperando con su pedido ya armado.
+func _mostrar_dialogo_chico(i: int) -> void:
+	var box: Control = slot_dialogo_boxes[i]
+	if box == null:
+		return
+	box.position = DIALOGO_RECT_CHICO.position
+	box.size = DIALOGO_RECT_CHICO.size
+	if slot_dialogos[i]:
+		slot_dialogos[i].text = ""
+	box.visible = true
+
+
+## Oculta el cuadro de diálogo por completo y lo deja listo (en tamaño
+## "chico") para la próxima vez que se necesite, para que nunca se quede
+## pegado en su tamaño "grande" de la resolución anterior.
+func _ocultar_dialogo(i: int) -> void:
+	var box: Control = slot_dialogo_boxes[i]
+	if box:
+		box.visible = false
+		box.position = DIALOGO_RECT_CHICO.position
+		box.size = DIALOGO_RECT_CHICO.size
+	if slot_dialogos[i]:
+		slot_dialogos[i].text = ""
+
+
+## Estira el cuadro de "chico" a DIALOGO_RECT_GRANDE (centrado en la zona
+## del personaje) y muestra "texto" encima. Quien llama a esta función es
+## quien luego decide, tras DIALOGO_DURACION_TEXTO segundos, ocultar todo
+## (ver _resolver_slot).
+func _mostrar_dialogo_grande(i: int, texto: String) -> void:
+	var box: Control = slot_dialogo_boxes[i]
+	if box == null:
+		return
+	box.visible = true
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(box, "position", DIALOGO_RECT_GRANDE.position, DIALOGO_DURACION_EXPANSION)
+	tween.tween_property(box, "size", DIALOGO_RECT_GRANDE.size, DIALOGO_DURACION_EXPANSION)
+	if slot_dialogos[i]:
+		slot_dialogos[i].text = texto
 
 
 # ---------------------------------------------------------------------
