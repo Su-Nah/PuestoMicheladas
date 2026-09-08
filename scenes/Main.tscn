@@ -34,6 +34,7 @@
 [ext_resource type="Texture2D" uid="uid://dmqba7u6uquaw" path="res://assets/michelada_capas/chamoy_azul.png" id="46"]
 [ext_resource type="Texture2D" uid="uid://cb713lud4dh1b" path="res://assets/michelada_capas/gomitas.png" id="47"]
 [ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/mesa.png" id="50"]
+[ext_resource type="Texture2D" uid="uid://c86mbcvd80mgx" path="res://assets/sprites/ui/dialogo_bg.png" id="60"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ngfvx"]
 font = ExtResource("31_dg70y")
@@ -47,48 +48,12 @@ font_size = 40
 font = ExtResource("31_dg70y")
 font_size = 30
 
-[sub_resource type="LabelSettings" id="LabelSettings_kxyth"]
-font = ExtResource("2_v0vrg")
-font_size = 30
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_burbuja"]
-bg_color = Color(1, 1, 1, 0.95)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.15, 0.15, 0.15, 1)
-corner_radius_top_left = 22
-corner_radius_top_right = 22
-corner_radius_bottom_right = 22
-corner_radius_bottom_left = 22
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_burbuja_punto"]
-bg_color = Color(1, 1, 1, 0.95)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.15, 0.15, 0.15, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-
 [sub_resource type="LabelSettings" id="LabelSettings_2c4at"]
 font = ExtResource("31_dg70y")
 font_size = 30
 
-[sub_resource type="LabelSettings" id="LabelSettings_hq6as"]
-font = ExtResource("2_v0vrg")
-font_size = 30
-
 [sub_resource type="LabelSettings" id="LabelSettings_pnhog"]
 font = ExtResource("31_dg70y")
-font_size = 30
-
-[sub_resource type="LabelSettings" id="LabelSettings_dg70y"]
-font = ExtResource("2_v0vrg")
 font_size = 30
 
 [sub_resource type="LabelSettings" id="LabelSettings_e2s0e"]
@@ -199,95 +164,55 @@ offset_right = 620.0
 offset_bottom = 913.0
 script = ExtResource("4")
 
-[node name="Portrait" type="TextureRect" parent="ClienteSlot0" unique_id=63804866]
-layout_mode = 0
-offset_top = 130.0
-offset_right = 580.0
-offset_bottom = 780.0
+[node name="DialogoBox" type="Control" parent="ClienteSlot0" unique_id=946682914]
+visible = false
+anchors_preset = 0
+offset_top = 88.0
+offset_right = 150.0
+offset_bottom = 248.0
 mouse_filter = 2
+
+[node name="BG" type="TextureRect" parent="ClienteSlot0/DialogoBox" unique_id=236736824]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("60")
 expand_mode = 1
-stretch_mode = 5
 
-[node name="NombreLabel" type="Label" parent="ClienteSlot0" unique_id=63804867]
-layout_mode = 0
-offset_left = 10.0
-offset_right = 570.0
-offset_bottom = 32.0
-theme_override_font_sizes/font_size = 22
-label_settings = SubResource("LabelSettings_cobve")
-
-[node name="EmojiIcon" type="TextureRect" parent="ClienteSlot0" unique_id=63804868]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 36.0
-offset_right = 50.0
-offset_bottom = 76.0
-mouse_filter = 2
-texture = ExtResource("10")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="PatienceBar" type="ProgressBar" parent="ClienteSlot0" unique_id=63804869]
-layout_mode = 0
-offset_left = 60.0
-offset_top = 46.0
-offset_right = 570.0
-offset_bottom = 66.0
-mouse_filter = 2
-max_value = 14.0
-value = 14.0
-show_percentage = false
-
-[node name="DialogueLabel" type="Label" parent="ClienteSlot0" unique_id=63804870]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 80.0
-offset_right = 570.0
-offset_bottom = 128.0
-theme_override_font_sizes/font_size = 14
-label_settings = SubResource("LabelSettings_kxyth")
+[node name="TextoLabel" type="Label" parent="ClienteSlot0/DialogoBox" unique_id=1517044538]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = -14.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="PedidoBubble" type="Control" parent="ClienteSlot0" unique_id=90100011]
 visible = false
 anchors_preset = 0
-offset_left = 300.0
-offset_top = 88.0
-offset_right = 580.0
-offset_bottom = 248.0
+offset_left = 16.0
+offset_top = 108.0
+offset_right = 149.0
+offset_bottom = 228.0
 mouse_filter = 2
-
-[node name="BG" type="Panel" parent="ClienteSlot0/PedidoBubble" unique_id=90100012]
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 160.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja")
-
-[node name="Punto1" type="Panel" parent="ClienteSlot0/PedidoBubble" unique_id=90100013]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 152.0
-offset_right = 44.0
-offset_bottom = 178.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
-
-[node name="Punto2" type="Panel" parent="ClienteSlot0/PedidoBubble" unique_id=90100014]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 184.0
-offset_right = 20.0
-offset_bottom = 200.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
 
 [node name="MiniVaso" type="Control" parent="ClienteSlot0/PedidoBubble" unique_id=90100015]
 anchors_preset = 0
-offset_left = 74.0
-offset_top = 20.0
-offset_right = 207.0
-offset_bottom = 140.0
+offset_left = -7.0
+offset_right = 126.0
+offset_bottom = 120.0
 mouse_filter = 2
 
 [node name="Limon" type="TextureRect" parent="ClienteSlot0/PedidoBubble/MiniVaso" unique_id=90100021]
@@ -390,17 +315,7 @@ texture = ExtResource("47")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ClienteSlot1" type="Control" parent="." unique_id=63804965]
-modulate = Color(1, 1, 1, 0.35)
-anchors_preset = 0
-offset_left = 660.0
-offset_top = 118.0
-offset_right = 1240.0
-offset_bottom = 913.0
-script = ExtResource("4")
-slot_index = 1
-
-[node name="Portrait" type="TextureRect" parent="ClienteSlot1" unique_id=63804966]
+[node name="Portrait" type="TextureRect" parent="ClienteSlot0" unique_id=63804866]
 layout_mode = 0
 offset_top = 130.0
 offset_right = 580.0
@@ -409,15 +324,16 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NombreLabel" type="Label" parent="ClienteSlot1" unique_id=63804967]
+[node name="NombreLabel" type="Label" parent="ClienteSlot0" unique_id=63804867]
+visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_right = 570.0
 offset_bottom = 32.0
 theme_override_font_sizes/font_size = 22
-label_settings = SubResource("LabelSettings_2c4at")
+label_settings = SubResource("LabelSettings_cobve")
 
-[node name="EmojiIcon" type="TextureRect" parent="ClienteSlot1" unique_id=63804968]
+[node name="EmojiIcon" type="TextureRect" parent="ClienteSlot0" unique_id=63804868]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 36.0
@@ -428,7 +344,7 @@ texture = ExtResource("10")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PatienceBar" type="ProgressBar" parent="ClienteSlot1" unique_id=63804969]
+[node name="PatienceBar" type="ProgressBar" parent="ClienteSlot0" unique_id=63804869]
 layout_mode = 0
 offset_left = 60.0
 offset_top = 46.0
@@ -439,56 +355,65 @@ max_value = 14.0
 value = 14.0
 show_percentage = false
 
-[node name="DialogueLabel" type="Label" parent="ClienteSlot1" unique_id=63804970]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 80.0
-offset_right = 570.0
-offset_bottom = 128.0
-theme_override_font_sizes/font_size = 14
-label_settings = SubResource("LabelSettings_hq6as")
+[node name="ClienteSlot1" type="Control" parent="." unique_id=63804965]
+modulate = Color(1, 1, 1, 0.35)
+anchors_preset = 0
+offset_left = 660.0
+offset_top = 118.0
+offset_right = 1240.0
+offset_bottom = 913.0
+script = ExtResource("4")
+slot_index = 1
+
+[node name="DialogoBox" type="Control" parent="ClienteSlot1" unique_id=637860800]
+visible = false
+anchors_preset = 0
+offset_top = 88.0
+offset_right = 150.0
+offset_bottom = 248.0
+mouse_filter = 2
+
+[node name="BG" type="TextureRect" parent="ClienteSlot1/DialogoBox" unique_id=1694478242]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("60")
+expand_mode = 1
+
+[node name="TextoLabel" type="Label" parent="ClienteSlot1/DialogoBox" unique_id=2103956501]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = -14.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="PedidoBubble" type="Control" parent="ClienteSlot1" unique_id=90200011]
 visible = false
 anchors_preset = 0
-offset_left = 300.0
-offset_top = 88.0
-offset_right = 580.0
-offset_bottom = 248.0
+offset_left = 16.0
+offset_top = 108.0
+offset_right = 149.0
+offset_bottom = 228.0
 mouse_filter = 2
-
-[node name="BG" type="Panel" parent="ClienteSlot1/PedidoBubble" unique_id=90200012]
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 160.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja")
-
-[node name="Punto1" type="Panel" parent="ClienteSlot1/PedidoBubble" unique_id=90200013]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 152.0
-offset_right = 44.0
-offset_bottom = 178.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
-
-[node name="Punto2" type="Panel" parent="ClienteSlot1/PedidoBubble" unique_id=90200014]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 184.0
-offset_right = 20.0
-offset_bottom = 200.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
 
 [node name="MiniVaso" type="Control" parent="ClienteSlot1/PedidoBubble" unique_id=90200015]
 anchors_preset = 0
-offset_left = 74.0
-offset_top = 20.0
-offset_right = 207.0
-offset_bottom = 140.0
+offset_left = -7.0
+offset_right = 126.0
+offset_bottom = 120.0
 mouse_filter = 2
 
 [node name="Limon" type="TextureRect" parent="ClienteSlot1/PedidoBubble/MiniVaso" unique_id=90200021]
@@ -591,34 +516,25 @@ texture = ExtResource("47")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ClienteSlot2" type="Control" parent="." unique_id=63805065]
-modulate = Color(1, 1, 1, 0.35)
-anchors_preset = 0
-offset_left = 1280.0
-offset_top = 118.0
-offset_right = 1860.0
-offset_bottom = 917.0
-script = ExtResource("4")
-slot_index = 2
-
-[node name="Portrait" type="TextureRect" parent="ClienteSlot2" unique_id=63805066]
+[node name="Portrait" type="TextureRect" parent="ClienteSlot1" unique_id=63804966]
 layout_mode = 0
 offset_top = 130.0
 offset_right = 580.0
-offset_bottom = 782.0
+offset_bottom = 780.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NombreLabel" type="Label" parent="ClienteSlot2" unique_id=63805067]
+[node name="NombreLabel" type="Label" parent="ClienteSlot1" unique_id=63804967]
+visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_right = 570.0
 offset_bottom = 32.0
 theme_override_font_sizes/font_size = 22
-label_settings = SubResource("LabelSettings_pnhog")
+label_settings = SubResource("LabelSettings_2c4at")
 
-[node name="EmojiIcon" type="TextureRect" parent="ClienteSlot2" unique_id=63805068]
+[node name="EmojiIcon" type="TextureRect" parent="ClienteSlot1" unique_id=63804968]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 36.0
@@ -629,7 +545,7 @@ texture = ExtResource("10")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PatienceBar" type="ProgressBar" parent="ClienteSlot2" unique_id=63805069]
+[node name="PatienceBar" type="ProgressBar" parent="ClienteSlot1" unique_id=63804969]
 layout_mode = 0
 offset_left = 60.0
 offset_top = 46.0
@@ -640,56 +556,65 @@ max_value = 14.0
 value = 14.0
 show_percentage = false
 
-[node name="DialogueLabel" type="Label" parent="ClienteSlot2" unique_id=63805070]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 80.0
-offset_right = 570.0
-offset_bottom = 128.0
-theme_override_font_sizes/font_size = 14
-label_settings = SubResource("LabelSettings_dg70y")
+[node name="ClienteSlot2" type="Control" parent="." unique_id=63805065]
+modulate = Color(1, 1, 1, 0.35)
+anchors_preset = 0
+offset_left = 1280.0
+offset_top = 118.0
+offset_right = 1860.0
+offset_bottom = 917.0
+script = ExtResource("4")
+slot_index = 2
+
+[node name="DialogoBox" type="Control" parent="ClienteSlot2" unique_id=721662722]
+visible = false
+anchors_preset = 0
+offset_top = 88.0
+offset_right = 150.0
+offset_bottom = 248.0
+mouse_filter = 2
+
+[node name="BG" type="TextureRect" parent="ClienteSlot2/DialogoBox" unique_id=186975086]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("60")
+expand_mode = 1
+
+[node name="TextoLabel" type="Label" parent="ClienteSlot2/DialogoBox" unique_id=1396759839]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = -14.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="PedidoBubble" type="Control" parent="ClienteSlot2" unique_id=90300011]
 visible = false
 anchors_preset = 0
-offset_left = 300.0
-offset_top = 88.0
-offset_right = 580.0
-offset_bottom = 248.0
+offset_left = 16.0
+offset_top = 108.0
+offset_right = 149.0
+offset_bottom = 228.0
 mouse_filter = 2
-
-[node name="BG" type="Panel" parent="ClienteSlot2/PedidoBubble" unique_id=90300012]
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 160.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja")
-
-[node name="Punto1" type="Panel" parent="ClienteSlot2/PedidoBubble" unique_id=90300013]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 152.0
-offset_right = 44.0
-offset_bottom = 178.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
-
-[node name="Punto2" type="Panel" parent="ClienteSlot2/PedidoBubble" unique_id=90300014]
-layout_mode = 0
-offset_left = 4.0
-offset_top = 184.0
-offset_right = 20.0
-offset_bottom = 200.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_burbuja_punto")
 
 [node name="MiniVaso" type="Control" parent="ClienteSlot2/PedidoBubble" unique_id=90300015]
 anchors_preset = 0
-offset_left = 74.0
-offset_top = 20.0
-offset_right = 207.0
-offset_bottom = 140.0
+offset_left = -7.0
+offset_right = 126.0
+offset_bottom = 120.0
 mouse_filter = 2
 
 [node name="Limon" type="TextureRect" parent="ClienteSlot2/PedidoBubble/MiniVaso" unique_id=90300021]
@@ -789,6 +714,46 @@ offset_right = 133.0
 offset_bottom = 120.0
 mouse_filter = 2
 texture = ExtResource("47")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NombreLabel" type="Label" parent="ClienteSlot2" unique_id=63805067]
+visible = false
+layout_mode = 0
+offset_left = 10.0
+offset_right = 570.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 22
+label_settings = SubResource("LabelSettings_pnhog")
+
+[node name="EmojiIcon" type="TextureRect" parent="ClienteSlot2" unique_id=63805068]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 36.0
+offset_right = 50.0
+offset_bottom = 76.0
+mouse_filter = 2
+texture = ExtResource("10")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PatienceBar" type="ProgressBar" parent="ClienteSlot2" unique_id=63805069]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 46.0
+offset_right = 570.0
+offset_bottom = 66.0
+mouse_filter = 2
+max_value = 14.0
+value = 14.0
+show_percentage = false
+
+[node name="Portrait" type="TextureRect" parent="ClienteSlot2" unique_id=63805066]
+layout_mode = 0
+offset_top = 130.0
+offset_right = 580.0
+offset_bottom = 782.0
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 

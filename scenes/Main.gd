@@ -109,11 +109,12 @@ const NUM_SLOTS := 3
 ## de diálogo se ve como un cuadrado beige VACÍO (sin texto), del mismo
 ## tamaño que la burbuja del pedido pero en el lado opuesto (arriba a la
 ## IZQUIERDA en vez de arriba a la derecha).
-const DIALOGO_RECT_CHICO := Rect2(0, 88, 280, 160)
+const DIALOGO_RECT_CHICO := Rect2(0, 88, 150, 160)
 ## "Grande": al resolverse el cliente (michelada servida, o cliente que
-## solo venía a platicar y se despide), el cuadro se estira a este
-## tamaño, centrado en la zona del personaje, y aparece el texto encima.
-const DIALOGO_RECT_GRANDE := Rect2(10, 380, 560, 160)
+## solo venía a platicar y se despide), el cuadro NO baja ni cambia de
+## alto — se queda en la misma esquina de arriba y solo se ESTIRA hacia
+## la derecha (mismo x, mismo y, mismo alto que DIALOGO_RECT_CHICO).
+const DIALOGO_RECT_GRANDE := Rect2(0, 88, 570, 160)
 ## Cuánto tiempo se queda el texto visible antes de que el cliente (y su
 ## cuadro) desaparezcan del todo.
 const DIALOGO_DURACION_TEXTO := 4.0
@@ -673,10 +674,10 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 ## Si la ruta queda mal escrita o el archivo no existe, el juego NO se
 ## rompe: vuelve a dibujar los cuadritos de color de antes, para que
 ## siempre puedas seguir jugando mientras terminas de ajustar esto.
-const TIMELINE_ICONO_RUTA := "res://assets/sprites/personitabebiendo.png"
+const TIMELINE_ICONO_RUTA := "res://assets/sprites/ui/cliente_timeline.png"
 
 ## Tamaño en píxeles de cada ícono. Súbelo/bájalo a gusto.
-const TIMELINE_ICONO_TAMANO := Vector2(40, 40)
+const TIMELINE_ICONO_TAMANO := Vector2(28, 28)
 
 ## Colores con los que se tiñe el ícono: PENDIENTE = cliente que todavía
 ## no llega ese día, RESUELTO = cliente ya atendido. Si quieres que el

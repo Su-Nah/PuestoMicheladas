@@ -33,8 +33,8 @@ var personajes: Array = [
 	{
 		"id": "chavo_prepa",
 		"retrato": "res://assets/sprites/chavo_prepa.png",
-		"nombre": "Chavo de prepa",
-		"es_menor": true,
+		"nombre": "Pepito",
+		"es_menor": false,
 		"especial": false,
 		"puede_repetir": false,
 		"precio_base": 40,
