@@ -200,7 +200,7 @@ var pasos: Array = [
 		"requiere": ["gomitas"],
 	},
 	{
-		"texto": "¡Casi se me olvida! La michelada y el azulito llevan alcohol. Si viene un MENOR DE EDAD, mejor no le vendas.",
+		"texto": "¡Ah! ¡Casi se me olvida! Cada día te van a cobrar $150 de piso. Mejor págalo si no quieres problemas.",
 		"requiere": [],
 	},
 	{
