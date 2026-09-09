@@ -1439,6 +1439,7 @@ mouse_filter = 2
 color = Color(0, 0, 0, 0.6)
 
 [node name="NancyPortrait" type="TextureRect" parent="TutorialLayer" unique_id=63704867]
+visible = false
 layout_mode = 0
 offset_left = 8.0
 offset_top = 217.0
