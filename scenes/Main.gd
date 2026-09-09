@@ -75,12 +75,6 @@ const NUM_SLOTS := 3
 @onready var slot_nombres: Array = [
 	get_node_or_null("ClienteSlot0/NombreLabel"), get_node_or_null("ClienteSlot1/NombreLabel"), get_node_or_null("ClienteSlot2/NombreLabel"),
 ]
-@onready var slot_emojis: Array = [
-	get_node_or_null("ClienteSlot0/EmojiIcon"), get_node_or_null("ClienteSlot1/EmojiIcon"), get_node_or_null("ClienteSlot2/EmojiIcon"),
-]
-@onready var slot_barras: Array = [
-	get_node_or_null("ClienteSlot0/PatienceBar"), get_node_or_null("ClienteSlot1/PatienceBar"), get_node_or_null("ClienteSlot2/PatienceBar"),
-]
 ## Cuadro de diálogo de cada cliente: ahora es un rectángulo beige
 ## (DialogoBox/BG) con un texto encima (DialogoBox/TextoLabel), en vez de
 ## la sola etiqueta de antes. slot_dialogo_boxes es el CONTENEDOR (lo que
@@ -122,9 +116,37 @@ const DIALOGO_DURACION_TEXTO := 4.0
 const DIALOGO_DURACION_EXPANSION := 0.35
 
 
-const CARA_FELIZ := preload("res://assets/sprites/faces/happy.png")
-const CARA_NEUTRAL := preload("res://assets/sprites/faces/neutral.png")
-const CARA_ENOJADA := preload("res://assets/sprites/faces/angry.png")
+## <<< MICHELADA-COMO-BARRA-DE-TIEMPO >>>
+## Ya no hay barra de progreso ni carita: el temporizador de paciencia
+## ahora ES la michelada miniatura del pedido (PedidoBubble/MiniVaso).
+## Su líquido (LiquidoCerveza o LiquidoGatorlite, el que aplique) se va
+## "vaciando" de arriba hacia abajo según _actualizar_nivel_michelada().
+const SHADER_NIVEL_LIQUIDO := preload("res://shaders/liquido_nivel.gdshader")
+## Cuándo (como fracción de la paciencia máxima, 0.0-1.0) empieza a
+## temblar el vasito completo para avisar que se está por acabar.
+const UMBRAL_TEMBLOR := 0.25
+## Qué tan fuerte tiembla (desplazamiento máximo en píxeles).
+const TEMBLOR_INTENSIDAD := 3.0
+## Nombres de nodo (dentro de MiniVaso) que SÍ actúan como el líquido que
+## se vacía con el tiempo. Todo lo demás (limón, vodka) se oculta abajo.
+const CAPAS_LIQUIDO_TIEMPO := ["LiquidoCerveza", "LiquidoGatorlite"]
+## Capas que quedan SIEMPRE ocultas en la michelada miniatura: están por
+## debajo del líquido en el orden de dibujo, así que si no se ocultan a
+## fuerza, se "asoman" según el líquido de arriba se va vaciando.
+const CAPAS_SIEMPRE_OCULTAS_EN_MINIATURA := ["Limon", "LiquidoVodka"]
+
+## Cuál nodo de líquido (LiquidoCerveza o LiquidoGatorlite) es el que
+## está "activo" ahora mismo en cada MiniVaso, o null si ese puesto no
+## tiene pedido de michelada visible. Se llena en _mostrar_pedido_burbuja
+## y se usa cada frame en _actualizar_nivel_michelada().
+var slot_liquido_activo: Array = [null, null, null]
+## Posición ORIGINAL (la que tú acomodaste a mano en el editor) de cada
+## MiniVaso dentro de su PedidoBubble. Se guarda la primera vez que se
+## muestra el pedido de ese puesto, y se usa como base para el temblor y
+## para cualquier reseteo — así nunca se pierde tu ajuste (por ejemplo,
+## el offset_left = -7 que le pusiste) cuando el vasito tiembla o se
+## vuelve a mostrar.
+var _mini_vaso_pos_original: Array = [null, null, null]
 
 ## Todos los ingredientes que SÍ cuentan para la calidad de la bebida (el
 ## "vaso" no cuenta: es solo el recipiente, no una preferencia de sabor).
@@ -417,7 +439,7 @@ func _process(delta: float) -> void:
 		if slots[i] == null or resolviendo_slot[i]:
 			continue
 		slots[i]["paciencia_actual"] -= delta
-		_actualizar_barra_paciencia(i)
+		_actualizar_nivel_michelada(i)
 		if slots[i]["paciencia_actual"] <= 0.0:
 			_resolver_slot(i, false)
 
@@ -645,6 +667,7 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		# mostrar ningún diálogo (a diferencia de los otros dos casos).
 		calidades_del_dia.append(0.0)
 		mostrar_dialogo = false
+		_ocultar_pedido_burbuja(idx) # la michelada se oculta YA, junto con el diálogo
 
 	clientes_resueltos += 1
 	_actualizar_timeline()
@@ -736,9 +759,6 @@ func _actualizar_slot_ui(i: int) -> void:
 		if slot_nombres[i]:
 			slot_nombres[i].text = ""
 		_ocultar_dialogo(i)
-		if slot_barras[i]:
-			slot_barras[i].max_value = 1.0
-			slot_barras[i].value = 0.0
 		slot_nodes[i].modulate = Color(1, 1, 1, 0.35)
 		_ocultar_pedido_burbuja(i)
 		return
@@ -758,16 +778,13 @@ func _actualizar_slot_ui(i: int) -> void:
 	# cliente: se queda vacío (u oculto) hasta que se resuelva su puesto
 	# (ver _resolver_slot -> _mostrar_dialogo_grande). Si el cliente sí
 	# quiere michelada, _mostrar_pedido_burbuja() de abajo lo deja como
-	# cuadrado "chico" mientras espera.
+	# cuadrado "chico" mientras espera (y esa michelada miniatura ahora es
+	# también su barra de tiempo — ver _actualizar_nivel_michelada).
 	if cliente.get("quiere_michelada", true) and cliente.get("receta", {}).size() > 0:
 		_mostrar_pedido_burbuja(i, cliente["receta"])
 	else:
 		_ocultar_pedido_burbuja(i)
 		_ocultar_dialogo(i)
-
-	if slot_barras[i]:
-		slot_barras[i].max_value = slot["paciencia_maxima"]
-		slot_barras[i].value = slot["paciencia_actual"]
 
 	# Este modulate SOLO cambia la opacidad (el canal alfa) para marcar un
 	# puesto vacío vs. ocupado — nunca toca "scale", así que no debería
@@ -776,45 +793,72 @@ func _actualizar_slot_ui(i: int) -> void:
 	# poniendo un valor a "scale" o a "custom_minimum_size" de
 	# ClienteSlot0 o de su Portrait — este script no lo hace.
 	slot_nodes[i].modulate = Color(1, 1, 1, 1)
-	_actualizar_emoji_slot(i)
 
 
-func _actualizar_barra_paciencia(i: int) -> void:
+## Cada frame: ajusta cuánto se ve del líquido "activo" de ese puesto
+## (según cuánta paciencia queda) y hace temblar el vasito completo si ya
+## está por acabarse.
+func _actualizar_nivel_michelada(i: int) -> void:
 	var slot = slots[i]
-	if slot == null or slot_barras[i] == null:
+	if slot == null or slot["paciencia_maxima"] <= 0.0:
 		return
-	slot_barras[i].value = max(slot["paciencia_actual"], 0.0)
-	_actualizar_emoji_slot(i)
+	var ratio: float = clamp(slot["paciencia_actual"] / slot["paciencia_maxima"], 0.0, 1.0)
 
+	var liquido: TextureRect = slot_liquido_activo[i]
+	if liquido and liquido.material is ShaderMaterial:
+		liquido.material.set_shader_parameter("nivel", ratio)
 
-func _actualizar_emoji_slot(i: int) -> void:
-	var slot = slots[i]
-	if slot == null or slot["paciencia_maxima"] <= 0.0 or slot_emojis[i] == null:
+	var mini_vaso: Node = slot_burbuja_vasos[i]
+	if mini_vaso == null:
 		return
-	var ratio: float = slot["paciencia_actual"] / slot["paciencia_maxima"]
-	if ratio > 0.66:
-		slot_emojis[i].texture = CARA_FELIZ
-	elif ratio > 0.33:
-		slot_emojis[i].texture = CARA_NEUTRAL
-	else:
-		slot_emojis[i].texture = CARA_ENOJADA
+	var pos_base: Vector2 = _mini_vaso_pos_original[i] if _mini_vaso_pos_original[i] != null else Vector2.ZERO
+	if ratio <= UMBRAL_TEMBLOR:
+		# Solo de lado a lado (eje X) — el eje Y se queda fijo en su
+		# posición original, nunca sube ni baja.
+		mini_vaso.position = pos_base + Vector2(randf_range(-TEMBLOR_INTENSIDAD, TEMBLOR_INTENSIDAD), 0.0)
+	elif mini_vaso.position != pos_base:
+		mini_vaso.position = pos_base
 
 
 ## Muestra el globo de cómic con una miniatura de la bebida que ese
 ## cliente quiere (misma idea que las capas del vaso real: se prende la
-## capa VidrioBase + una capa por cada ingrediente de su receta).
+## capa VidrioBase + una capa por cada ingrediente de su receta). El
+## líquido correspondiente (cerveza o gatorlite) queda listo para irse
+## "vaciando" con el tiempo — ver _actualizar_nivel_michelada().
 func _mostrar_pedido_burbuja(i: int, receta: Dictionary) -> void:
 	if slot_burbujas[i] == null or slot_burbuja_vasos[i] == null:
 		return
 	var mini_vaso: Node = slot_burbuja_vasos[i]
+	if _mini_vaso_pos_original[i] == null:
+		_mini_vaso_pos_original[i] = mini_vaso.position
+	mini_vaso.position = _mini_vaso_pos_original[i]
 	var vidrio: Node = mini_vaso.get_node_or_null("VidrioBase")
 	if vidrio:
 		vidrio.visible = true
+
+	slot_liquido_activo[i] = null
 	for id in CAPAS_BURBUJA:
 		var nombre_nodo: String = CAPAS_BURBUJA[id]
 		var capa: Node = mini_vaso.get_node_or_null(nombre_nodo)
-		if capa:
-			capa.visible = receta.get(id, false)
+		if capa == null:
+			continue
+
+		if nombre_nodo in CAPAS_SIEMPRE_OCULTAS_EN_MINIATURA:
+			# Limón y vodka van SIEMPRE ocultos aquí (ver constante de
+			# arriba), sin importar si la receta los pide o no.
+			capa.visible = false
+			continue
+
+		capa.visible = receta.get(id, false)
+
+		if nombre_nodo in CAPAS_LIQUIDO_TIEMPO and capa.visible:
+			if not (capa.material is ShaderMaterial):
+				var mat := ShaderMaterial.new()
+				mat.shader = SHADER_NIVEL_LIQUIDO
+				capa.material = mat
+			capa.material.set_shader_parameter("nivel", 1.0)
+			slot_liquido_activo[i] = capa
+
 	slot_burbujas[i].visible = true
 	_mostrar_dialogo_chico(i)
 
@@ -822,6 +866,9 @@ func _mostrar_pedido_burbuja(i: int, receta: Dictionary) -> void:
 func _ocultar_pedido_burbuja(i: int) -> void:
 	if slot_burbujas[i]:
 		slot_burbujas[i].visible = false
+	slot_liquido_activo[i] = null
+	if slot_burbuja_vasos[i] and _mini_vaso_pos_original[i] != null:
+		slot_burbuja_vasos[i].position = _mini_vaso_pos_original[i]
 
 
 ## Cuadro de diálogo en su estado "chico": un cuadrado beige vacío (sin
