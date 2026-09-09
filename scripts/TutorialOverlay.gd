@@ -41,7 +41,6 @@ signal tutorial_terminado
 @onready var texto_label: RichTextLabel = get_node_or_null("DialogBox/TextoLabel") as RichTextLabel
 @onready var paso_label: Label = $DialogBox/PasoLabel
 @onready var nombre_label: Label = $DialogBox/NombreLabel
-@onready var pista_label: Label = $DialogBox/PistaLabel
 @onready var siguiente_btn: Button = $DialogBox/SiguienteBtn
 @onready var saltar_btn: Button = $DialogBox/SaltarBtn
 
@@ -304,8 +303,8 @@ func _ready() -> void:
 	if texto_label:
 		texto_label.bbcode_enabled = true
 		# <<< AQUÍ CAMBIAS LA FUENTE Y EL TAMAÑO DEL TEXTO DE NANCY >>>
-		texto_label.add_theme_font_override("normal_font", preload("res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf"))
-		texto_label.add_theme_font_size_override("normal_font_size", 50)
+		texto_label.add_theme_font_override("normal_font", preload("res://assets/fonts/gin_fight/Gin Fight.ttf"))
+		texto_label.add_theme_font_size_override("normal_font_size", 60)
 	_crear_vaso_faltante()
 
 	# Esperamos un frame completo antes de mostrar el paso 0, para que
@@ -364,9 +363,6 @@ func mostrar_paso(i: int) -> void:
 	var requiere: Array = paso.get("requiere", [])
 	var necesita_accion: bool = requiere.size() > 0
 
-	if pista_label:
-		pista_label.visible = necesita_accion
-	siguiente_btn.visible = not necesita_accion
 	if necesita_accion:
 		_dejar_de_parpadear_boton()
 	else:
@@ -387,8 +383,6 @@ func _actualizar_ingredientes(requiere: Array) -> void:
 		_vaso_faltante.visible = requiere.has("vaso")
 
 	if requiere.is_empty():
-		if pista_label:
-			pista_label.text = ""
 		_quitar_resaltados()
 		_bloquear_ingredientes(["__ninguno__"])
 		return
@@ -401,8 +395,6 @@ func _actualizar_ingredientes(requiere: Array) -> void:
 		if j > 0:
 			texto_ingredientes += " o "
 		texto_ingredientes += nombres[j]
-	if pista_label:
-		pista_label.text = "👉 Arrastra " + texto_ingredientes + " al vaso para continuar."
 
 	_bloquear_ingredientes(requiere)
 	_resaltar(requiere)

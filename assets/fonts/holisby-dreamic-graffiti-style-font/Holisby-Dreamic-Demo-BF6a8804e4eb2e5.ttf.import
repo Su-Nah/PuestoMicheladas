@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://bdgoxwge0j1y"
-path="res://.godot/imported/SedgwickAveDisplay-Regular.ttf-823285c6ee7c873bacbf6a422b069443.fontdata"
+uid="uid://b0cdn7d3jjkq6"
+path="res://.godot/imported/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf-9fedd34105e9c45a09db7691f7362092.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/Sedgwick_Ave_Display/SedgwickAveDisplay-Regular.ttf"
-dest_files=["res://.godot/imported/SedgwickAveDisplay-Regular.ttf-823285c6ee7c873bacbf6a422b069443.fontdata"]
+source_file="res://assets/fonts/holisby-dreamic-graffiti-style-font/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf"
+dest_files=["res://.godot/imported/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf-9fedd34105e9c45a09db7691f7362092.fontdata"]
 
 [params]
 
