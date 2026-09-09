@@ -1,17 +1,13 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dnuunwhefo20f"]
 
-[ext_resource type="Script" path="res://scenes/InicioMenu.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/sprites/fondo.png" id="2"]
-[ext_resource type="FontFile" path="res://assets/fonts/Sedgwick_Ave_Display/SedgwickAveDisplay-Regular.ttf" id="3"]
-[ext_resource type="FontFile" path="res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf" id="4"]
+[ext_resource type="Script" uid="uid://bmnx6bsrpbuss" path="res://scenes/InicioMenu.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/fondo.png" id="2"]
+[ext_resource type="FontFile" uid="uid://bdgoxwge0j1y" path="res://assets/fonts/Sedgwick_Ave_Display/SedgwickAveDisplay-Regular.ttf" id="3"]
+[ext_resource type="FontFile" uid="uid://e07c6is6ur5k" path="res://assets/fonts/Shadows_Into_Light/ShadowsIntoLight-Regular.ttf" id="4"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_titulo_juego"]
 font = ExtResource("3")
 font_size = 64
-
-[sub_resource type="LabelSettings" id="LabelSettings_titulo_panel"]
-font = ExtResource("3")
-font_size = 40
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.51, 0.25075, 0.19889998, 1)
@@ -25,14 +21,20 @@ corner_radius_top_right = 18
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
 
-[node name="InicioMenu" type="Control"]
+[sub_resource type="LabelSettings" id="LabelSettings_titulo_panel"]
+font = ExtResource("3")
+font_size = 40
+
+[node name="InicioMenu" type="Control" unique_id=2090845542]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Fondo" type="TextureRect" parent="."]
+[node name="Fondo" type="TextureRect" parent="." unique_id=1709012962]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,7 +45,7 @@ texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="ColorRect" parent="." unique_id=691068182]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,7 +54,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.25)
 
-[node name="MenuPrincipal" type="Control" parent="."]
+[node name="MenuPrincipal" type="Control" parent="." unique_id=1092996880]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,25 +62,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TituloJuego" type="Label" parent="MenuPrincipal"]
+[node name="TituloJuego" type="Label" parent="MenuPrincipal" unique_id=931696137]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -340.0
-offset_right = 400.0
-offset_bottom = -240.0
+offset_left = -395.0
+offset_top = -249.0
+offset_right = 405.0
+offset_bottom = -149.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Micheladas del Barrio"
+text = "Micheladas Nancy"
 label_settings = SubResource("LabelSettings_titulo_juego")
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MenuPrincipal"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuPrincipal" unique_id=692987317]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -93,28 +95,28 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 18
 
-[node name="JugarBtn" type="Button" parent="MenuPrincipal/VBoxContainer"]
+[node name="JugarBtn" type="Button" parent="MenuPrincipal/VBoxContainer" unique_id=125273705]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 26
 text = "Jugar"
 
-[node name="CreditosBtn" type="Button" parent="MenuPrincipal/VBoxContainer"]
+[node name="CreditosBtn" type="Button" parent="MenuPrincipal/VBoxContainer" unique_id=638428850]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 26
 text = "Créditos"
 
-[node name="OpcionesBtn" type="Button" parent="MenuPrincipal/VBoxContainer"]
+[node name="OpcionesBtn" type="Button" parent="MenuPrincipal/VBoxContainer" unique_id=706807634]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 26
 text = "Opciones"
 
-[node name="CreditosPanel" type="Control" parent="."]
+[node name="CreditosPanel" type="Control" parent="." unique_id=463776467]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -123,7 +125,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Dim" type="ColorRect" parent="CreditosPanel"]
+[node name="Dim" type="ColorRect" parent="CreditosPanel" unique_id=1618131164]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -132,7 +134,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.65)
 
-[node name="Panel" type="Panel" parent="CreditosPanel"]
+[node name="Panel" type="Panel" parent="CreditosPanel" unique_id=1243380811]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -147,7 +149,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CreditosPanel/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CreditosPanel/Panel" unique_id=905780409]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -158,62 +160,62 @@ offset_right = -28.0
 offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
 theme_override_constants/separation = 14
+alignment = 1
 
-[node name="TituloLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer"]
+[node name="TituloLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=823801904]
 layout_mode = 2
 text = "Créditos"
 label_settings = SubResource("LabelSettings_titulo_panel")
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="CreditosPanel/Panel/VBoxContainer"]
+[node name="ProgramacionLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=2126062461]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Programación asistida con IA & efectos de sonido: Quetzali"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer1" type="Control" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1987460425]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="DisenoLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer"]
+[node name="AssetsLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=2077065607]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Assets: Ángel Avilés @angel_jar_22"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer2" type="Control" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1355651846]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="DisenoLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1619058394]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Diseño de personajes: Diego"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="AssetsLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Assets: Ángel"
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="ProgramacionLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Programación asistida con IA: Quetzali"
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="Spacer2" type="Control" parent="CreditosPanel/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 10)
-layout_mode = 2
-
-[node name="AgradecimientosLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer"]
+[node name="AgradecimientosLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1873079849]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Agradecimientos especiales a Guillermo B, Hasem"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="Spacer3" type="Control" parent="CreditosPanel/Panel/VBoxContainer"]
+[node name="Spacer3" type="Control" parent="CreditosPanel/Panel/VBoxContainer" unique_id=2080609184]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="VolverBtn" type="Button" parent="CreditosPanel/Panel/VBoxContainer"]
+[node name="VolverBtn" type="Button" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1194869986]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Volver"
 
-[node name="OpcionesPanel" type="Control" parent="."]
+[node name="OpcionesPanel" type="Control" parent="." unique_id=1716190571]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -222,7 +224,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Dim" type="ColorRect" parent="OpcionesPanel"]
+[node name="Dim" type="ColorRect" parent="OpcionesPanel" unique_id=881657077]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -231,7 +233,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.65)
 
-[node name="Panel" type="Panel" parent="OpcionesPanel"]
+[node name="Panel" type="Panel" parent="OpcionesPanel" unique_id=1990233507]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -246,7 +248,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="OpcionesPanel/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="OpcionesPanel/Panel" unique_id=1736834103]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -259,27 +261,27 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TituloLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="TituloLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=1335700712]
 layout_mode = 2
 text = "Opciones"
 label_settings = SubResource("LabelSettings_titulo_panel")
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="Spacer1" type="Control" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=1020132526]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="MusicaRow" type="HBoxContainer" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="MusicaRow" type="HBoxContainer" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=793902653]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="MusicaLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer/MusicaRow"]
+[node name="MusicaLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer/MusicaRow" unique_id=1230321193]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Música"
 
-[node name="MusicaSlider" type="HSlider" parent="OpcionesPanel/Panel/VBoxContainer/MusicaRow"]
+[node name="MusicaSlider" type="HSlider" parent="OpcionesPanel/Panel/VBoxContainer/MusicaRow" unique_id=703327033]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -287,17 +289,17 @@ max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="RuidoRow" type="HBoxContainer" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="RuidoRow" type="HBoxContainer" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=1260693633]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="RuidoLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer/RuidoRow"]
+[node name="RuidoLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer/RuidoRow" unique_id=798127824]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Ruido de fondo"
 
-[node name="RuidoSlider" type="HSlider" parent="OpcionesPanel/Panel/VBoxContainer/RuidoRow"]
+[node name="RuidoSlider" type="HSlider" parent="OpcionesPanel/Panel/VBoxContainer/RuidoRow" unique_id=1469513394]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -305,17 +307,17 @@ max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="SonidosRow" type="HBoxContainer" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="SonidosRow" type="HBoxContainer" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=1453649471]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="SonidosLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer/SonidosRow"]
+[node name="SonidosLabel" type="Label" parent="OpcionesPanel/Panel/VBoxContainer/SonidosRow" unique_id=803056716]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Botones/ingredientes"
 
-[node name="SonidosSlider" type="HSlider" parent="OpcionesPanel/Panel/VBoxContainer/SonidosRow"]
+[node name="SonidosSlider" type="HSlider" parent="OpcionesPanel/Panel/VBoxContainer/SonidosRow" unique_id=334506977]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -323,11 +325,11 @@ max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="Spacer2" type="Control" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="Spacer2" type="Control" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=1078169627]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="VolverBtn" type="Button" parent="OpcionesPanel/Panel/VBoxContainer"]
+[node name="VolverBtn" type="Button" parent="OpcionesPanel/Panel/VBoxContainer" unique_id=1400872373]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24

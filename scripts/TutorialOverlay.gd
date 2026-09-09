@@ -209,6 +209,7 @@ var pasos: Array = [
 	},
 ]
 
+
 var indice := 0
 
 ## --- PARPADEO (sin Tween) -------------------------------------------
@@ -225,6 +226,14 @@ const PARPADEO_ESCALA := 1.04
 const PARPADEO_VELOCIDAD := 4.5
 ## Color en el pico del parpadeo (más claro que blanco = "destello").
 const PARPADEO_COLOR_BRILLO := Color(1.2, 1.2, 1.2, 1.0)
+
+## El contorno "vaso_faltante" es un caso aparte: NO usa escala ni brillo
+## como todo lo demás — solo aparece y desaparece (parpadeo simple de
+## visibilidad). _vaso_faltante_parpadeando controla si debe estar
+## haciendo eso ahora mismo; PARPADEO_VASO_FALTANTE_VELOCIDAD es cuántos
+## ciclos completos (aparece+desaparece) hace por segundo.
+var _vaso_faltante_parpadeando := false
+const PARPADEO_VASO_FALTANTE_VELOCIDAD := 0.7
 
 ## Para el print de diagnóstico de abajo — no lo borres todavía.
 var _debug_acumulado := 0.0
@@ -251,6 +260,15 @@ var _debug_acumulado := 0.0
 ##   (revisa el orden de nodos y que "clip_contents" esté apagado en los
 ##   padres del ícono).
 func _process(_delta: float) -> void:
+	# vaso_faltante: parpadeo SIMPLE de visibilidad (aparece/desaparece),
+	# totalmente separado del sistema de escala+brillo de abajo. Se
+	# actualiza siempre que le toque, sin importar si hay otros nodos
+	# resaltados o no.
+	if _vaso_faltante_parpadeando and _vaso_faltante:
+		var t_vaso: float = Time.get_ticks_msec() / 1000.0
+		var ciclo: float = fmod(t_vaso * PARPADEO_VASO_FALTANTE_VELOCIDAD, 1.0)
+		_vaso_faltante.visible = ciclo < 0.5
+
 	if _resaltados.is_empty() and _resaltado_boton == null:
 		return
 
@@ -361,6 +379,10 @@ func mostrar_paso(i: int) -> void:
 
 
 func _actualizar_ingredientes(requiere: Array) -> void:
+	# vaso_faltante ya NO pasa por _resaltar() (que es el sistema de
+	# escala+brillo) — solo se le dice aquí si debe estar apareciendo y
+	# desapareciendo (ver _process) mientras haga falta un vaso.
+	_vaso_faltante_parpadeando = requiere.has("vaso")
 	if _vaso_faltante:
 		_vaso_faltante.visible = requiere.has("vaso")
 
@@ -432,11 +454,9 @@ func _resaltar(ids: Array) -> void:
 		if nodo:
 			nodo.pivot_offset = nodo.size / 2.0
 			_resaltados.append(nodo)
-	# El contorno "vaso_faltante" también debe parpadear mientras haga
-	# falta un vaso, igual que el ícono de la bandeja.
-	if ids.has("vaso") and _vaso_faltante:
-		_vaso_faltante.pivot_offset = _vaso_faltante.size / 2.0
-		_resaltados.append(_vaso_faltante)
+	# vaso_faltante NO entra aquí a propósito: tiene su propio parpadeo
+	# simple de aparecer/desaparecer (ver _vaso_faltante_parpadeando en
+	# _actualizar_ingredientes y _process), sin escala ni brillo.
 
 func _quitar_resaltados() -> void:
 	for nodo in _resaltados:
@@ -471,6 +491,7 @@ func _on_ingrediente_soltado(ingrediente_id: String) -> void:
 		return
 	if ingrediente_id == "vaso" and _vaso_faltante:
 		_vaso_faltante.visible = false
+		_vaso_faltante_parpadeando = false
 	var paso: Dictionary = pasos[indice]
 	var requiere: Array = paso.get("requiere", [])
 	if requiere.size() > 0 and requiere.has(ingrediente_id):
@@ -501,6 +522,7 @@ func _terminar() -> void:
 	_bloquear_ingredientes([])
 	if _vaso_faltante:
 		_vaso_faltante.visible = false
+		_vaso_faltante_parpadeando = false
 	visible = false
 	if nancy_portrait:
 		nancy_portrait.visible = false
