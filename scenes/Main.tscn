@@ -793,6 +793,9 @@ cache/0/50/0/glyphs/69/texture_idx = 0
 font = SubResource("FontFile_cobve")
 font_size = 30
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_g6wdg"]
+load_path = "res://.godot/imported/basura2.png-298cb9d335f6e3a5a4b1d62f8bbbdb72.ctex"
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pausa"]
 bg_color = Color(0.51, 0.25075, 0.19889998, 1)
 border_width_left = 5
@@ -1441,10 +1444,10 @@ color = Color(0, 0, 0, 0.6)
 [node name="NancyPortrait" type="TextureRect" parent="TutorialLayer" unique_id=63704867]
 visible = false
 layout_mode = 0
-offset_left = 8.0
-offset_top = 217.0
-offset_right = 439.0
-offset_bottom = 869.0
+offset_left = 9.0
+offset_top = 147.0
+offset_right = 440.0
+offset_bottom = 799.0
 mouse_filter = 2
 texture = ExtResource("32")
 expand_mode = 1
@@ -1453,10 +1456,10 @@ flip_h = true
 
 [node name="DialogBox" type="TextureRect" parent="TutorialLayer" unique_id=1495281737]
 layout_mode = 0
-offset_left = 364.0
-offset_top = 110.0
-offset_right = 1888.0
-offset_bottom = 577.0
+offset_left = 365.0
+offset_top = 71.0
+offset_right = 1889.0
+offset_bottom = 538.0
 texture = ExtResource("21_g6wdg")
 
 [node name="NombreLabel" type="Label" parent="TutorialLayer/DialogBox" unique_id=63704869]
@@ -1493,10 +1496,10 @@ text = "..."
 
 [node name="SaltarBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704872]
 layout_mode = 0
-offset_left = 197.0
-offset_top = 316.0001
-offset_right = 421.0
-offset_bottom = 356.0001
+offset_left = 407.00003
+offset_top = 336.99997
+offset_right = 631.0
+offset_bottom = 376.99997
 rotation = 0.08924606
 theme_override_fonts/font = ExtResource("21_2c4at")
 theme_override_font_sizes/font_size = 21
@@ -1504,10 +1507,10 @@ text = "Saltar tutorial"
 
 [node name="SiguienteBtn" type="Button" parent="TutorialLayer/DialogBox" unique_id=63704873]
 layout_mode = 0
-offset_left = 438.0
-offset_top = 347.0001
-offset_right = 634.0
-offset_bottom = 384.52432
+offset_left = 200.0
+offset_top = 330.00015
+offset_right = 395.99997
+offset_bottom = 367.52438
 rotation = 0.09375403
 theme_override_fonts/font = ExtResource("21_2c4at")
 theme_override_font_sizes/font_size = 21
@@ -1525,7 +1528,7 @@ color = Color(0.4, 0.26, 0.14, 1)
 [node name="MesaFondo" type="TextureRect" parent="Mesa" unique_id=1573789700]
 layout_mode = 0
 offset_left = -12.0
-offset_top = -2.0
+offset_top = -41.0
 offset_right = 1913.0
 offset_bottom = 340.0
 mouse_filter = 2
@@ -1576,10 +1579,10 @@ etiqueta = "Chamoy azul"
 [node name="EscarchadoAzulIcon" type="TextureRect" parent="Mesa" unique_id=1811468603]
 custom_minimum_size = Vector2(110, 110)
 layout_mode = 0
-offset_left = 603.0
-offset_top = 68.0
-offset_right = 769.0
-offset_bottom = 240.0
+offset_left = 605.0
+offset_top = 72.0
+offset_right = 771.0
+offset_bottom = 244.0
 texture = ExtResource("12")
 expand_mode = 1
 stretch_mode = 5
@@ -1680,9 +1683,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -160.0
-offset_top = -322.0
+offset_top = -379.0
 offset_right = 160.0
-offset_bottom = -32.0
+offset_bottom = -89.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("3")
@@ -1795,15 +1798,14 @@ texture = ExtResource("47")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ReiniciarBtn" type="Button" parent="Mesa" unique_id=1707587747]
+[node name="ReiniciarBtn" type="TextureButton" parent="Mesa" unique_id=2067298584]
 layout_mode = 0
-offset_left = 797.0
-offset_top = 233.0
-offset_right = 1115.0
-offset_bottom = 293.0
-theme_override_fonts/font = ExtResource("21_2c4at")
-theme_override_font_sizes/font_size = 21
-text = "Vaciar vaso"
+offset_left = 809.0
+offset_top = 221.0
+offset_right = 1089.0
+offset_bottom = 601.0
+texture_normal = SubResource("CompressedTexture2D_g6wdg")
+stretch_mode = 0
 
 [node name="PauseMenu" type="Control" parent="." unique_id=900000001]
 process_mode = 3

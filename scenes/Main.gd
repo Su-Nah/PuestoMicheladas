@@ -40,7 +40,7 @@ const NUM_SLOTS := 3
 ## detectar el problema en vez de fallar en silencio más adelante.
 @onready var vaso: VasoMichelada = get_node_or_null("Mesa/Vaso")
 @onready var vaso_label: Label = get_node_or_null("Mesa/Vaso/VasoLabel")
-@onready var reiniciar_btn: Button = get_node_or_null("Mesa/ReiniciarBtn")
+@onready var reiniciar_btn: TextureButton = get_node_or_null("Mesa/ReiniciarBtn")
 @onready var result_label: Label = get_node_or_null("Mesa/ResultLabel")
 
 @onready var tutorial: TutorialOverlay = get_node_or_null("TutorialLayer")
