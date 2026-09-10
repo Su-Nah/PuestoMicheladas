@@ -1420,7 +1420,6 @@ theme_override_font_sizes/font_size = 22
 label_settings = SubResource("LabelSettings_pnhog")
 
 [node name="TutorialLayer" type="Control" parent="." unique_id=63704865]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

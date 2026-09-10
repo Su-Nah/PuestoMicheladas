@@ -659,7 +659,6 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 
 		GameManager.registrar_venta(cliente.get("id", ""), precio_final, false)
 		calidades_del_dia.append(calidad)
-		mensaje = _texto_resultado(calidad, precio_final)
 		_vaciar_vaso() # el vaso ya se sirvió: desaparece del centro
 		_ocultar_pedido_burbuja(idx) # su michelada (la burbuja) también se oculta
 	else:
@@ -1005,18 +1004,6 @@ func _multiplicador_por_calidad(calidad: float) -> float:
 		return 0.7
 	else:
 		return 0.4
-
-
-func _texto_resultado(calidad: float, precio: int) -> String:
-	if calidad >= 0.85:
-		return "¡Excelente! Le encantó. Paga $%d." % precio
-	elif calidad >= 0.6:
-		return "Buena bebida. Paga $%d." % precio
-	elif calidad >= 0.35:
-		return "Meh... no era lo que pidió. Paga solo $%d." % precio
-	else:
-		return "No le gustó nada. A regañadientes paga $%d." % precio
-
 
 # ---------------------------------------------------------------------
 # UI GENERAL / SEÑALES DE GameManager
