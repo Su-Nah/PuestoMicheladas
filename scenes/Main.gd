@@ -32,7 +32,7 @@ const NUM_SLOTS := 3
 ## deja de ver ese textito), en vez de trabarse por completo.
 @onready var day_label: Label = get_node_or_null("InfoBar/DayLabel")
 @onready var money_label: Label = get_node_or_null("InfoBar/MoneyLabel")
-@onready var day_timeline: HBoxContainer = get_node_or_null("DayTimeline")
+@onready var day_timeline: HBoxContainer = get_node_or_null("InfoBar/DayTimeline")
 
 ## Estos SÍ son parte del juego (no solo informativos): si faltan, el
 ## juego de verdad no puede funcionar, así que se buscan igual con
@@ -103,15 +103,15 @@ const NUM_SLOTS := 3
 ## de diálogo se ve como un cuadrado beige VACÍO (sin texto), del mismo
 ## tamaño que la burbuja del pedido pero en el lado opuesto (arriba a la
 ## IZQUIERDA en vez de arriba a la derecha).
-const DIALOGO_RECT_CHICO := Rect2(0, 88, 150, 160)
+const DIALOGO_RECT_CHICO := Rect2(0, -20, 150, 160)
 ## "Grande": al resolverse el cliente (michelada servida, o cliente que
 ## solo venía a platicar y se despide), el cuadro NO baja ni cambia de
 ## alto — se queda en la misma esquina de arriba y solo se ESTIRA hacia
 ## la derecha (mismo x, mismo y, mismo alto que DIALOGO_RECT_CHICO).
-const DIALOGO_RECT_GRANDE := Rect2(0, 88, 570, 160)
+const DIALOGO_RECT_GRANDE := Rect2(0, -20, 670, 160)
 ## Cuánto tiempo se queda el texto visible antes de que el cliente (y su
 ## cuadro) desaparezcan del todo.
-const DIALOGO_DURACION_TEXTO := 4.0
+const DIALOGO_DURACION_TEXTO := 5.0
 ## Qué tan rápido se estira el cuadro de "chico" a "grande".
 const DIALOGO_DURACION_EXPANSION := 0.35
 
@@ -147,6 +147,42 @@ var slot_liquido_activo: Array = [null, null, null]
 ## el offset_left = -7 que le pusiste) cuando el vasito tiembla o se
 ## vuelve a mostrar.
 var _mini_vaso_pos_original: Array = [null, null, null]
+
+## <<< DIÁLOGO DE PERSONAJES ESPECIALES >>>
+## El cuadro de diálogo (DialogoBox) YA NO muestra el precio ni un
+## mensaje genérico de despedida — eso ahora se ve con el $ flotante
+## (ver más abajo) para el precio, y sencillamente no se muestra nada
+## para los clientes normales que solo se despiden. DialogoBox SOLO
+## aparece cuando el cliente es "especial" (CharacterDB.especial ==
+## true), mostrando una de sus frases (CharacterDB.dialogo).
+## _dialogo_restante guarda, por id de personaje, qué índices de frases
+## le quedan por decir SIN repetir; cuando se acaban, se vuelve a llenar
+## y barajar (así sí se pueden repetir, pero solo después de haber
+## salido todas al menos una vez).
+var _dialogo_restante: Dictionary = {}
+
+## <<< $ FLOTANTE AL SERVIR >>>
+## Aparece junto al personaje al que se le acaba de servir su bebida:
+## un "$<precio>" verde que sube y se desvanece haciendo zigzag.
+const DINERO_COLOR := Color(0.267, 0.821, 0.341, 1.0)
+const DINERO_FONT_SIZE := 50
+## Pon aquí la ruta de la fuente que quieras (arrástrala al FileSystem
+## si no la tienes ya en el proyecto, clic derecho -> "Copy Path").
+const DINERO_FUENTE := preload("res://assets/fonts/gin_fight/Gin Fight.ttf")
+const DINERO_CONTORNO_COLOR := Color(0, 0, 0, 1)
+const DINERO_CONTORNO_GROSOR := 6
+## Dónde nace el $ dentro del puesto (coordenadas LOCALES del
+## ClienteSlot, no de la pantalla completa). Por defecto, arriba a la
+## derecha del retrato — ajusta estos dos números a tu gusto.
+const DINERO_POS_INICIAL := Vector2(430, 60)
+## Cuánto sube en total (píxeles) antes de terminar de desvanecerse.
+const DINERO_ALTURA_SUBIDA := 150.0
+## Cuánto dura toda la animación (subida + desvanecido).
+const DINERO_DURACION := 2
+## Cuántos "tramos" tiene el zigzag horizontal y qué tan ancho es cada
+## uno (en píxeles, hacia cada lado).
+const DINERO_ZIGZAG_TRAMOS := 5
+const DINERO_ZIGZAG_ANCHO := 10.0
 
 ## Todos los ingredientes que SÍ cuentan para la calidad de la bebida (el
 ## "vaso" no cuenta: es solo el recipiente, no una preferencia de sabor).
@@ -645,11 +681,16 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 	resolviendo_slot[idx] = true
 
 	var cliente: Dictionary = slots[idx]["cliente"]
-	var mensaje := ""
-	var mostrar_dialogo := true
+	# Un timeout de verdad (se le acabó la paciencia sin que lo
+	# atendieras) se distingue viendo la paciencia en sí, NO el parámetro
+	# "hubo_tiempo" — porque ese mismo parámetro también llega en falso
+	# para el cliente que solo quiere platicar (no necesita tiempo, se
+	# resuelve con un toque). Un timeout real nunca debe mostrar diálogo,
+	# ni siquiera si el personaje es especial.
+	var fue_timeout: bool = slots[idx]["paciencia_actual"] <= 0.0
 
 	if not cliente.get("quiere_michelada", true):
-		mensaje = "%s se despide y sigue su camino." % cliente.get("nombre", "El cliente")
+		pass # se despide sin pagar; ya no hay mensaje que mostrarle a nadie
 	elif hubo_tiempo:
 		var receta: Dictionary = cliente.get("receta", {})
 		var calidad := _calcular_calidad(receta)
@@ -661,12 +702,21 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 		calidades_del_dia.append(calidad)
 		_vaciar_vaso() # el vaso ya se sirvió: desaparece del centro
 		_ocultar_pedido_burbuja(idx) # su michelada (la burbuja) también se oculta
+		_mostrar_dinero_flotante(idx, precio_final)
 	else:
-		# Se le acabó la paciencia esperando su michelada: se va SIN
-		# mostrar ningún diálogo (a diferencia de los otros dos casos).
+		# Se le acabó la paciencia esperando su michelada.
 		calidades_del_dia.append(0.0)
-		mostrar_dialogo = false
 		_ocultar_pedido_burbuja(idx) # la michelada se oculta YA, junto con el diálogo
+
+	# El cuadro de diálogo SOLO se usa para la frase de los personajes
+	# especiales (CharacterDB.especial == true) — nunca para el precio ni
+	# para una despedida genérica, y nunca si de verdad se le acabó el
+	# tiempo sin atenderlo.
+	var mostrar_dialogo := false
+	var mensaje := ""
+	if not fue_timeout and cliente.get("especial", false):
+		mensaje = _elegir_dialogo_especial(cliente)
+		mostrar_dialogo = mensaje != ""
 
 	clientes_resueltos += 1
 	_actualizar_timeline()
@@ -683,6 +733,60 @@ func _resolver_slot(idx: int, hubo_tiempo: bool) -> void:
 	resolviendo_slot[idx] = false
 	_actualizar_slot_ui(idx)
 	_rellenar_slots()
+
+
+## Elige una frase de cliente["dialogo"] sin repetir hasta que salgan
+## todas por lo menos una vez (efecto "bolsa que se baraja"): cuando ya
+## no quedan frases sin usar para este personaje, se vuelve a llenar y
+## barajar la bolsa completa (ahí sí pueden volver a salir repetidas).
+## Devuelve "" si el personaje no tiene frases (o no es especial).
+func _elegir_dialogo_especial(cliente: Dictionary) -> String:
+	var lineas: Array = cliente.get("dialogo", [])
+	if lineas.is_empty():
+		return ""
+	var id: String = cliente.get("id", "")
+	if not _dialogo_restante.has(id) or _dialogo_restante[id].is_empty():
+		var indices: Array = range(lineas.size())
+		indices.shuffle()
+		_dialogo_restante[id] = indices
+	var elegido: int = _dialogo_restante[id].pop_back()
+	return lineas[elegido]
+
+
+## Crea un "$<precio>" verde junto al personaje al que se le acaba de
+## servir su bebida, y lo anima subiendo con un zigzag mientras se
+## desvanece, hasta desaparecer del todo.
+func _mostrar_dinero_flotante(idx: int, precio: int) -> void:
+	var slot_node: Control = slot_nodes[idx]
+	if slot_node == null:
+		return
+
+	var etiqueta := Label.new()
+	etiqueta.text = "$%d" % precio
+	etiqueta.add_theme_color_override("font_color", DINERO_COLOR)
+	etiqueta.add_theme_font_size_override("font_size", DINERO_FONT_SIZE)
+	etiqueta.add_theme_font_override("font", DINERO_FUENTE)
+	etiqueta.add_theme_color_override("font_outline_color", DINERO_CONTORNO_COLOR)
+	etiqueta.add_theme_constant_override("outline_size", DINERO_CONTORNO_GROSOR)
+	etiqueta.z_index = 30
+	etiqueta.position = DINERO_POS_INICIAL
+	slot_node.add_child(etiqueta)
+
+	# Subida + desvanecido: una sola animación continua en paralelo.
+	var tween_subida := create_tween()
+	tween_subida.set_parallel(true)
+	tween_subida.tween_property(etiqueta, "position:y", DINERO_POS_INICIAL.y - DINERO_ALTURA_SUBIDA, DINERO_DURACION)
+	tween_subida.tween_property(etiqueta, "modulate:a", 0.0, DINERO_DURACION)
+	tween_subida.finished.connect(etiqueta.queue_free)
+
+	# Zigzag horizontal: tramos cortos y SECUENCIALES (uno tras otro,
+	# alternando izquierda/derecha), en un Tween aparte para no
+	# complicar el de arriba.
+	var tween_zigzag := create_tween()
+	var duracion_tramo: float = DINERO_DURACION / float(DINERO_ZIGZAG_TRAMOS)
+	for tramo in range(DINERO_ZIGZAG_TRAMOS):
+		var lado: float = DINERO_ZIGZAG_ANCHO if tramo % 2 == 0 else -DINERO_ZIGZAG_ANCHO
+		tween_zigzag.tween_property(etiqueta, "position:x", DINERO_POS_INICIAL.x + lado, duracion_tramo)
 
 
 # ---------------------------------------------------------------------
@@ -705,7 +809,7 @@ const TIMELINE_ICONO_TAMANO := Vector2(40, 40)
 ## no llega ese día, RESUELTO = cliente ya atendido. Si quieres que el
 ## ícono pendiente se vea con sus colores originales (sin ningún tinte),
 ## cambia PENDIENTE a Color(1, 1, 1, 1).
-const TIMELINE_COLOR_PENDIENTE := Color(0.6, 0.6, 0.6)
+const TIMELINE_COLOR_PENDIENTE := Color(0.17, 0.17, 0.17, 1.0)
 const TIMELINE_COLOR_RESUELTO := Color(0.3, 0.8, 0.3)
 
 

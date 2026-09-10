@@ -28,6 +28,7 @@ var personajes: Array = [
 		"dialogo": [
 			"Antes este puesto lo llevaba mi compadre... hasta que dejó de pagar la cuota.",
 			"Cuídate, aquí las cosas se ponen feas para el que no coopera.",
+			"No le vendas al de polo azul. No tiene aura.",
 		],
 	},
 	{
@@ -45,8 +46,8 @@ var personajes: Array = [
 		# CustomerSpawner.gd). Este personaje es menor de edad: este es
 		# justo el dilema, tú decides si se lo completas o no.
 		"dialogo": [
-			"Muchas gracias. Ya me estaba asando en esta botarga. Necesitaba algo refrescante.",
-			"Salí de la carrera y el único trabajo que encontré fue como botarga afuera del Simi.",
+			"Necesitaba algo refrescante. Ya me estaba asando en esta botarga. ",
+			"El único trabajo que encontré fue como botarga afuera del Simi.",
 		],
 	},
 	{
@@ -66,36 +67,42 @@ var personajes: Array = [
 		"retrato": "res://assets/sprites/personajes/elazulito.png",
 		"nombre": "El que tiene cara de azulito",
 		"es_menor": false,
-		"especial": false,
+		"especial": true,
 		"puede_repetir": true,
 		"precio_base": 40,
 		"quiere_michelada": true,
 		"paciencia": 9.0,
-		"dialogo": [],
+		"dialogo": [
+			"Mi camisa es Gucci. Puro dinero aquí."
+		],
 	},
 	{
 		"id": "elchelas",
 		"retrato": "res://assets/sprites/personajes/elchelas.png",
 		"nombre": "El chelas",
 		"es_menor": false,
-		"especial": false,
+		"especial": true,
 		"puede_repetir": true,
 		"precio_base": 21,
 		"quiere_michelada": true,
 		"paciencia": 14.0,
-		"dialogo": [],
+		"dialogo": [
+			"Otra vez ganó el América. LES DIJEEE."
+		],
 	},
 	{
 		"id": "kimkardashian",
 		"retrato": "res://assets/sprites/personajes/kimkardashian.png",
 		"nombre": "¿Es Kim Kardashian?",
 		"es_menor": false,
-		"especial": false,
+		"especial": true,
 		"puede_repetir": true,
 		"precio_base": 28,
 		"quiere_michelada": true,
 		"paciencia": 16.0,
-		"dialogo": [],
+		"dialogo": [
+			"¡Qué rico! ¡Deberías hacer KityMicheladas!"
+		],
 	},
 	{
 		"id": "tlaloc",
@@ -108,7 +115,7 @@ var personajes: Array = [
 		"quiere_michelada": true,
 		"paciencia": 11.0,
 		"dialogo": [
-			"Si te vuelves a tardar en atenderme voy a invocar lluvia para que se te moje el puesto."
+			"Si te vuelves a tardar invocaré lluvia para que se te moje el puesto."
 		],
 	},
 	{
@@ -116,12 +123,14 @@ var personajes: Array = [
 		"retrato": "res://assets/sprites/personajes/youtuber.png",
 		"nombre": "Youtuber",
 		"es_menor": false,
-		"especial": false,
+		"especial": true,
 		"puede_repetir": true,
 		"precio_base": 35,
 		"quiere_michelada": true,
 		"paciencia": 16.0,
-		"dialogo": [],
+		"dialogo": [
+			"¿¿¿Tan poquitas gomitas???"
+		],
 	},
 ]
 
