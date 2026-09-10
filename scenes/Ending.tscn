@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cs44d6jh5j7xe"]
 
 [ext_resource type="Script" uid="uid://bgxyme6qpc2ed" path="res://scenes/Ending.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/fondo.png" id="2_fnpsr"]
+[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/ui/fondo.png" id="2_fnpsr"]
 [ext_resource type="FontFile" uid="uid://b0cdn7d3jjkq6" path="res://assets/fonts/holisby-dreamic-graffiti-style-font/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf" id="3_ryuiv"]
 
 [node name="Ending" type="Control" unique_id=1648828183]
@@ -30,27 +30,30 @@ offset_left = 40.0
 offset_top = 60.0
 offset_right = 760.0
 offset_bottom = 100.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 11
 theme_override_fonts/font = ExtResource("3_ryuiv")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 100
 text = "Título del final"
 
 [node name="Texto" type="Label" parent="." unique_id=796427319]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 120.0
-offset_right = 760.0
-offset_bottom = 260.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+offset_left = 44.0
+offset_top = 184.0
+offset_right = 764.0
+offset_bottom = 324.0
+theme_override_colors/font_color = Color(0.97, 0.97, 0.97, 1)
+theme_override_constants/outline_size = 11
 theme_override_fonts/font = ExtResource("3_ryuiv")
+theme_override_font_sizes/font_size = 50
 text = "Descripción del final."
 autowrap_mode = 3
 
 [node name="ReiniciarBtn" type="Button" parent="." unique_id=13159839]
 layout_mode = 0
 offset_left = 40.0
-offset_top = 300.0
+offset_top = 447.0
 offset_right = 240.0
-offset_bottom = 340.0
+offset_bottom = 487.0
 theme_override_fonts/font = ExtResource("3_ryuiv")
 text = "Jugar de nuevo"

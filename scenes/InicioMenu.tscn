@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bmnx6bsrpbuss" path="res://scenes/InicioMenu.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/ui/fondo.png" id="2"]
 [ext_resource type="FontFile" uid="uid://b0cdn7d3jjkq6" path="res://assets/fonts/holisby-dreamic-graffiti-style-font/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf" id="3_213fs"]
+[ext_resource type="FontFile" uid="uid://b08vfhxdypo62" path="res://assets/fonts/gin_fight/Gin Fight.ttf" id="4_213fs"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_titulo_juego"]
 font = ExtResource("3_213fs")
@@ -12,12 +13,12 @@ outline_size = 50
 outline_color = Color(0.97, 0.97, 0.97, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.51, 0.25075, 0.19889998, 1)
+bg_color = Color(0.58, 0.1682, 0.19565332, 1)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.29, 0.14, 0.11, 1)
+border_color = Color(0.9333595, 0.9327412, 0.9724063, 1)
 corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
@@ -654,10 +655,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -260.0
-offset_right = 300.0
-offset_bottom = 260.0
+offset_left = -613.5
+offset_top = -368.0
+offset_right = 613.5
+offset_bottom = 402.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
@@ -668,23 +669,29 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 28.0
-offset_top = 24.0
+offset_top = -84.0
 offset_right = -28.0
-offset_bottom = -24.0
+offset_bottom = 84.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 14
 alignment = 1
 
-[node name="TituloLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=823801904]
+[node name="Label" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1924650970]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_213fs")
+theme_override_font_sizes/font_size = 50
 text = "Créditos"
-label_settings = SubResource("LabelSettings_titulo_panel")
 horizontal_alignment = 1
+
+[node name="Spacer4" type="Control" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1014079741]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
 
 [node name="DisenoLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1619058394]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_fonts/font = ExtResource("4_213fs")
+theme_override_font_sizes/font_size = 40
 text = "Diseño de personajes: Diego"
 horizontal_alignment = 1
 autowrap_mode = 2
@@ -695,7 +702,8 @@ layout_mode = 2
 
 [node name="AssetsLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=2077065607]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_fonts/font = ExtResource("4_213fs")
+theme_override_font_sizes/font_size = 40
 text = "Assets: Ángel Avilés @angel_jar_22"
 horizontal_alignment = 1
 autowrap_mode = 2
@@ -706,19 +714,37 @@ layout_mode = 2
 
 [node name="ProgramacionLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=2126062461]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_fonts/font = ExtResource("4_213fs")
+theme_override_font_sizes/font_size = 40
 text = "Programación asistida con IA, diseño UI & efectos de sonido: Quetzali"
 horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="AgradecimientosLabel" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1873079849]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Agradecimientos especiales a Guillermo B, Hasem, Juan"
+theme_override_fonts/font = ExtResource("4_213fs")
+theme_override_font_sizes/font_size = 40
+text = "Esto no habría sido posible sin el apoyo del CMM.
+Agradecimientos especiales a Guillermo Basoco, Hasem Ansurez, Luis Romero, Eduardo Moyron & Juan Carlos."
 horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="Spacer3" type="Control" parent="CreditosPanel/Panel/VBoxContainer" unique_id=2080609184]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="CreditosPanel/Panel/VBoxContainer" unique_id=1088322103]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_213fs")
+theme_override_font_sizes/font_size = 40
+text = "Íconos de bote de basura, calendario, dinero, botón pausa y cuadros
+ de diágolo recuperados de Canva.
+
+Audio de limón, chamoy azul y rojo y bebida energética recuperados de
+freesound.com."
+horizontal_alignment = 1
+
+[node name="Spacer5" type="Control" parent="CreditosPanel/Panel/VBoxContainer" unique_id=30764112]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
