@@ -26,7 +26,7 @@ var personajes: Array = [
 		"quiere_michelada": true,
 		"paciencia": 18.0,
 		"dialogo": [
-			"Antes este puesto lo llevaba mi compadre... hasta que dejó de pagar la cuota.",
+			"Antes este puesto lo llevaba mi compadre... hasta que dejó de pagar.",
 			"Cuídate, aquí las cosas se ponen feas para el que no coopera.",
 			"No le vendas al de polo azul. No tiene aura.",
 		],
