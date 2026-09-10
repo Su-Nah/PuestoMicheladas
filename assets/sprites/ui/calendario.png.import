@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://boa7x3c0ke0v8"
-path="res://.godot/imported/obrero_tony.png-2a9fa9adc0fae827cfed022622cd985d.ctex"
+uid="uid://dq5pgafe2ar8m"
+path="res://.godot/imported/calendario.png-04914c8287509a77581a30546b54c914.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/obrero_tony.png"
-dest_files=["res://.godot/imported/obrero_tony.png-2a9fa9adc0fae827cfed022622cd985d.ctex"]
+source_file="res://assets/sprites/ui/calendario.png"
+dest_files=["res://.godot/imported/calendario.png-04914c8287509a77581a30546b54c914.ctex"]
 
 [params]
 

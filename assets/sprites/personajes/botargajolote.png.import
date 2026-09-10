@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvhsfe766ks5k"
-path="res://.godot/imported/pausa.png-463de648069614fd277a434f9e69dc7b.ctex"
+uid="uid://mdogrpmywr2l"
+path="res://.godot/imported/botargajolote.png-df1e76a3fb89d5c585b7418b810c430e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pausa.png"
-dest_files=["res://.godot/imported/pausa.png-463de648069614fd277a434f9e69dc7b.ctex"]
+source_file="res://assets/sprites/personajes/botargajolote.png"
+dest_files=["res://.godot/imported/botargajolote.png-df1e76a3fb89d5c585b7418b810c430e.ctex"]
 
 [params]
 

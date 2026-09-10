@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjeb85t1irr4i"
-path="res://.godot/imported/fondo.png-79fb258b53d78a3a9425e6e2f0e774c8.ctex"
+uid="uid://dc60b4mnnmjv3"
+path="res://.godot/imported/elazulito.png-13fe760cadf32c124df5377b43f63995.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/fondo.png"
-dest_files=["res://.godot/imported/fondo.png-79fb258b53d78a3a9425e6e2f0e774c8.ctex"]
+source_file="res://assets/sprites/personajes/elazulito.png"
+dest_files=["res://.godot/imported/elazulito.png-13fe760cadf32c124df5377b43f63995.ctex"]
 
 [params]
 

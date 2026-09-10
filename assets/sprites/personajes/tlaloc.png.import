@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b773mjm7wbcm6"
-path="res://.godot/imported/nancy_la_hermana.png-ec47e1691039d4be64ade42f1b257115.ctex"
+uid="uid://bh8jl70wflgwv"
+path="res://.godot/imported/tlaloc.png-a1231e143ae062eaebb4482e7edf7d60.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/nancy_la_hermana.png"
-dest_files=["res://.godot/imported/nancy_la_hermana.png-ec47e1691039d4be64ade42f1b257115.ctex"]
+source_file="res://assets/sprites/personajes/tlaloc.png"
+dest_files=["res://.godot/imported/tlaloc.png-a1231e143ae062eaebb4482e7edf7d60.ctex"]
 
 [params]
 

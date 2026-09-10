@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g4hukfyimquo"
-path="res://.godot/imported/basura.png-a51b721a7f872329a0cabe7ed7a1e456.ctex"
+uid="uid://dgctluqukulva"
+path="res://.godot/imported/nancy.png-032b3f365245a17dc81328fc75b56db4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/basura.png"
-dest_files=["res://.godot/imported/basura.png-a51b721a7f872329a0cabe7ed7a1e456.ctex"]
+source_file="res://assets/sprites/personajes/nancy.png"
+dest_files=["res://.godot/imported/nancy.png-032b3f365245a17dc81328fc75b56db4.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm3sts51fvtxr"
-path="res://.godot/imported/chavo_prepa.png-bbeaf2851ea7e12a8d941306e9798a93.ctex"
+uid="uid://bvhsfe766ks5k"
+path="res://.godot/imported/pausa.png-85560089acc7fb8d037ce614a533bf2c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chavo_prepa.png"
-dest_files=["res://.godot/imported/chavo_prepa.png-bbeaf2851ea7e12a8d941306e9798a93.ctex"]
+source_file="res://assets/sprites/ui/pausa.png"
+dest_files=["res://.godot/imported/pausa.png-85560089acc7fb8d037ce614a533bf2c.ctex"]
 
 [params]
 

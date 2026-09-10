@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dnc3fmvwgaocy"
-path="res://.godot/imported/basura2.png-298cb9d335f6e3a5a4b1d62f8bbbdb72.ctex"
+uid="uid://hcwc0isu3gb6"
+path="res://.godot/imported/youtuber.png-9073cce882dc4e978b1601c42c6f8425.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/basura2.png"
-dest_files=["res://.godot/imported/basura2.png-298cb9d335f6e3a5a4b1d62f8bbbdb72.ctex"]
+source_file="res://assets/sprites/personajes/youtuber.png"
+dest_files=["res://.godot/imported/youtuber.png-9073cce882dc4e978b1601c42c6f8425.ctex"]
 
 [params]
 

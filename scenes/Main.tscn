@@ -2,29 +2,31 @@
 
 [ext_resource type="Script" uid="uid://vltr1jtoclx3" path="res://scenes/Main.gd" id="1"]
 [ext_resource type="Script" uid="uid://cbdawe1i17kdq" path="res://scripts/IngredientDrag.gd" id="2"]
-[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/fondo.png" id="2_dg70y"]
+[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/ui/fondo.png" id="2_g6wdg"]
 [ext_resource type="Script" uid="uid://wa7elcp6n1mu" path="res://scripts/VasoMichelada.gd" id="3"]
-[ext_resource type="Texture2D" uid="uid://dq5pgafe2ar8m" path="res://assets/sprites/calendario.png" id="3_pnhog"]
+[ext_resource type="Texture2D" uid="uid://dq5pgafe2ar8m" path="res://assets/sprites/ui/calendario.png" id="3_hq6as"]
 [ext_resource type="Script" uid="uid://bex4fhnyuxitn" path="res://scripts/ClienteSlotDrop.gd" id="4"]
+[ext_resource type="Texture2D" uid="uid://b5lu0r2p0o70l" path="res://assets/sprites/ui/ajolopeso.png" id="4_kxyth"]
 [ext_resource type="Texture2D" uid="uid://cjx7cmyw6n0nq" path="res://assets/sprites/ingredients/limon.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://b5lu0r2p0o70l" path="res://assets/sprites/ajolopeso.png" id="5_2c4at"]
-[ext_resource type="Texture2D" uid="uid://bvhsfe766ks5k" path="res://assets/sprites/pausa.png" id="6_2c4at"]
+[ext_resource type="Texture2D" uid="uid://bvhsfe766ks5k" path="res://assets/sprites/ui/pausa.png" id="5_cobve"]
 [ext_resource type="Texture2D" uid="uid://dnh3bk3prd0l8" path="res://assets/sprites/ingredients/escarchado_cafe.png" id="11"]
 [ext_resource type="Texture2D" uid="uid://dbpwy8iy2rt1j" path="res://assets/sprites/ingredients/escarchado_azul.png" id="12"]
 [ext_resource type="Texture2D" uid="uid://c5k58fbsky8ee" path="res://assets/sprites/ingredients/cerveza.png" id="16"]
 [ext_resource type="Texture2D" uid="uid://cah4ih8jjmt3x" path="res://assets/sprites/ingredients/vodka.png" id="18"]
 [ext_resource type="Texture2D" uid="uid://e3h7a8ic87vs" path="res://assets/sprites/ingredients/gatorlite.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://dgctluqukulva" path="res://assets/sprites/personajes/nancy.png" id="19_hq6as"]
 [ext_resource type="Texture2D" uid="uid://b0g0br0mmxcyu" path="res://assets/michelada_capas/vidrio_base.png" id="20"]
 [ext_resource type="FontFile" uid="uid://b0cdn7d3jjkq6" path="res://assets/fonts/holisby-dreamic-graffiti-style-font/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf" id="21_2c4at"]
 [ext_resource type="Texture2D" uid="uid://comk8jrv0vkre" path="res://assets/sprites/ui/globo_texto_Nancy.png" id="21_g6wdg"]
 [ext_resource type="FontFile" uid="uid://b08vfhxdypo62" path="res://assets/fonts/gin_fight/Gin Fight.ttf" id="22_g6wdg"]
 [ext_resource type="Texture2D" uid="uid://bispmafo6ewcq" path="res://assets/michelada_capas/liquido_cerveza.png" id="23"]
+[ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/ui/mesa.png" id="23_hq6as"]
 [ext_resource type="Texture2D" uid="uid://rr67b2jdvqkf" path="res://assets/michelada_capas/liquido_vodka.png" id="24"]
 [ext_resource type="Texture2D" uid="uid://bdfs2c8raliin" path="res://assets/michelada_capas/rim_escarchado_cafe.png" id="27"]
 [ext_resource type="Texture2D" uid="uid://gg33dn6wtijr" path="res://assets/michelada_capas/rim_escarchado_azul.png" id="28"]
 [ext_resource type="Texture2D" uid="uid://ck20t8v1lh86j" path="res://assets/michelada_capas/limon.png" id="29"]
 [ext_resource type="Script" uid="uid://ccac2fsj4a3ev" path="res://scripts/TutorialOverlay.gd" id="31"]
-[ext_resource type="Texture2D" uid="uid://b773mjm7wbcm6" path="res://assets/sprites/nancy_la_hermana.png" id="32"]
+[ext_resource type="Texture2D" uid="uid://dnc3fmvwgaocy" path="res://assets/sprites/ui/basura.png" id="36_hq6as"]
 [ext_resource type="Texture2D" uid="uid://ddk54pec27n7p" path="res://assets/sprites/ingredients/chamoy_cafe.png" id="40"]
 [ext_resource type="Texture2D" uid="uid://dcq0qn3jn1wly" path="res://assets/sprites/ingredients/chamoy_azul.png" id="41"]
 [ext_resource type="Texture2D" uid="uid://cxr5h4da0ogv0" path="res://assets/sprites/ingredients/gomitas.png" id="42"]
@@ -33,7 +35,6 @@
 [ext_resource type="Texture2D" uid="uid://3nxoehpw802m" path="res://assets/michelada_capas/chamoy_cafe.png" id="45"]
 [ext_resource type="Texture2D" uid="uid://dmqba7u6uquaw" path="res://assets/michelada_capas/chamoy_azul.png" id="46"]
 [ext_resource type="Texture2D" uid="uid://cb713lud4dh1b" path="res://assets/michelada_capas/gomitas.png" id="47"]
-[ext_resource type="Texture2D" uid="uid://c5c8a5hpb56r" path="res://assets/sprites/mesa.png" id="50"]
 [ext_resource type="Texture2D" uid="uid://c86mbcvd80mgx" path="res://assets/sprites/ui/dialogo_bg.png" id="60"]
 
 [sub_resource type="Image" id="Image_213fs"]
@@ -793,9 +794,6 @@ cache/0/50/0/glyphs/69/texture_idx = 0
 font = SubResource("FontFile_cobve")
 font_size = 30
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_g6wdg"]
-load_path = "res://.godot/imported/basura2.png-298cb9d335f6e3a5a4b1d62f8bbbdb72.ctex"
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pausa"]
 bg_color = Color(0.51, 0.25075, 0.19889998, 1)
 border_width_left = 5
@@ -826,21 +824,21 @@ layout_mode = 0
 offset_top = 2.0
 offset_right = 1920.0
 offset_bottom = 743.0
-texture = ExtResource("2_dg70y")
+texture = ExtResource("2_g6wdg")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="InfoBar" type="HBoxContainer" parent="." unique_id=536354376]
 layout_mode = 0
-offset_left = 368.0
-offset_top = 30.0
-offset_right = 1310.0
-offset_bottom = 81.0
+offset_left = 214.0
+offset_top = 9.0
+offset_right = 1198.0
+offset_bottom = 99.0
 alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="InfoBar" unique_id=959433900]
 layout_mode = 2
-texture = ExtResource("3_pnhog")
+texture = ExtResource("3_hq6as")
 expand_mode = 2
 
 [node name="DayLabel" type="Label" parent="InfoBar" unique_id=22815888]
@@ -855,7 +853,7 @@ layout_mode = 2
 
 [node name="TextureRect2" type="TextureRect" parent="InfoBar" unique_id=1927909980]
 layout_mode = 2
-texture = ExtResource("5_2c4at")
+texture = ExtResource("4_kxyth")
 expand_mode = 2
 
 [node name="MoneyLabel" type="Label" parent="InfoBar" unique_id=2082340388]
@@ -867,10 +865,10 @@ label_settings = SubResource("LabelSettings_ydfnm")
 
 [node name="DayTimeline" type="HBoxContainer" parent="." unique_id=1399139259]
 layout_mode = 0
-offset_left = 1079.0
-offset_top = 30.0
-offset_right = 1650.0
-offset_bottom = 81.0
+offset_left = 945.0
+offset_top = 9.0
+offset_right = 1929.0
+offset_bottom = 83.0
 size_flags_horizontal = 3
 
 [node name="pausa" type="TextureButton" parent="." unique_id=738692701]
@@ -878,22 +876,21 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -97.0
-offset_top = 36.0
-offset_right = -34.0
-offset_bottom = 99.0
+offset_left = -101.0
+offset_top = 8.0
+offset_right = -11.0
+offset_bottom = 98.0
 grow_horizontal = 0
-texture_normal = ExtResource("6_2c4at")
+texture_normal = ExtResource("5_cobve")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ClienteSlot0" type="Control" parent="." unique_id=63804865]
 modulate = Color(1, 1, 1, 0.35)
 anchors_preset = 0
-offset_left = 40.0
 offset_top = 118.0
-offset_right = 620.0
-offset_bottom = 913.0
+offset_right = 676.0
+offset_bottom = 918.0
 script = ExtResource("4")
 
 [node name="DialogoBox" type="Control" parent="ClienteSlot0" unique_id=946682914]
@@ -1050,8 +1047,8 @@ stretch_mode = 5
 [node name="Portrait" type="TextureRect" parent="ClienteSlot0" unique_id=63804866]
 layout_mode = 0
 offset_top = 130.0
-offset_right = 580.0
-offset_bottom = 780.0
+offset_right = 676.0
+offset_bottom = 930.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
@@ -1070,8 +1067,8 @@ modulate = Color(1, 1, 1, 0.35)
 anchors_preset = 0
 offset_left = 660.0
 offset_top = 118.0
-offset_right = 1240.0
-offset_bottom = 913.0
+offset_right = 1336.0
+offset_bottom = 918.0
 script = ExtResource("4")
 slot_index = 1
 
@@ -1229,8 +1226,8 @@ stretch_mode = 5
 [node name="Portrait" type="TextureRect" parent="ClienteSlot1" unique_id=63804966]
 layout_mode = 0
 offset_top = 130.0
-offset_right = 580.0
-offset_bottom = 780.0
+offset_right = 676.0
+offset_bottom = 930.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
@@ -1247,19 +1244,18 @@ label_settings = SubResource("LabelSettings_2c4at")
 [node name="ClienteSlot2" type="Control" parent="." unique_id=63805065]
 modulate = Color(1, 1, 1, 0.35)
 anchors_preset = 0
-offset_left = 1280.0
+offset_left = 1245.0
 offset_top = 118.0
-offset_right = 1860.0
-offset_bottom = 917.0
+offset_right = 1921.0
+offset_bottom = 918.0
 script = ExtResource("4")
 slot_index = 2
 
 [node name="DialogoBox" type="Control" parent="ClienteSlot2" unique_id=721662722]
-visible = false
 anchors_preset = 0
-offset_top = 88.0
+offset_top = -20.0
 offset_right = 150.0
-offset_bottom = 248.0
+offset_bottom = 140.0
 mouse_filter = 2
 
 [node name="BG" type="TextureRect" parent="ClienteSlot2/DialogoBox" unique_id=186975086]
@@ -1408,8 +1404,8 @@ stretch_mode = 5
 [node name="Portrait" type="TextureRect" parent="ClienteSlot2" unique_id=63805066]
 layout_mode = 0
 offset_top = 130.0
-offset_right = 580.0
-offset_bottom = 782.0
+offset_right = 676.0
+offset_bottom = 930.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
@@ -1424,6 +1420,7 @@ theme_override_font_sizes/font_size = 22
 label_settings = SubResource("LabelSettings_pnhog")
 
 [node name="TutorialLayer" type="Control" parent="." unique_id=63704865]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1444,14 +1441,12 @@ color = Color(0, 0, 0, 0.6)
 [node name="NancyPortrait" type="TextureRect" parent="TutorialLayer" unique_id=63704867]
 visible = false
 layout_mode = 0
-offset_left = 9.0
-offset_top = 147.0
-offset_right = 440.0
-offset_bottom = 799.0
+offset_left = -267.0
+offset_top = 67.0
+offset_right = 666.0
+offset_bottom = 1046.0
 mouse_filter = 2
-texture = ExtResource("32")
-expand_mode = 1
-stretch_mode = 5
+texture = ExtResource("19_hq6as")
 flip_h = true
 
 [node name="DialogBox" type="TextureRect" parent="TutorialLayer" unique_id=1495281737]
@@ -1532,7 +1527,7 @@ offset_top = -41.0
 offset_right = 1913.0
 offset_bottom = 340.0
 mouse_filter = 2
-texture = ExtResource("50")
+texture = ExtResource("23_hq6as")
 expand_mode = 1
 
 [node name="ChamoyCafeIcon" type="TextureRect" parent="Mesa" unique_id=1811468710]
@@ -1804,7 +1799,7 @@ offset_left = 809.0
 offset_top = 221.0
 offset_right = 1089.0
 offset_bottom = 601.0
-texture_normal = SubResource("CompressedTexture2D_g6wdg")
+texture_normal = ExtResource("36_hq6as")
 stretch_mode = 0
 
 [node name="PauseMenu" type="Control" parent="." unique_id=900000001]

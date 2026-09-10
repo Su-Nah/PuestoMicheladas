@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dq5pgafe2ar8m"
-path="res://.godot/imported/calendario.png-4fb8fd2fcd0746e98b995e8d30bbeb55.ctex"
+uid="uid://b5lu0r2p0o70l"
+path="res://.godot/imported/ajolopeso.png-a5aae061750e8e83b2bd70102e7aaca9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/calendario.png"
-dest_files=["res://.godot/imported/calendario.png-4fb8fd2fcd0746e98b995e8d30bbeb55.ctex"]
+source_file="res://assets/sprites/ui/ajolopeso.png"
+dest_files=["res://.godot/imported/ajolopeso.png-a5aae061750e8e83b2bd70102e7aaca9.ctex"]
 
 [params]
 

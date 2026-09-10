@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b5lu0r2p0o70l"
-path="res://.godot/imported/ajolopeso.png-2d129183b7e1d85f89522d91f8162012.ctex"
+uid="uid://bjeb85t1irr4i"
+path="res://.godot/imported/fondo.png-3cef10934a126e96cc1c2bd2cc7559e7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/ajolopeso.png"
-dest_files=["res://.godot/imported/ajolopeso.png-2d129183b7e1d85f89522d91f8162012.ctex"]
+source_file="res://assets/sprites/ui/fondo.png"
+dest_files=["res://.godot/imported/fondo.png-3cef10934a126e96cc1c2bd2cc7559e7.ctex"]
 
 [params]
 
