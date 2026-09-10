@@ -813,6 +813,11 @@ const TIMELINE_COLOR_PENDIENTE := Color(0.17, 0.17, 0.17, 1.0)
 const TIMELINE_COLOR_RESUELTO := Color(0.3, 0.8, 0.3)
 
 
+## Shader que dibuja los íconos en blanco con contorno negro de 11px,
+## igual que el estilo de DayLabel/MoneyLabel.
+const SHADER_ICONO_CONTORNO := preload("res://shaders/icono_blanco_contorno.gdshader")
+
+
 func _construir_timeline() -> void:
 	if day_timeline == null:
 		return
@@ -827,6 +832,11 @@ func _construir_timeline() -> void:
 			icono.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			icono.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			icono.modulate = TIMELINE_COLOR_PENDIENTE
+			var mat := ShaderMaterial.new()
+			mat.shader = SHADER_ICONO_CONTORNO
+			mat.set_shader_parameter("contorno_px", 11.0)
+			mat.set_shader_parameter("tamano_px", TIMELINE_ICONO_TAMANO)
+			icono.material = mat
 			day_timeline.add_child(icono)
 		else:
 			# Ruta de TIMELINE_ICONO_RUTA no encontrada todavía: se usa

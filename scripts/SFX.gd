@@ -136,14 +136,14 @@ func _ready() -> void:
 
 	SONIDOS_AGARRAR = {
 		"vaso": _cargar("res://assets/audio/agarrar_vaso.wav"),
-		"chamoy_cafe": _cargar("res://assets/audio/agarrar_chamoy_cafe.wav"),
-		"chamoy_azul": _cargar("res://assets/audio/agarrar_chamoy_azul.wav"),
+		"chamoy_cafe": _cargar("res://assets/audio/agarrar_chamoy_cafe.mp3"),
+		"chamoy_azul": _cargar("res://assets/audio/agarrar_chamoy_azul.mp3"),
 		"escarchado_cafe": _cargar("res://assets/audio/agarrar_escarchado_cafe.wav"),
 		"escarchado_azul": _cargar("res://assets/audio/agarrar_escarchado_azul.wav"),
-		"limon": _cargar("res://assets/audio/agarrar_limon.wav"),
+		"limon": _cargar("res://assets/audio/agarrar_limon.mp3"),
 		"vodka": _cargar("res://assets/audio/agarrar_vodka.wav"),
 		"cerveza": _cargar("res://assets/audio/agarrar_cerveza.wav"),
-		"gatorlite": _cargar("res://assets/audio/agarrar_gatorlite.wav"),
+		"gatorlite": _cargar("res://assets/audio/agarrar_gatorlite.mp3"),
 		"gomitas": _cargar("res://assets/audio/agarrar_gomitas.wav"),
 	}
 

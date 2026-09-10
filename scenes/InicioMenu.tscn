@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://dnuunwhefo20f"]
 
 [ext_resource type="Script" uid="uid://bmnx6bsrpbuss" path="res://scenes/InicioMenu.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/fondo.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bjeb85t1irr4i" path="res://assets/sprites/ui/fondo.png" id="2"]
 [ext_resource type="FontFile" uid="uid://b0cdn7d3jjkq6" path="res://assets/fonts/holisby-dreamic-graffiti-style-font/Holisby-Dreamic-Demo-BF6a8804e4eb2e5.ttf" id="3_213fs"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_titulo_juego"]
