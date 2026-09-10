@@ -552,13 +552,13 @@ cache/0/31/0/glyphs/228/texture_idx = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_ngfvx"]
 font = SubResource("FontFile_fdeny")
-font_size = 40
+font_size = 50
 outline_size = 11
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ydfnm"]
 font = SubResource("FontFile_fdeny")
-font_size = 40
+font_size = 50
 outline_size = 11
 outline_color = Color(0, 0, 0, 1)
 
